@@ -77,10 +77,93 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
+    <style>
+        #loader-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader-container {
+            width: 30vw;
+            max-width: 200px;
+            height: 30vw;
+            max-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo {
+            width: 90%;
+            height: 90%;
+            animation: heartbeat 1.5s infinite;
+            object-fit: contain;
+        }
+        .text-container {
+            height: 40px;
+            width: 100%;
+            text-align: center;
+        }
+        .letter {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            opacity: 0;
+            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
+        }
+        .fadeOut { animation: fadeOut 0.7s forwards; }
 
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        @media (max-width: 480px) {
+            .loader-container { width: 80vw !important; height: auto; }
+            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
+            .letter { font-size: 28px; }
+        }
+    </style>
 </head>
 
 <body style="font-family: 'Montserrat', sans-serif;">
+<!-- loader.php -->
+<div id="loader-overlay">
+    <div class="loader-container">
+        <img src="../img/logo1.png" alt="Logo" class="logo">
+        <div class="text-container">
+            <span class="letter" style="--index: 1;">Q</span>
+            <span class="letter" style="--index: 2;">U</span>
+            <span class="letter" style="--index: 3;">I</span>
+            <span class="letter" style="--index: 4;">C</span>
+            <span class="letter" style="--index: 5;">K</span>
+            <span class="letter" style="--index: 6;">F</span>
+            <span class="letter" style="--index: 7;">I</span>
+            <span class="letter" style="--index: 8;">X</span>
+        </div>
+    </div>
+</div>
+
+<div id="main-content" style="display:none;">
     <form method="POST" action="">
         <div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
             <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
@@ -152,6 +235,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </form>
+</div>
+    <script>
+        function resetAnimation() {
+            const letters = document.querySelectorAll('.letter');
+            letters.forEach(letter => letter.classList.add('fadeOut'));
+            setTimeout(() => {
+                letters.forEach(letter => {
+                    letter.classList.remove('fadeOut');
+                    letter.style.opacity = 0;
+                    void letter.offsetWidth;
+                    letter.style.animation = 'none';
+                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                });
+            }, 800);
+        }
+
+        // Adjust totalFadeInTime due to faster animation
+        const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
+        const displayTime = 1.2; // optional tweak
+        const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
+        setInterval(() => resetAnimation(), cycleTime);
+
+        // Show main content after loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 2000); // Show loader for 3 seconds
+        });
+    </script>
+
 </body>
 
 

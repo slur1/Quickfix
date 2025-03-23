@@ -1,6 +1,5 @@
 <?php
 include 'config/db_connection.php';
-
 $query = "SELECT * FROM categories";
 $categoryresult = $conn->query($query);
 ?>
@@ -24,11 +23,77 @@ $categoryresult = $conn->query($query);
     html {
       scroll-behavior: smooth;
     }
+    #loader-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader-container {
+            width: 30vw;
+            max-width: 200px;
+            height: 30vw;
+            max-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo {
+            width: 90%;
+            height: 90%;
+            animation: heartbeat 1.5s infinite;
+            object-fit: contain;
+        }
+        .text-container {
+            height: 40px;
+            width: 100%;
+            text-align: center;
+        }
+        .letter {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            opacity: 0;
+            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
+        }
+        .fadeOut { animation: fadeOut 0.7s forwards; }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        @media (max-width: 480px) {
+            .loader-container { width: 80vw !important; height: auto; }
+            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
+            .letter { font-size: 28px; }
+        }
   </style>
 </head>
 
 <body class="bg-white min-h-screen">
+<?php include('loader.php'); ?>
   <!-- Navigation -->
+  <div id="main-content" style="display:none;">
   <nav class="flex justify-between items-center p-4 bg-white shadow-md sticky top-0 z-50">
     <!-- Logo Section -->
     <a href="#" class="flex items-center space-x-2">
@@ -364,7 +429,7 @@ $categoryresult = $conn->query($query);
     </div>
   </section>
 
-
+  </div>
 
 
   <!-- Testimonials Section -->
@@ -707,6 +772,35 @@ $categoryresult = $conn->query($query);
     });
   </script>
 
+    <script>
+        function resetAnimation() {
+            const letters = document.querySelectorAll('.letter');
+            letters.forEach(letter => letter.classList.add('fadeOut'));
+            setTimeout(() => {
+                letters.forEach(letter => {
+                    letter.classList.remove('fadeOut');
+                    letter.style.opacity = 0;
+                    void letter.offsetWidth;
+                    letter.style.animation = 'none';
+                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                });
+            }, 800);
+        }
+
+        // Adjust totalFadeInTime due to faster animation
+        const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
+        const displayTime = 1.2; // optional tweak
+        const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
+        setInterval(() => resetAnimation(), cycleTime);
+
+        // Show main content after loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 2000); // Show loader for 3 seconds
+        });
+    </script>
 
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 

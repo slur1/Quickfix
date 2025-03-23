@@ -180,10 +180,74 @@ $conn->close();
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-
+    
     body {
       font-family: 'Montserrat', sans-serif;
     }
+    #loader-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader-container {
+            width: 30vw;
+            max-width: 200px;
+            height: 30vw;
+            max-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo {
+            width: 90%;
+            height: 90%;
+            animation: heartbeat 1.5s infinite;
+            object-fit: contain;
+        }
+        .text-container {
+            height: 40px;
+            width: 100%;
+            text-align: center;
+        }
+        .letter {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            opacity: 0;
+            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
+        }
+        .fadeOut { animation: fadeOut 0.7s forwards; }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        @media (max-width: 480px) {
+            .loader-container { width: 80vw !important; height: auto; }
+            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
+            .letter { font-size: 28px; }
+        }
   </style>
 </head>
 <?php include './userHeader.php'; ?>
@@ -407,7 +471,7 @@ $conn->close();
             });
         }
     });
-},
+    },
 
 
 
@@ -556,127 +620,127 @@ $conn->close();
             confirmCompletion(job) {
     this.selectedJob = job;
     this.showConfirmModal = true;
-},
+    },
 
-markJobCompleted() {
-    if (!this.selectedJob) return;
+    markJobCompleted() {
+        if (!this.selectedJob) return;
 
-    fetch('mark_job_completed.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            job_id: this.selectedJob.id
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            this.in_progress_jobs = this.in_progress_jobs.filter(job => job.id !== this.selectedJob.id);
-            this.completed_jobs.push(this.selectedJob);
-            this.showConfirmModal = false;
-
-            // ✅ Show success message using SweetAlert
-            Swal.fire({
-                title: "Job Completed!",
-                text: "The job has been marked as completed successfully.",
-                icon: "success",
-                confirmButtonColor: "#28a745"
-            }).then(() => {
-                // ✅ Save active tab before reloading
-                localStorage.setItem("activeTab", "completed");
-                location.reload(); // 🔄 Reload the page
-            });
-
-        } else {
-            console.error("Error from server:", data.error);
-            Swal.fire({
-                title: "Error!",
-                text: data.error || "Something went wrong.",
-                icon: "error",
-                confirmButtonColor: "#d33"
-            });
-        }
-    })
-    .catch(error => {
-        console.error("Error completing job:", error);
-        Swal.fire({
-            title: "Error!",
-            text: "Something went wrong. Please try again.",
-            icon: "error",
-            confirmButtonColor: "#d33"
-        });
-    });
-},
-
-openReviewModal(job) {
-                console.log("Opening Review Modal for Job:", job);
-                this.selectedJob = job;
-                this.reviewRating = '';
-                this.reviewText = '';
-                this.showReviewModal = true;
-            },
-
-            async submitReview() {
-    if (!this.reviewRating || !this.reviewText) {
-        Swal.fire({
-            title: "Oops!",
-            text: "Please provide both a rating and a review.",
-            icon: "warning",
-            confirmButtonColor: "#f39c12"
-        });
-        return;
-    }
-
-    try {
-        let response = await fetch('submit_review.php', {
+        fetch('mark_job_completed.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-                job_id: this.selectedJob.id,
-                rating: this.reviewRating,
-                review: this.reviewText
+                job_id: this.selectedJob.id
             })
-        });
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                this.in_progress_jobs = this.in_progress_jobs.filter(job => job.id !== this.selectedJob.id);
+                this.completed_jobs.push(this.selectedJob);
+                this.showConfirmModal = false;
 
-        let result = await response.json();
-        console.log("Server Response:", result);
+                // ✅ Show success message using SweetAlert
+                Swal.fire({
+                    title: "Job Completed!",
+                    text: "The job has been marked as completed successfully.",
+                    icon: "success",
+                    confirmButtonColor: "#28a745"
+                }).then(() => {
+                    // ✅ Save active tab before reloading
+                    localStorage.setItem("activeTab", "completed");
+                    location.reload(); // 🔄 Reload the page
+                });
 
-        if (result.success) {
-            this.selectedJob.rating = this.reviewRating;
-            this.selectedJob.review = this.reviewText;
-            this.showReviewModal = false;
-
-            // ✅ Show success message using SweetAlert
-            Swal.fire({
-                title: "Review Submitted!",
-                text: "Thank you for your feedback.",
-                icon: "success",
-                confirmButtonColor: "#28a745"
-            });
-
-        } else {
+            } else {
+                console.error("Error from server:", data.error);
+                Swal.fire({
+                    title: "Error!",
+                    text: data.error || "Something went wrong.",
+                    icon: "error",
+                    confirmButtonColor: "#d33"
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error completing job:", error);
             Swal.fire({
                 title: "Error!",
-                text: result.message || "Something went wrong.",
+                text: "Something went wrong. Please try again.",
+                icon: "error",
+                confirmButtonColor: "#d33"
+            });
+        });
+    },
+
+    openReviewModal(job) {
+                    console.log("Opening Review Modal for Job:", job);
+                    this.selectedJob = job;
+                    this.reviewRating = '';
+                    this.reviewText = '';
+                    this.showReviewModal = true;
+                },
+
+                async submitReview() {
+        if (!this.reviewRating || !this.reviewText) {
+            Swal.fire({
+                title: "Oops!",
+                text: "Please provide both a rating and a review.",
+                icon: "warning",
+                confirmButtonColor: "#f39c12"
+            });
+            return;
+        }
+
+        try {
+            let response = await fetch('submit_review.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    job_id: this.selectedJob.id,
+                    rating: this.reviewRating,
+                    review: this.reviewText
+                })
+            });
+
+            let result = await response.json();
+            console.log("Server Response:", result);
+
+            if (result.success) {
+                this.selectedJob.rating = this.reviewRating;
+                this.selectedJob.review = this.reviewText;
+                this.showReviewModal = false;
+
+                // ✅ Show success message using SweetAlert
+                Swal.fire({
+                    title: "Review Submitted!",
+                    text: "Thank you for your feedback.",
+                    icon: "success",
+                    confirmButtonColor: "#28a745"
+                });
+
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: result.message || "Something went wrong.",
+                    icon: "error",
+                    confirmButtonColor: "#d33"
+                });
+            }
+        } catch (error) {
+            console.error("Error submitting review:", error);
+            Swal.fire({
+                title: "Error!",
+                text: "Failed to submit review. Please try again.",
                 icon: "error",
                 confirmButtonColor: "#d33"
             });
         }
-    } catch (error) {
-        console.error("Error submitting review:", error);
-        Swal.fire({
-            title: "Error!",
-            text: "Failed to submit review. Please try again.",
-            icon: "error",
-            confirmButtonColor: "#d33"
-        });
-    }
-},
+    },
 
 
-validateRating() {
+    validateRating() {
             // ✅ Allow only numbers 1-5
             if (!/^[1-5]$/.test(this.reviewRating)) {
                 this.reviewRating = "";
@@ -881,6 +945,23 @@ validateRating() {
 
 
 <body class="bg-gray-100" x-data="jobDashboard()" x-init="init()">
+<!-- loader.php -->
+<div id="loader-overlay">
+    <div class="loader-container">
+        <img src="../img/logo1.png" alt="Logo" class="logo">
+        <div class="text-container">
+            <span class="letter" style="--index: 1;">Q</span>
+            <span class="letter" style="--index: 2;">U</span>
+            <span class="letter" style="--index: 3;">I</span>
+            <span class="letter" style="--index: 4;">C</span>
+            <span class="letter" style="--index: 5;">K</span>
+            <span class="letter" style="--index: 6;">F</span>
+            <span class="letter" style="--index: 7;">I</span>
+            <span class="letter" style="--index: 8;">X</span>
+        </div>
+    </div>
+</div>
+<div id="main-content" style="display:none;">
     <div class="w-full max-w-5xl mx-auto p-3 sm:p-6">
         <h1 class="text-2xl sm:text-3xl font-bold text-blue-800 mb-4 sm:mb-6">My jobs</h1>
 
@@ -1641,6 +1722,36 @@ validateRating() {
             </div>
         </div>
     </div>
+</div>
+    <script>
+        function resetAnimation() {
+            const letters = document.querySelectorAll('.letter');
+            letters.forEach(letter => letter.classList.add('fadeOut'));
+            setTimeout(() => {
+                letters.forEach(letter => {
+                    letter.classList.remove('fadeOut');
+                    letter.style.opacity = 0;
+                    void letter.offsetWidth;
+                    letter.style.animation = 'none';
+                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                });
+            }, 800);
+        }
+
+        // Adjust totalFadeInTime due to faster animation
+        const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
+        const displayTime = 1.2; // optional tweak
+        const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
+        setInterval(() => resetAnimation(), cycleTime);
+
+        // Show main content after loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 2000); // Show loader for 3 seconds
+        });
+    </script>
 </body>
 
 </html>

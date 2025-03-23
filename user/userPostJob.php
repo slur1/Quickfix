@@ -101,189 +101,302 @@ if (isset($_POST['category_id'])) {
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+          #loader-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader-container {
+            width: 30vw;
+            max-width: 200px;
+            height: 30vw;
+            max-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo {
+            width: 90%;
+            height: 90%;
+            animation: heartbeat 1.5s infinite;
+            object-fit: contain;
+        }
+        .text-container {
+            height: 40px;
+            width: 100%;
+            text-align: center;
+        }
+        .letter {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            opacity: 0;
+            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
+        }
+        .fadeOut { animation: fadeOut 0.7s forwards; }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        @media (max-width: 480px) {
+            .loader-container { width: 80vw !important; height: auto; }
+            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
+            .letter { font-size: 28px; }
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- loader.php -->
+<div id="loader-overlay">
+    <div class="loader-container">
+        <img src="../img/logo1.png" alt="Logo" class="logo">
+        <div class="text-container">
+            <span class="letter" style="--index: 1;">Q</span>
+            <span class="letter" style="--index: 2;">U</span>
+            <span class="letter" style="--index: 3;">I</span>
+            <span class="letter" style="--index: 4;">C</span>
+            <span class="letter" style="--index: 5;">K</span>
+            <span class="letter" style="--index: 6;">F</span>
+            <span class="letter" style="--index: 7;">I</span>
+            <span class="letter" style="--index: 8;">X</span>
+        </div>
+    </div>
+</div>
     <?php include './userHeader.php'; ?>
-
+<div id="main-content" style="display:none;">
     <div class="flex justify-center items-start mt-10">
-        <form id="jobForm" method="POST" enctype="multipart/form-data" class="w-full max-w-4xl p-6 shadow-lg bg-white rounded-lg border border-gray-300">
-            <h1 class="text-3xl font-bold text-blue-900 mb-8">Post a Job</h1>
-            <div class="space-y-6">
-                <div>
-                    <label for="job_title" class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
-                    <input type="text" id="job_title" name="job_title" placeholder="Enter a job title"
-                        class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
-                    <span class="text-xs text-red-500 hidden error-message"></span>
-                </div>
-
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Job date</label>
-                    <div class="flex flex-wrap gap-3 items-center">
-                        <button type="button" id="onDateBtn" class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
-                            On date
-                        </button>
-                        <input type="date" id="onDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300">
-
-                        <button type="button" id="beforeDateBtn" class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
-                            Before date
-                        </button>
-                        <input type="date" id="beforeDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300">
-
-                        <button type="button" id="flexibleBtn"
-                            class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
-                            I'm flexible
-                        </button>
-                        <input type="hidden" id="job_date" name="job_date">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="flex items-center mb-4">
-                        <input type="checkbox" id="specificTimeCheckbox" name="job_time" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <span class="ml-2 text-sm text-gray-700">I need a certain time of day</span>
-                    </label>
-                    <div id="timeOptions" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Morning (Before 10am)">
-                            Morning<br><span class="text-sm opacity-80">Before 10am</span>
-                        </button>
-                        <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Midday (10am - 2pm)">
-                            Midday<br><span class="text-sm opacity-80">10am - 2pm</span>
-                        </button>
-                        <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Afternoon (2pm - 6pm)">
-                            Afternoon<br><span class="text-sm opacity-80">2pm - 6pm</span>
-                        </button>
-                        <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Evening (After 6pm)">
-                            Evening<br><span class="text-sm opacity-80">After 6pm</span>
-                        </button>
-                    </div>
-                    <input type="hidden" id="job_time" name="job_time">
-                </div>
-
-                <div class="w-full relative">
-                    <label for="location" class="block text-gray-700 font-semibold mb-1">Location:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="location" name="location" placeholder="Enter address..."
+            <form id="jobForm" method="POST" enctype="multipart/form-data" class="w-full max-w-4xl p-6 shadow-lg bg-white rounded-lg border border-gray-300">
+                <h1 class="text-3xl font-bold text-blue-900 mb-8">Post a Job</h1>
+                <div class="space-y-6">
+                    <div>
+                        <label for="job_title" class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
+                        <input type="text" id="job_title" name="job_title" placeholder="Enter a job title"
                             class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
                         <span class="text-xs text-red-500 hidden error-message"></span>
-                        <button type="button" onclick="openMapModal()"
-                            class="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition flex items-center justify-center">
-                            <img src="../img/location-post-job.svg" alt="Location Icon" class="w-5 h-5">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Job date</label>
+                        <div class="flex flex-wrap gap-3 items-center">
+                            <button type="button" id="onDateBtn" class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
+                                On date
+                            </button>
+                            <input type="date" id="onDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300">
+
+                            <button type="button" id="beforeDateBtn" class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
+                                Before date
+                            </button>
+                            <input type="date" id="beforeDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300">
+
+                            <button type="button" id="flexibleBtn"
+                                class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
+                                I'm flexible
+                            </button>
+                            <input type="hidden" id="job_date" name="job_date">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center mb-4">
+                            <input type="checkbox" id="specificTimeCheckbox" name="job_time" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">I need a certain time of day</span>
+                        </label>
+                        <div id="timeOptions" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Morning (Before 10am)">
+                                Morning<br><span class="text-sm opacity-80">Before 10am</span>
+                            </button>
+                            <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Midday (10am - 2pm)">
+                                Midday<br><span class="text-sm opacity-80">10am - 2pm</span>
+                            </button>
+                            <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Afternoon (2pm - 6pm)">
+                                Afternoon<br><span class="text-sm opacity-80">2pm - 6pm</span>
+                            </button>
+                            <button type="button" name="job_time" class="time-btn p-4 rounded-lg text-center transition-colors bg-gray-50 text-gray-700" data-time="Evening (After 6pm)">
+                                Evening<br><span class="text-sm opacity-80">After 6pm</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="job_time" name="job_time">
+                    </div>
+
+                    <div class="w-full relative">
+                        <label for="location" class="block text-gray-700 font-semibold mb-1">Location:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="location" name="location" placeholder="Enter address..."
+                                class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
+                            <span class="text-xs text-red-500 hidden error-message"></span>
+                            <button type="button" onclick="openMapModal()"
+                                class="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition flex items-center justify-center">
+                                <img src="../img/location-post-job.svg" alt="Location Icon" class="w-5 h-5">
+                            </button>
+                        </div>
+
+
+                        <div id="suggestions" class="absolute left-0 right-0 bg-white shadow-lg rounded-md mt-1 hidden border border-gray-300 z-10"></div>
+                    </div>
+
+                    <div id="mapModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div class="bg-white p-5 rounded-lg w-full max-w-3xl shadow-lg">
+                            <h3 class="text-xl font-semibold mb-3">Select Location</h3>
+                            <div class="relative w-full h-[500px] bg-gray-200 rounded-lg">
+                                <div id="map" class="w-full h-full"></div>
+                            </div>
+                            <div class="flex justify-end gap-3 mt-4">
+                                <button type="button" onclick="useSelectedLocation()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Use this Address</button>
+                                <button type="button" onclick="closeMapModal()" class="px-5 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Close</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Describe the job"
+                            class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 resize-none"></textarea>
+                        <span class="text-xs text-red-500 hidden error-message"></span>
+                    </div>
+
+                    <div x-data="{ categories: [], selectedCategory: '', subcategories: [], selectedSubcategory: '' }" x-init="
+                        fetch('get_categories.php')
+                        .then(response => response.json())
+                        .then(data => categories = data)">
+
+                        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="category" x-model="selectedCategory" @change="
+                            subcategories = categories.find(cat => cat.id == selectedCategory)?.sub_categories || []"
+                            class="block w-full mt-1 p-2 border rounded-md">
+                            <option value="">Select Category</option>
+                            <template x-for="category in categories" :key="category.id">
+                                <option :value="category.id" x-text="category.name"></option>
+                            </template>
+                        </select>
+                        <input type="hidden" name="category_id" x-model="selectedCategory">
+
+                        <label for="sub_category" class="block text-sm font-medium text-gray-700 mt-3">Subcategory</label>
+                        <select id="sub_category" x-model="selectedSubcategory" class="block w-full mt-1 p-2 border rounded-md">
+                            <option value="">Select Subcategory</option>
+                            <template x-for="sub in subcategories" :key="sub.id">
+                                <option :value="sub.id" x-text="sub.name"></option>
+                            </template>
+                        </select>
+                        <input type="hidden" name="sub_category_id" x-model="selectedSubcategory">
+
+                    </div>
+
+
+                    <div>
+                        <label for="budget" class="block text-sm font-medium text-gray-700 mb-2">Budget</label>
+                        <!-- Old -->
+                        <!-- <input type="number" id="budget" name="budget" placeholder="Enter budget amount"
+                            class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none"> -->
+
+                        <!-- Current -->
+                        <input type="text" id="budget" name="budget" placeholder="Enter budget ranging amount (0 - 100)"
+                            class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
+                        <span class="text-xs text-red-500 hidden error-message"></span>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Add images (optional)</label>
+                        <input type="file" id="images" name="images[]" multiple accept="image/*" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none">
+                        <p class="text-sm text-gray-500 mt-2">You can upload up to 5 images.</p>
+                        <span class="text-xs text-red-500 hidden error-message"></span>
+                    </div>
+
+                    <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" id="resetButton" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
+                        Reset
+                    </button>
+
+                        <button type="submit" id="postJobBtn" data-unverified="<?= $isUnverified ? 'true' : 'false'; ?>" 
+                            class="px-6 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors">
+                            Post
                         </button>
                     </div>
-
-
-                    <div id="suggestions" class="absolute left-0 right-0 bg-white shadow-lg rounded-md mt-1 hidden border border-gray-300 z-10"></div>
                 </div>
+                </main>
+            </form>
 
-                <div id="mapModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div class="bg-white p-5 rounded-lg w-full max-w-3xl shadow-lg">
-                        <h3 class="text-xl font-semibold mb-3">Select Location</h3>
-                        <div class="relative w-full h-[500px] bg-gray-200 rounded-lg">
-                            <div id="map" class="w-full h-full"></div>
-                        </div>
-                        <div class="flex justify-end gap-3 mt-4">
-                            <button type="button" onclick="useSelectedLocation()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Use this Address</button>
-                            <button type="button" onclick="closeMapModal()" class="px-5 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Close</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea id="description" name="description" rows="4" placeholder="Describe the job"
-                        class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 resize-none"></textarea>
-                    <span class="text-xs text-red-500 hidden error-message"></span>
-                </div>
-
-                <div x-data="{ categories: [], selectedCategory: '', subcategories: [], selectedSubcategory: '' }" x-init="
-                    fetch('get_categories.php')
-                    .then(response => response.json())
-                    .then(data => categories = data)">
-
-                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-                    <select id="category" x-model="selectedCategory" @change="
-                        subcategories = categories.find(cat => cat.id == selectedCategory)?.sub_categories || []"
-                        class="block w-full mt-1 p-2 border rounded-md">
-                        <option value="">Select Category</option>
-                        <template x-for="category in categories" :key="category.id">
-                            <option :value="category.id" x-text="category.name"></option>
-                        </template>
-                    </select>
-                    <input type="hidden" name="category_id" x-model="selectedCategory">
-
-                    <label for="sub_category" class="block text-sm font-medium text-gray-700 mt-3">Subcategory</label>
-                    <select id="sub_category" x-model="selectedSubcategory" class="block w-full mt-1 p-2 border rounded-md">
-                        <option value="">Select Subcategory</option>
-                        <template x-for="sub in subcategories" :key="sub.id">
-                            <option :value="sub.id" x-text="sub.name"></option>
-                        </template>
-                    </select>
-                    <input type="hidden" name="sub_category_id" x-model="selectedSubcategory">
-
-                </div>
-
-
-                <div>
-                    <label for="budget" class="block text-sm font-medium text-gray-700 mb-2">Budget</label>
-                    <!-- Old -->
-                    <!-- <input type="number" id="budget" name="budget" placeholder="Enter budget amount"
-                        class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none"> -->
-
-                    <!-- Current -->
-                    <input type="text" id="budget" name="budget" placeholder="Enter budget ranging amount (0 - 100)"
-                        class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
-                    <span class="text-xs text-red-500 hidden error-message"></span>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Add images (optional)</label>
-                    <input type="file" id="images" name="images[]" multiple accept="image/*" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none">
-                    <p class="text-sm text-gray-500 mt-2">You can upload up to 5 images.</p>
-                    <span class="text-xs text-red-500 hidden error-message"></span>
-                </div>
-
-                <div class="flex justify-end space-x-4 pt-4">
-                <button type="button" id="resetButton" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
-                    Reset
-                </button>
-
-                    <button type="submit" id="postJobBtn" data-unverified="<?= $isUnverified ? 'true' : 'false'; ?>" 
-                        class="px-6 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors">
-                        Post
+            <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-lg font-semibold">Job Posted Successfully!</h2>
+                    <p class="mt-2 text-gray-600">Your job has been posted successfully.</p>
+                    <button id="closeSuccessModal" class="mt-4 px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition">
+                        OK
                     </button>
                 </div>
             </div>
-            </main>
-        </form>
 
-        <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <h2 class="text-lg font-semibold">Job Posted Successfully!</h2>
-                <p class="mt-2 text-gray-600">Your job has been posted successfully.</p>
-                <button id="closeSuccessModal" class="mt-4 px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition">
-                    OK
-                </button>
-            </div>
-        </div>
-
-        <!-- Verification Modal -->
-        <div id="requiredModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md hidden">
-            <div class="bg-white p-6 rounded-2xl shadow-xl w-[90%] max-w-sm relative">
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-12 h-12 flex items-center justify-center bg-red-100 text-red-500 rounded-full mb-4">
-                        <i class="fas fa-exclamation-circle text-2xl"></i>
+            <!-- Verification Modal -->
+            <div id="requiredModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-xl w-[90%] max-w-sm relative">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-12 h-12 flex items-center justify-center bg-red-100 text-red-500 rounded-full mb-4">
+                            <i class="fas fa-exclamation-circle text-2xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">Verification Required</h2>
+                        <p class="mt-2 text-gray-600 text-sm">You must verify your account before posting a job.</p>
+                        <button id="closeRequiredModal" class="mt-5 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300">
+                            OK, Verify Now
+                        </button>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-900">Verification Required</h2>
-                    <p class="mt-2 text-gray-600 text-sm">You must verify your account before posting a job.</p>
-                    <button id="closeRequiredModal" class="mt-5 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300">
-                        OK, Verify Now
-                    </button>
                 </div>
             </div>
-        </div>
+    </div>
+</div>
 
+<script>
+        function resetAnimation() {
+            const letters = document.querySelectorAll('.letter');
+            letters.forEach(letter => letter.classList.add('fadeOut'));
+            setTimeout(() => {
+                letters.forEach(letter => {
+                    letter.classList.remove('fadeOut');
+                    letter.style.opacity = 0;
+                    void letter.offsetWidth;
+                    letter.style.animation = 'none';
+                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                });
+            }, 800);
+        }
+
+        // Adjust totalFadeInTime due to faster animation
+        const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
+        const displayTime = 1.2; // optional tweak
+        const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
+        setInterval(() => resetAnimation(), cycleTime);
+
+        // Show main content after loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 2000); // Show loader for 3 seconds
+        });
+    </script>
 
 <script>
 function categoryDropdown() {
