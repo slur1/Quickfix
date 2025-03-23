@@ -1,0 +1,215 @@
+Array
+(
+    [job_id] => 36
+    [rating] => 4
+    [review] => ntest
+)
+Array
+(
+    [job_id] => 37
+    [rating] => 5
+    [review] => goods
+)
+2025-03-18 05:01:46 - File uploaded successfully: Barangay_ID_Sample2.jpg | Type: image/png
+2025-03-18 05:01:47 - API Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+</body></html>
+
+2025-03-18 05:01:47 - API Verification Failed: Verification failed
+2025-03-18 05:09:26 - File uploaded successfully: Barangay_ID_Sample2.jpg | Type: image/png
+2025-03-18 05:09:27 - API Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+
+2025-03-18 05:09:27 - API Verification Failed: Verification failed
+2025-03-18 05:12:51 - File uploaded successfully: 480948010_1832506980935620_7537748626361050051_n.jpg | Type: image/jpeg
+2025-03-18 05:12:52 - API Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+
+2025-03-18 05:12:52 - API Verification Failed: Verification failed
+2025-03-18 05:13:02 - File uploaded successfully: 480948010_1832506980935620_7537748626361050051_n.jpg | Type: image/jpeg
+2025-03-18 05:13:03 - API Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+
+2025-03-18 05:13:03 - API Verification Failed: Verification failed
+2025-03-18 05:13:03 - File uploaded successfully: 480948010_1832506980935620_7537748626361050051_n.jpg | Type: image/jpeg
+2025-03-18 05:13:04 - API Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+
+2025-03-18 05:13:04 - API Verification Failed: Verification failed
+2025-03-18 05:13:17 - File uploaded successfully: 480948010_1832506980935620_7537748626361050051_n.jpg | Type: image/jpeg
+2025-03-18 05:13:18 - API Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+
+2025-03-18 05:13:18 - API Verification Failed: Verification failed
+2025-03-18 05:13:18 - File uploaded successfully: 480948010_1832506980935620_7537748626361050051_n.jpg | Type: image/jpeg
+2025-03-18 05:13:19 - API Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+<p>Additionally, a 404 Not Found
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+
+2025-03-18 05:13:19 - API Verification Failed: Verification failed
+API Response: 
+POST Data: []
+POST Data: {
+    "id_type": "national_id",
+    "status": "identity_verified"
+}
+POST Data: {
+    "id_type": "national_id",
+    "status": "identity_verified"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id",
+    "status": "identity_verified"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: []
+POST Data: []
+POST Data: []
+POST Data: []
+POST Data: {
+    "id_type": "national_id"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id",
+    "verification_status": "identity_verified"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id",
+    "verification_status": "identity_verified"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id",
+    "verification_status": "identity_verified"
+}
+POST Data: {
+    "id_type": "national_id",
+    "verification_status": "identity_verified"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id",
+    "verification_status": "identity_verified"
+}
+POST Data: {
+    "id_type": "national_id",
+    "verification_status": "identity_verified"
+}
+POST Data: []
+POST Data: {
+    "id_type": "national_id",
+    "verification_status": "identity_verified"
+}
+UserID: 105, Status: identity_verified
+UserID: 105, Status: identity_verified
+UserID: 105, Status: identity_verified
+Array
+(
+    [job_id] => 38
+    [rating] => 5
+    [review] => Goods naman i guess
+)
+UserID: 113, Status: identity_verified
+UserID: 115, Status: unverified
+UserID: 115, Status: identity_verified
+UserID: 115, Status: unverified
+UserID: 115, Status: unverified
+UserID: 115, Status: identity_verified
+UserID: 116, Status: identity_verified
+Array
+(
+    [job_id] => 38
+    [rating] => 5
+    [review] => nice one
+)
+UserID: 114, Status: identity_verified
+UserID: 113, Status: identity_verified
+Array
+(
+    [job_id] => 42
+    [rating] => 4
+    [review] => Nice work!
+)
+Array
+(
+    [job_id] => 40
+    [rating] => 5
+    [review] => Cleaned all the dishes well. What a nice work!
+)
+UserID: 118, Status: unverified
+UserID: 120, Status: unverified
+UserID: 121, Status: identity_verified
