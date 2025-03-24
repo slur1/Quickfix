@@ -144,7 +144,70 @@ $conn->close();
         body {
             font-family: 'Montserrat', sans-serif;
         }
+        #loader-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader-container {
+            width: 30vw;
+            max-width: 200px;
+            height: 30vw;
+            max-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo {
+            width: 90%;
+            height: 90%;
+            animation: heartbeat 1.5s infinite;
+            object-fit: contain;
+        }
+        .text-container {
+            height: 40px;
+            width: 100%;
+            text-align: center;
+        }
+        .letter {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            opacity: 0;
+            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
+        }
+        .fadeOut { animation: fadeOut 0.7s forwards; }
 
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        @media (max-width: 480px) {
+            .loader-container { width: 80vw !important; height: auto; }
+            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
+            .letter { font-size: 28px; }
+        }
     </style>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -156,7 +219,7 @@ $conn->close();
 
 <body>
 <!-- loader.php -->
-<!-- <div id="loader-overlay">
+<div id="loader-overlay">
     <div class="loader-container">
         <img src="../img/logo1.png" alt="Logo" class="logo">
         <div class="text-container">
@@ -171,7 +234,7 @@ $conn->close();
         </div>
     </div>
 </div>
-<div id="main-content" style="display:none;"> -->
+<div id="main-content" style="display:none;">
     <?php include './userHeader.php'; ?>
 
 
@@ -1178,7 +1241,7 @@ $conn->close();
             });
         </script>
 
-    <!-- <script>
+    <script>
         function resetAnimation() {
             const letters = document.querySelectorAll('.letter');
             letters.forEach(letter => letter.classList.add('fadeOut'));
@@ -1206,7 +1269,7 @@ $conn->close();
                 document.getElementById('main-content').style.display = 'block';
             }, 2000); // Show loader for 3 seconds
         });
-    </script> -->
+    </script>
 
 
 
@@ -1245,6 +1308,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <?php } else { ?>
     <?php include 'assesment.php'; ?>
 <?php } ?>
+</div>
 </body>
 
 </html>

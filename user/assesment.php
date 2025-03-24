@@ -143,4 +143,34 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+<script>
+        function resetAnimation() {
+            const letters = document.querySelectorAll('.letter');
+            letters.forEach(letter => letter.classList.add('fadeOut'));
+            setTimeout(() => {
+                letters.forEach(letter => {
+                    letter.classList.remove('fadeOut');
+                    letter.style.opacity = 0;
+                    void letter.offsetWidth;
+                    letter.style.animation = 'none';
+                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                });
+            }, 800);
+        }
+
+        // Adjust totalFadeInTime due to faster animation
+        const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
+        const displayTime = 1.2; // optional tweak
+        const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
+        setInterval(() => resetAnimation(), cycleTime);
+
+        // Show main content after loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 2000); // Show loader for 3 seconds
+        });
+    </script>
+
 </html>
