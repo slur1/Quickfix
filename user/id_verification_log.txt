@@ -68173,3 +68173,34 @@ error was encountered while trying to use an ErrorDocument to handle the request
     "executionTime": 2.494316652
 }
 2025-03-21 12:51:19 - Decision: accept - Status: approved
+2025-03-24 12:12:37 - Response: {
+    "success": true,
+    "transactionId": "c4a8bc0b08034af3b149a18ddbaedf47",
+    "outputImage": {
+        "front": "http://api2-us2.idanalyzer.com/image/c4a8bc0b08034af3b149a18ddbaedf47/c31bdbb0b9598e424d78e1b18b5010dfe04190b1996e69b0678676c6bf676fa3/front.jpg"
+    },
+    "warning": [
+        {
+            "code": "UNRECOGNIZED_DOCUMENT",
+            "description": "Document not recognized.",
+            "severity": "high",
+            "confidence": 1,
+            "decision": "reject"
+        },
+        {
+            "code": "IMAGE_EDITED",
+            "description": "The front document image contains exif header indicating that it was edited in Microsoft Paint.",
+            "severity": "medium",
+            "confidence": 1,
+            "decision": "review"
+        }
+    ],
+    "profileId": "e574604c2952418bb47c199d776cbcb4",
+    "reviewScore": 1,
+    "rejectScore": 1,
+    "decision": "reject",
+    "quota": 5,
+    "credit": 23,
+    "executionTime": 0.878635509
+}
+2025-03-24 12:12:37 - Decision: reject - Status: rejected

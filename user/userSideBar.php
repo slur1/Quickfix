@@ -6,7 +6,7 @@
         <div class="w-12 h-12 bg-blue-200 rounded-full"></div>
       </div>
     </div>
-    
+
     <h2 class="text-lg font-medium text-blue-900">
       <?php
       // Check if the user is logged in and display their full name
@@ -32,10 +32,10 @@
       <img src="../img/userDashboard.svg" alt="Dashboard" class="h-5 w-5 mr-3">
       My Job Seeker Dashboard
     </a>
-    <a href="../user/aboutListings.php" class="flex items-center text-blue-900 hover:text-blue-700">
+    <!--<a href="../user/aboutListings.php" class="flex items-center text-blue-900 hover:text-blue-700">
       <img src="../img/userService.svg" alt="Services" class="h-5 w-5 mr-3">
       My services
-    </a>
+    </a>-->
     <a href="../user/userPaymentHistory.php" class="flex items-center text-blue-900 hover:text-blue-700">
       <img src="../img/userPaymentHistory.svg" alt="Payment History" class="h-5 w-5 mr-3">
       Payment history
@@ -68,18 +68,18 @@
         x-transition:leave-start="opacity-100 transform translate-y-0"
         x-transition:leave-end="opacity-0 transform -translate-y-2"
         class="mt-4 space-y-4 bg-gray-50 px-4 py-4">
-        <a href="../user/userMobile.php" class="flex items-center text-blue-900 hover:text-blue-700">
+        <!--<a href="../user/userMobile.php" class="flex items-center text-blue-900 hover:text-blue-700">
           <img src="../img/userMobile.svg" alt="Mobile" class="h-5 w-5 mr-3">
           Mobile
-        </a>
+        </a>-->
         <a href="../user/userEmail.php" class="flex items-center text-blue-900 hover:text-blue-700">
           <img src="../img/userEmail.svg" alt="Email" class="h-5 w-5 mr-3">
           Email
         </a>
-        <a href="../user/userAccount.php" class="flex items-center text-blue-900 hover:text-blue-700">
+        <!--<a href="../user/userAccount.php" class="flex items-center text-blue-900 hover:text-blue-700">
           <img src="../img/userAccount.svg" alt="Account" class="h-5 w-5 mr-3">
           Account
-        </a>
+        </a>-->
         <a href="../user/userVerifyAccount.php" class="flex items-center text-blue-900 hover:text-blue-700">
           <img src="../img/userAccountVerify.svg" alt="Verify Account" class="h-5 w-5 mr-3">
           Submit NC2 File
