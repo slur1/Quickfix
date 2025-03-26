@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </form>
 </div>
-
+<!-- eto lahat sa files na to di ko mahanap yung error ko sa loader -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const categoryCheckboxes = document.querySelectorAll(".category-checkbox");
@@ -126,7 +126,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ],
             upholstery: [
                 "What are the best methods for cleaning upholstery?",
-                "Which cleaning agents should be avoided on fabric sofas?"
+                "Which cleaning agents should be avoided on fabric sofas?",
+                "Which cleaning agents should be chosen for fabric sofas?"
             ],
             electrical_repair: [
                 "What are common causes of electrical failures?",
