@@ -28,26 +28,30 @@
       <img src="../img/userHome.svg" alt="Home" class="h-5 w-5 mr-3">
       Home
     </a>
-    <a href="../user/userJobSeekerDashboard.php" class="flex items-center text-blue-900 font-medium">
+    <!--<a href="../user/userJobSeekerDashboard.php" class="flex items-center text-blue-900 font-medium">
       <img src="../img/userDashboard.svg" alt="Dashboard" class="h-5 w-5 mr-3">
       My Job Seeker Dashboard
-    </a>
+    </a>-->
     <!--<a href="../user/aboutListings.php" class="flex items-center text-blue-900 hover:text-blue-700">
       <img src="../img/userService.svg" alt="Services" class="h-5 w-5 mr-3">
       My services
     </a>-->
-    <a href="../user/userPaymentHistory.php" class="flex items-center text-blue-900 hover:text-blue-700">
+    <!--<a href="../user/userPaymentHistory.php" class="flex items-center text-blue-900 hover:text-blue-700">
       <img src="../img/userPaymentHistory.svg" alt="Payment History" class="h-5 w-5 mr-3">
       Payment history
-    </a>
-    <a href="#" class="flex items-center text-blue-900 hover:text-blue-700">
+    </a> -->
+    <!--<a href="#" class="flex items-center text-blue-900 hover:text-blue-700">
       <img src="../img/userPaymentMethod.svg" alt="Payment Methods" class="h-5 w-5 mr-3">
       Payment methods
+    </a> -->
+    <a href="../user/userVerifyAccount.php" class="flex items-center text-blue-900 hover:text-blue-700">
+      <img src="../img/userAccountVerify.svg" alt="Verify Account" class="h-5 w-5 mr-3">
+      Verify Account
     </a>
-    <a href="#" class="flex items-center text-blue-900 hover:text-blue-700">
+    <!--<a href="#" class="flex items-center text-blue-900 hover:text-blue-700">
       <img src="../img/userNotifications.svg" alt="Notifications" class="h-5 w-5 mr-3">
       Notifications
-    </a>
+    </a>-->
     <div class="relative">
       <div
         @click="showSettings = !showSettings"
@@ -80,10 +84,10 @@
           <img src="../img/userAccount.svg" alt="Account" class="h-5 w-5 mr-3">
           Account
         </a>-->
-        <a href="../user/userVerifyAccount.php" class="flex items-center text-blue-900 hover:text-blue-700">
+        <!--<a href="../user/userVerifyAccount.php" class="flex items-center text-blue-900 hover:text-blue-700">
           <img src="../img/userAccountVerify.svg" alt="Verify Account" class="h-5 w-5 mr-3">
           Submit NC2 File
-        </a>
+        </a>-->
         <a href="../user/userChangePassword.php" class="flex items-center text-blue-900 hover:text-blue-700">
           <img src="../img/userChangePassword.svg" alt="Change Password" class="h-5 w-5 mr-3">
           Change Password

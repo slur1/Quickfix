@@ -1,29 +1,11 @@
 <?php
-// Start the session
 session_start();
 include '../config/db_connection.php';
 
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: userLogin.php");
-    exit;
+  header("Location: userLogin.php");
+  exit;
 }
-
-// Fetch verification status
-$userId = $_SESSION['user_id'];
-$query = "SELECT verification_status FROM user WHERE id = ?";
-$verificationStatus = 'unverified'; // Default
-
-if ($stmt = $conn->prepare($query)) {
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $stmt->bind_result($verificationStatus);
-    $stmt->fetch();
-    $stmt->close();
-}
-
-// Check if the button should be disabled
-$disableIdentityButton = ($verificationStatus === 'identity_verified' || $verificationStatus === 'fully_verified');
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +17,6 @@ $disableIdentityButton = ($verificationStatus === 'identity_verified' || $verifi
   <title>Verify Account</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script src="https://unpkg.com/alpinejs" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
   <link rel="icon" type="logo" href="../img/logo1.png">
   <style>
@@ -45,420 +26,388 @@ $disableIdentityButton = ($verificationStatus === 'identity_verified' || $verifi
       font-family: 'Montserrat', sans-serif;
     }
   </style>
-  <style>
-/* Modal Styling */
-.modal {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
-}
-
-/* Glassmorphic Content Box */
-.modal-content {
-    background: rgba(255, 255, 255, 0.95); /* White */
-    padding: 24px;
-    border-radius: 12px;
-    text-align: center;
-    width: 380px;
-    color: #333;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-/* Icons */
-.icon-container {
-    margin-bottom: 10px;
-}
-
-.icon {
-    width: 60px;
-    height: 60px;
-}
-
-/* Button Styling */
-.btn-primary, .btn-danger {
-    margin-top: 12px;
-    padding: 12px 20px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    width: 100%;
-}
-
-.btn-primary {
-    background-color: #007BFF; /* Blue */
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-.btn-danger {
-    background-color: #e74c3c;
-    color: white;
-}
-
-.btn-danger:hover {
-    background-color: #c0392b;
-}
-
-/* Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Hide by default */
-.hidden {
-    display: none;
-}
-</style>
-
 </head>
 
-<?php
-include './userHeader.php';
-?>
-
 <body class="bg-gray-50">
+  <?php include './userHeader.php'; ?>
+
   <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white p-6 shadow-sm">
+
+    <aside class="hidden md:block w-64 bg-white p-6 shadow-sm flex-shrink-0">
       <?php include './userSideBar.php'; ?>
     </aside>
 
 
-    <body class="bg-gray-50" x-data="{ 
-    showIdentityModal: false,
-    showTaxModal: false 
-}">
+    <main class="flex-1 p-4 md:p-6 overflow-auto">
+      <div class="max-w-3xl mx-auto">
 
-      <!-- Main Content -->
-      <main class="max-w-2xl mx-auto p-6">
-        <h1 class="text-4xl font-bold text-blue-900 mb-6">Verify account</h1>
-
-        <p class="text-gray-800 mb-8">
-          We're now legally required to verify some of your account information. Please take a few minutes to complete the following:
-        </p>
-
-        <!-- Verification Steps -->
-        <div class="space-y-4 mb-8">
-          <!-- Verify Identity Step -->
-          <button 
-              <?php if ($disableIdentityButton) : ?>
-                  onclick="openPopup()" 
-                  class="w-full flex items-start p-4 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed"
-              <?php else : ?>
-                  @click="showIdentityModal = true"
-                  class="w-full flex items-start p-4 hover:bg-gray-50 rounded-lg group"
-              <?php endif; ?>
-          >
-              <div class="flex-1">
-                  <div class="flex items-center gap-4">
-                      <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                      <div>
-                          <h2 class="text-xl font-semibold text-blue-900">Verify your identity</h2>
-                          <p class="text-gray-600">Step 1: Less than 5 minutes</p>
-                      </div>
-                  </div>
-              </div>
-              <svg class="w-6 h-6 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
+        <div class="md:hidden mb-4">
+          <button id="sidebarToggle" class="p-2 bg-white rounded-md shadow-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
           </button>
+        </div>
 
-          <!-- Submit Tax Profile Step -->
-          <button @click="showTaxModal = true" class="w-full flex items-start p-4 hover:bg-gray-50 rounded-lg group">
-            <div class="flex-1">
-              <div class="flex items-center gap-4">
-                <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <!-- Header -->
+        <header class="mb-8">
+          <h1 class="text-3xl font-bold text-blue-800">Verify your identity</h1>
+          <p class="text-gray-600 mt-2">Complete this verification process to continue (less than 5 minutes)</p>
+        </header>
+
+        <!-- Main Verification Section -->
+        <div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-8">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="">
+              <img src="../img/userAccountVerify.svg" alt="Verify Account" class="h-10 w-10">
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold text-blue-900">ID Verification</h2>
+              <p class="text-gray-600">We need to verify your identity for security purposes</p>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-3">Make sure your ID:</h3>
+            <ul class="space-y-2 mb-4 text-base text-gray-600">
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
-                <div>
-                  <h2 class="text-xl font-semibold text-blue-900">Submit NC2 File</h2>
-                  <p class="text-gray-600">Step 2: Less than 10 minutes</p>
+                <span>Is not blurry and all text is readable.</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Is well-lit and clearly visible.</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Has no glare or reflections.</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Is not cropped; the full ID is within the frame.</span>
+              </li>
+            </ul>
+          </div>
+
+          <form id="idVerificationForm" class="space-y-6">
+            <!-- Front ID Upload -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <label for="front_id" class="block text-base font-medium text-gray-700 mb-2">Front of ID:</label>
+              <div class="flex flex-col items-center">
+                <div id="front_id_preview" class="w-full h-48 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                  <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p class="text-gray-500 text-center mt-2">No image selected</p>
+                </div>
+                <div class="w-full">
+                  <label for="front_id" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
+                    </svg>
+                    Upload Front of ID
+                  </label>
+                  <input type="file" id="front_id" name="front_id" accept="image/*" required class="hidden" onchange="previewImage('front_id', 'front_id_preview')">
                 </div>
               </div>
             </div>
-            <svg class="w-6 h-6 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+
+            <!-- Back ID Upload -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <label for="back_id" class="block text-base font-medium text-gray-700 mb-2">Back of ID:</label>
+              <div class="flex flex-col items-center">
+                <div id="back_id_preview" class="w-full h-48 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                  <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p class="text-gray-500 text-center mt-2">No image selected</p>
+                </div>
+                <div class="w-full">
+                  <label for="back_id" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
+                    </svg>
+                    Upload Back of ID
+                  </label>
+                  <input type="file" id="back_id" name="back_id" accept="image/*" required class="hidden" onchange="previewImage('back_id', 'back_id_preview')">
+                </div>
+              </div>
+            </div>
+
+            <!-- Selfie Photo Capture -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <label class="block text-base font-medium text-gray-700 mb-2">Your Photo:</label>
+              <div class="flex flex-col items-center">
+                <!-- Camera preview -->
+                <div id="camera_container" class="w-full h-64 bg-gray-100 rounded-lg mb-3 overflow-hidden relative">
+                  <video id="camera_preview" class="w-full h-full object-cover hidden" autoplay playsinline></video>
+                  <canvas id="photo_preview" class="w-full h-full object-cover hidden"></canvas>
+                  <div id="camera_placeholder" class="absolute inset-0 flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <p class="text-gray-500 text-center mt-2">Camera not activated</p>
+                  </div>
+                </div>
+
+                <div class="w-full flex flex-wrap gap-2 justify-center">
+                  <button type="button" id="start_camera" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Start Camera
+                  </button>
+                  <button type="button" id="capture_photo" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" disabled>
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    </svg>
+                    Take Photo
+                  </button>
+                  <button type="button" id="retake_photo" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hidden">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Retake Photo
+                  </button>
+                </div>
+                <input type="hidden" id="selfie_data" name="selfie_data">
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+              Submit Verification
+            </button>
+          </form>
         </div>
 
-        <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Learn More</a>
-
-        <!-- Warning Section -->
-        <div class="mt-8 flex gap-4 p-4 bg-orange-50 rounded-lg">
-          <svg class="w-6 h-6 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          <div>
-            <h3 class="font-semibold text-gray-900">Avoid verification issues</h3>
-            <p class="text-gray-600">If reporting as an individual, ensure the same <span class="font-medium">legal name and date of birth</span> are used on both steps to avoid having to re-verify.</p>
-          </div>
-        </div>
-
-        <button class="mt-8 w-full bg-gray-100 text-gray-600 py-3 px-4 rounded-full hover:bg-gray-200 font-medium">
-          Finish verifying account
-        </button>
-
-        <p class="mt-6 text-sm text-gray-500">
+        <p class="text-sm text-gray-500 mb-8">
           Any information captured in this process is used for security and job seeker's capability to work only.
-          <a href="#" class="text-blue-600 hover:text-blue-700">Learn more about how QuickFix handles your information</a>.
+          <a href="#" class="text-blue-600 hover:text-blue-700">Learn more about how we handle your information</a>.
         </p>
-      </main>
-
-<!-- Identity Verification Modal -->
-<div x-show="showIdentityModal"
-    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center mt-16 p-5"
-    x-transition>
-
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative">
-      <button @click="showIdentityModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500">
-        ✖
-      </button>
-
-      <h2 class="text-2xl font-bold text-gray-900 mb-3">Verify your identity</h2>
-      <p class="text-base text-gray-600 mb-5">
-        Get ID verified with IDAnalyzer, a third-party provider helping us verify your identity.
-      </p>
-
-      <h3 class="text-lg font-medium text-gray-900 mb-3">Here's what you'll need:</h3>
-      <ul class="space-y-2 mb-4 text-base text-gray-600">
-        <li>✅ A valid ID document such as your National ID, Passport, Driver's License.</li>
-      </ul>
-
-      <h3 class="text-lg font-medium text-gray-900 mb-3">Make sure your ID:</h3>
-      <ul class="space-y-2 mb-4 text-base text-gray-600">
-        <li class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          Is not blurry and all text is readable.
-        </li>
-        <li class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          Is well-lit and clearly visible.
-        </li>
-        <li class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          Has no glare or reflections.
-        </li>
-        <li class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          Is not cropped; the full ID is within the frame.
-        </li>
-      </ul>
-
-      <form id="idVerificationForm">
-        <label class="text-base font-medium text-gray-700">Select ID Type:</label>
-        <select id="id_type" name="id_type" required class="border p-2 w-full text-base mb-3">
-          <option value="passport">Passport</option>
-          <option value="nationalid">National ID</option>
-          <option value="driverlicense">Driver's License</option>
-        </select>
-
-        <label class="text-base font-medium text-gray-700">Upload ID Image:</label>
-        <input type="file" id="id_image" name="id_image" accept="image/*" required class="border p-2 w-full text-base mb-3">
-
-        <button type="button" onclick="submitIDVerification()" class="mt-1 w-full bg-blue-500 text-white py-3 px-4 rounded-full hover:bg-blue-600 text-base font-medium">
-          Verify now
-        </button>
-      </form>
-
-<div id="result"></div>
-
-    </div>
-</div>
-
-
-
-
-      <!-- Tax Profile Modal -->
-      <div x-show="showTaxModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
-        x-transition>
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative">
-          <button @click="showTaxModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">Submit NC2 Document</h2>
-          <p class="text-gray-600 mb-6">
-            The admin will verify your document.
-          </p>
-
-          <ul class="space-y-3 mb-6 list-disc pl-5 text-gray-600">
-            <li>Legal name</li>
-            <li>Primary address</li>
-            <li>Your NC2 Document</li>
-          </ul>
-
-          <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">How does this work?</a>
-
-          <button class="mt-8 w-full bg-blue-500 text-white py-3 px-4 rounded-full hover:bg-blue-600 font-medium">
-            Submit NC2 Document
-          </button>
-        </div>
       </div>
+    </main>
+  </div>
 
-<!-- Loading Animation -->
-<div id="loading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="flex flex-col items-center">
-        <div class="animate-spin border-4 border-blue-500 border-t-transparent rounded-full h-14 w-14"></div>
-        <p class="text-white mt-2 font-semibold text-lg">Verifying, please wait...</p>
+
+  <div id="mobileSidebar" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-40 hidden">
+    <div class="absolute right-0 top-0 p-4">
+      <button id="closeSidebar" class="text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
     </div>
-</div>
-
-<!-- Success Pop-up -->
-<div id="successModal" class="modal hidden">
-    <div class="modal-content success">
-    <i class="fa-solid fa-circle-check text-green-500 text-4xl"></i> <!-- Success -->
-        <h2>Verification Successful!</h2>
-        <p>Your ID has been verified successfully. You can now access all features.</p>
-        <button onclick="closeAllModals()" class="btn-primary">OK</button>
+    <div class="h-full w-64 bg-white p-6 overflow-y-auto">
+      <?php include './userSideBar.php'; ?>
     </div>
-</div>
+  </div>
 
-<!-- Rejection Pop-up -->
-<div id="rejectionModal" class="modal hidden">
-    <div class="modal-content error">
-        <i class="fa-solid fa-circle-xmark text-red-500 text-4xl mb-2"></i> <!-- Error Icon -->
-        <h2 class="text-xl font-semibold">Verification Failed</h2>
-        <p class="mt-2">Your ID submission was rejected. Please ensure:</p>
-        <div class="text-left mt-3">
-            <ul class="list-disc list-inside">
-                <li>ID is clear and not blurry.</li>
-                <li>Proper lighting (no shadows or glare).</li>
-                <li>The entire ID is visible (not cropped).</li>
-            </ul>
-        </div>
-        <button onclick="closeAllModals()" class="btn-danger mt-4">OK</button>
-    </div>
-</div>
+  <script>
+    // Variables to store camera stream and captured photo
+    let stream = null;
+    let photoTaken = false;
 
-<!-- Custom Popup Modal -->
-<div id="popup" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
-        <h2 class="text-xl font-semibold text-gray-900">Verification Already Completed</h2>
-        <p class="text-gray-600 mt-2">You have already completed this step!</p>
-        <button onclick="closePopup()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">OK</button>
-    </div>
-</div>
+    // Function to preview uploaded images
+    function previewImage(inputId, previewId) {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
 
-<!-- JavaScript to Handle Popup -->
-<script>
-function openPopup() {
-    document.getElementById("popup").classList.remove("hidden");
-}
-function closePopup() {
-    document.getElementById("popup").classList.add("hidden");
-}
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
 
+        reader.onload = function(e) {
+          // Clear the preview container
+          preview.innerHTML = '';
 
-function submitIDVerification() {
-    let idType = document.getElementById("id_type").value;
-    let idImage = document.getElementById("id_image").files[0];
-    let loadingDiv = document.getElementById("loading");
+          // Create image element
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('w-full', 'h-full', 'object-contain');
 
-    if (!idImage) {
-        alert("Please upload an ID image.");
-        return;
+          // Add image to preview
+          preview.appendChild(img);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+      }
     }
 
-    let formData = new FormData();
-    formData.append("id_type", idType);
-    formData.append("id_image", idImage);
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const mobileSidebar = document.getElementById('mobileSidebar');
+      const closeSidebar = document.getElementById('closeSidebar');
 
-    loadingDiv.style.display = "flex"; // Show loading animation
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+          mobileSidebar.classList.remove('hidden');
+        });
+      }
 
-    fetch("verify_id.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        loadingDiv.style.display = "none"; // Hide loading animation
+      if (closeSidebar) {
+        closeSidebar.addEventListener('click', function() {
+          mobileSidebar.classList.add('hidden');
+        });
+      }
 
-        if (data.success) {
-            if (data.status === "approved") {
-                document.getElementById("successModal").classList.remove("hidden"); // Show success modal
-                updateVerificationStatus("identity_verified"); // Update database
-            } else if (data.status === "rejected") {
-                document.getElementById("rejectionModal").classList.remove("hidden"); // Show rejection modal
-                updateVerificationStatus("unverified"); // Update database
-            }
-        } else {
-            alert("Error: " + data.error);
-        }
-    })
-    .catch(error => {
-        loadingDiv.style.display = "none"; // Hide loading animation
-        alert("Something went wrong.");
-        console.error("Error:", error);
+      // Camera functionality
+      const startCameraBtn = document.getElementById('start_camera');
+      const capturePhotoBtn = document.getElementById('capture_photo');
+      const retakePhotoBtn = document.getElementById('retake_photo');
+      const cameraPreview = document.getElementById('camera_preview');
+      const photoPreview = document.getElementById('photo_preview');
+      const cameraPlaceholder = document.getElementById('camera_placeholder');
+      const selfieDataInput = document.getElementById('selfie_data');
+      const form = document.getElementById('idVerificationForm');
+
+      // Start camera
+      if (startCameraBtn) {
+        startCameraBtn.addEventListener('click', async function() {
+          try {
+            // Request access to the user's camera
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: {
+                facingMode: 'user',
+                width: {
+                  ideal: 1280
+                },
+                height: {
+                  ideal: 720
+                }
+              }
+            });
+
+            // Show video stream
+            cameraPreview.srcObject = stream;
+            cameraPreview.classList.remove('hidden');
+            cameraPlaceholder.classList.add('hidden');
+
+            // Enable capture button
+            capturePhotoBtn.disabled = false;
+
+          } catch (err) {
+            console.error('Error accessing camera:', err);
+            alert('Unable to access camera. Please make sure you have granted camera permissions and are using a secure connection (HTTPS).');
+          }
+        });
+      }
+
+      // Capture photo
+      if (capturePhotoBtn) {
+        capturePhotoBtn.addEventListener('click', function() {
+          if (!stream) return;
+
+          const context = photoPreview.getContext('2d');
+
+          // Set canvas dimensions to match video
+          photoPreview.width = cameraPreview.videoWidth;
+          photoPreview.height = cameraPreview.videoHeight;
+
+          // Draw video frame to canvas
+          context.drawImage(cameraPreview, 0, 0, photoPreview.width, photoPreview.height);
+
+          // Convert canvas to data URL and store in hidden input
+          const photoData = photoPreview.toDataURL('image/png');
+          selfieDataInput.value = photoData;
+
+          // Show photo preview
+          photoPreview.classList.remove('hidden');
+          cameraPreview.classList.add('hidden');
+
+          // Show retake button and hide capture button
+          retakePhotoBtn.classList.remove('hidden');
+          capturePhotoBtn.classList.add('hidden');
+
+          // Mark photo as taken
+          photoTaken = true;
+
+          // Stop camera stream
+          if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+          }
+        });
+      }
+
+      // Retake photo
+      if (retakePhotoBtn) {
+        retakePhotoBtn.addEventListener('click', async function() {
+          // Clear canvas
+          const context = photoPreview.getContext('2d');
+          context.clearRect(0, 0, photoPreview.width, photoPreview.height);
+
+          // Hide photo preview
+          photoPreview.classList.add('hidden');
+
+          // Try to restart camera
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: {
+                facingMode: 'user',
+                width: {
+                  ideal: 1280
+                },
+                height: {
+                  ideal: 720
+                }
+              }
+            });
+
+            // Show video stream again
+            cameraPreview.srcObject = stream;
+            cameraPreview.classList.remove('hidden');
+
+            // Show capture button and hide retake button
+            capturePhotoBtn.classList.remove('hidden');
+            retakePhotoBtn.classList.add('hidden');
+
+            // Reset photo taken flag
+            photoTaken = false;
+
+          } catch (err) {
+            console.error('Error restarting camera:', err);
+            alert('Unable to restart camera. Please refresh the page and try again.');
+          }
+        });
+      }
+
+      // Form submission
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          // Check if all required fields are filled
+          const frontId = document.getElementById('front_id').files[0];
+          const backId = document.getElementById('back_id').files[0];
+
+          if (!frontId || !backId || !photoTaken) {
+            alert('Please complete all required fields before submitting.');
+            return;
+          }
+
+
+          alert('Verification submitted successfully!');
+
+          // For demo purposes, you could display the uploaded images and form data
+          console.log('Form data:', {
+            frontId: frontId.name,
+            backId: backId.name,
+            selfieData: 'Data URL (too long to display)'
+          });
+        });
+      }
     });
-}
+  </script>
+</body>
 
-// Function to update verification status in the database
-function updateVerificationStatus(status) {
-    fetch("update_verification_status.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: status })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            console.error("Error updating verification status:", data.error);
-        }
-    })
-    .catch(error => console.error("Error:", error));
-}
-
-// Close all modals including identity and tax verification
-function closeAllModals() {
-    document.querySelectorAll(".modal").forEach(modal => {
-        modal.classList.add("hidden");
-    });
-
-    let alpineRoot = document.querySelector("[x-data]");
-    if (alpineRoot && alpineRoot.__x) {
-        alpineRoot.__x.$data.showIdentityModal = false;
-        alpineRoot.__x.$data.showTaxModal = false;
-    }
-}
-
-</script>
-
-
-
-
-    </body>
-
-    
 </html>

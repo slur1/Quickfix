@@ -1,7 +1,7 @@
 <?php
 include '../config/db_connection.php';
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 ini_set('error_log', '../logs/php-error.log');
 
@@ -63,7 +63,8 @@ function getCoordinates($job_id, $address, $locationiq_api_key)
     return ['latitude' => null, 'longitude' => null];
 }
 
-$sql = "SELECT jobs.id, jobs.user_id, jobs.job_title, jobs.job_date, jobs.job_time, jobs.location, jobs.budget, jobs.images, 
+$sql = "SELECT jobs.id, jobs.user_id, jobs.job_title, jobs.job_date, jobs.job_time, jobs.location, 
+               jobs.budget, jobs.images, 
                jobs.category_id, jobs.sub_category_id, 
                categories.name AS category_name, sub_categories.name AS sub_category_name,
                user.first_name, user.last_name, user.verification_status, user.profile_picture,
@@ -72,13 +73,12 @@ $sql = "SELECT jobs.id, jobs.user_id, jobs.job_title, jobs.job_date, jobs.job_ti
         JOIN user ON jobs.user_id = user.id
         LEFT JOIN categories ON jobs.category_id = categories.id 
         LEFT JOIN sub_categories ON jobs.sub_category_id = sub_categories.id
-        WHERE jobs.user_id != ? 
-        AND jobs.status NOT IN ('in_progress', 'completed')  -- Exclude 'in_progress' and 'completed' jobs
+        WHERE jobs.status NOT IN ('in_progress', 'completed')  
         ORDER BY has_offered DESC, jobs.job_date DESC";
 
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $user_id, $user_id);
+$stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -88,6 +88,8 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $row['budget'] = $row['budget']; // Keep budget as a string (e.g., "200-500")
         $row['has_offered'] = intval($row['has_offered']);
+        
+        // Fetch coordinates based on the address
         if (!empty($row['location'])) {
             $coords = getCoordinates($row['id'], $row['location'], $locationiq_api_key);
             $row['latitude'] = $coords['latitude'];
@@ -96,17 +98,64 @@ if ($result->num_rows > 0) {
             $row['latitude'] = null;
             $row['longitude'] = null;
         }
+
+        // Fetch offers for this job
+        $offerSql = "SELECT offers.id, offers.provider_id, offers.offer_amount, offers.message
+                     FROM offers WHERE job_id = ?";
+        $offerStmt = $conn->prepare($offerSql);
+        $offerStmt->bind_param("i", $row['id']);
+        $offerStmt->execute();
+        $offerResult = $offerStmt->get_result();
+        $offers = [];
+        while ($offerRow = $offerResult->fetch_assoc()) {
+            $offers[] = $offerRow;
+        }
+        $row['offers'] = $offers;
+
+        // Fetch comments for this job (including user details)
+        $commentSql = "SELECT comments.id, comments.comment, comments.created_at, 
+                            user.id AS user_id, user.first_name, user.last_name, 
+                            user.profile_picture, user.verification_status
+                    FROM comments
+                    JOIN user ON comments.user_id = user.id
+                    WHERE comments.job_id = ?";
+
+        $commentStmt = $conn->prepare($commentSql);
+        if (!$commentStmt) {
+            echo json_encode(["error" => "SQL Error: " . $conn->error]);
+            exit;
+        }
+        $commentStmt->bind_param("i", $row['id']);
+        $commentStmt->execute();
+        $commentResult = $commentStmt->get_result();
+
+        $comments = [];
+        while ($commentRow = $commentResult->fetch_assoc()) {
+            $comments[] = [
+                'id' => $commentRow['id'],
+                'comment' => $commentRow['comment'],
+                'created_at' => $commentRow['created_at'],
+                'user_id' => $commentRow['user_id'],
+                'first_name' => $commentRow['first_name'],
+                'last_name' => $commentRow['last_name'],
+                'profile_picture' => $commentRow['profile_picture'] ?: 'default-profile.png',
+                'verification_status' => $commentRow['verification_status'] ?: 'not_verified'
+            ];
+        }
+        $row['comments'] = count($comments) > 0 ? $comments : []; // Ensure it's an array
+
+
         $jobs[] = $row;
     }
 }
-
-
-
 
 $sql = "SELECT * FROM user WHERE id = $user_id AND take_assesment = 1";
 $take_assesmentresult = $conn->query($sql);
 
 $conn->close();
+
+
+
 ?>
 
 <style>
@@ -144,11 +193,9 @@ $conn->close();
         body {
             font-family: 'Montserrat', sans-serif;
         }
-
         #loader-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100vw;
             height: 100vh;
             background: white;
@@ -157,7 +204,6 @@ $conn->close();
             align-items: center;
             z-index: 9999;
         }
-
         .loader-container {
             width: 30vw;
             max-width: 200px;
@@ -168,209 +214,217 @@ $conn->close();
             align-items: center;
             justify-content: center;
         }
-
         .logo {
             width: 90%;
             height: 90%;
             animation: heartbeat 1.5s infinite;
             object-fit: contain;
         }
-
         .text-container {
             height: 40px;
             width: 100%;
             text-align: center;
         }
-
         .letter {
             display: inline-block;
             font-size: 24px;
             font-weight: bold;
             color: #3498db;
             opacity: 0;
-            animation: fadeIn 0.4s forwards;
-            /* Faster fadeIn */
-            animation-delay: calc(var(--index) * 0.15s);
-            /* Faster delay between letters */
+            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
         }
-
-        .fadeOut {
-            animation: fadeOut 0.7s forwards;
-        }
+        .fadeOut { animation: fadeOut 0.7s forwards; }
 
         @keyframes heartbeat {
-            0% {
-                transform: scale(1);
-            }
-
-            14% {
-                transform: scale(1.2);
-            }
-
-            28% {
-                transform: scale(1);
-            }
-
-            42% {
-                transform: scale(1.2);
-            }
-
-            70% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
         }
-
         @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
         }
 
         @media (max-width: 480px) {
-            .loader-container {
-                width: 80vw !important;
-                height: auto;
-            }
-
-            .logo {
-                width: 70%;
-                height: 70%;
-                margin-bottom: 30px;
-            }
-
-            .letter {
-                font-size: 28px;
-            }
+            .loader-container { width: 80vw !important; height: auto; }
+            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
+            .letter { font-size: 28px; }
         }
     </style>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous" defer></script>
 </head>
 
 <body>
-    <!-- loader.php -->
-    <div id="loader-overlay">
-        <div class="loader-container">
-            <img src="../img/logo1.png" alt="Logo" class="logo">
-            <div class="text-container">
-                <span class="letter" style="--index: 1;">Q</span>
-                <span class="letter" style="--index: 2;">U</span>
-                <span class="letter" style="--index: 3;">I</span>
-                <span class="letter" style="--index: 4;">C</span>
-                <span class="letter" style="--index: 5;">K</span>
-                <span class="letter" style="--index: 6;">F</span>
-                <span class="letter" style="--index: 7;">I</span>
-                <span class="letter" style="--index: 8;">X</span>
-            </div>
+<!-- loader.php -->
+<div id="loader-overlay">
+    <div class="loader-container">
+        <img src="../img/logo1.png" alt="Logo" class="logo">
+        <div class="text-container">
+            <span class="letter" style="--index: 1;">Q</span>
+            <span class="letter" style="--index: 2;">U</span>
+            <span class="letter" style="--index: 3;">I</span>
+            <span class="letter" style="--index: 4;">C</span>
+            <span class="letter" style="--index: 5;">K</span>
+            <span class="letter" style="--index: 6;">F</span>
+            <span class="letter" style="--index: 7;">I</span>
+            <span class="letter" style="--index: 8;">X</span>
         </div>
     </div>
-    <div id="main-content" style="display:none;"> </div>
+</div>
+<div id="main-content" style="display:none;"></div>
     <?php include './userHeader.php'; ?>
 
 
     <?php if ($take_assesmentresult->num_rows > 0) { ?>
-        <section class="bg-white shadow px-1 py-1 flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
+    <section class="bg-white shadow px-1 py-1 flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
 
-            <div class="flex-1 max-w-full md:max-w-md">
-                <input
-                    type="text"
-                    placeholder="Search for a Job"
-                    class="w-full border rounded px-4 py-2 focus:ring focus:ring-blue-300" />
+        <div class="flex-1 max-w-full md:max-w-md">
+            <input
+                type="text"
+                placeholder="Search for a Job"
+                class="w-full border rounded px-4 py-2 focus:ring focus:ring-blue-300" />
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 md:gap-4">
+
+            <div x-data="{ open: false, selectedCategories: [] }" class="relative">
+
+                <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
+                    <span>Category</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div
+                    x-show="open"
+                    @click.away="open = false"
+                    class="absolute mt-2 bg-white border rounded shadow-lg w-[90vw] md:w-96 p-4 z-50 left-0 md:left-auto"
+                    style="display: none;">
+
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h3 class="text-sm font-medium text-gray-600">All Categories</h3>
+                        <button @click="selectedCategories = []" class="text-blue-500 text-sm">Clear all</button>
+                    </div>
+
+                    <div class="mt-2">
+                        <input
+                            type="text"
+                            placeholder="Search categories"
+                            class="w-full border rounded px-3 py-2 text-sm focus:ring focus:ring-blue-300" />
+                    </div>
+
+                    <div class="flex flex-col md:flex-row md:items-start md:space-x-8 space-y-4 md:space-y-0 mt-2">
+
+                        <div>
+
+                            <h3 class="text-lg font-semibold text-blue-800 mb-2">Home Cleaning</h3>
+
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <template x-for="category in ['Laundry', 'Upholstery Cleaning', 'Regular Cleaning', 'Deep Cleaning', 'Carpet Cleaning', 'Aircon Cleaning']">
+                                    <li>
+                                        <label class="flex items-center space-x-2">
+                                            <input
+                                                type="checkbox"
+                                                :value="category"
+                                                @change="(e) => { if(e.target.checked) selectedCategories.push(category); else selectedCategories = selectedCategories.filter(c => c !== category); }"
+                                                class="form-checkbox" />
+                                            <span x-text="category"></span>
+                                        </label>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+
+
+                        <div>
+
+                            <h3 class="text-lg font-semibold text-blue-800 mb-2">House Repair</h3>
+
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <template x-for="category in ['Electrical Repair', 'Lighting Repair', 'Wiring Repair', 'Appliance Repair', 'Furniture Repair']">
+                                    <li>
+                                        <label class="flex items-center space-x-2">
+                                            <input
+                                                type="checkbox"
+                                                :value="category"
+                                                @change="(e) => { if(e.target.checked) selectedCategories.push(category); else selectedCategories = selectedCategories.filter(c => c !== category); }"
+                                                class="form-checkbox" />
+                                            <span x-text="category"></span>
+                                        </label>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+
+
+
+                    <div class="flex justify-between mt-4">
+                        <button
+                            @click="open = false"
+                            class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded-md hover:bg-gray-200 text-sm">
+                            Cancel
+                        </button>
+                        <button class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 text-sm">Apply</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 md:gap-4">
 
-                <div x-data="{ open: false, selectedCategories: [] }" class="relative">
+            <div x-data="{ open: false }" class="relative">
 
-                    <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
-                        <span>Category</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+                <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
+                    <span>Location</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
 
-                    <div
-                        x-show="open"
-                        @click.away="open = false"
-                        class="absolute mt-2 bg-white border rounded shadow-lg w-[90vw] md:w-96 p-4 z-50 left-0 md:left-auto"
-                        style="display: none;">
 
-                        <div class="flex items-center justify-between border-b pb-2">
-                            <h3 class="text-sm font-medium text-gray-600">All Categories</h3>
-                            <button @click="selectedCategories = []" class="text-blue-500 text-sm">Clear all</button>
-                        </div>
+                <div
+                    x-show="open"
+                    x-transition
+                    @click.away="open = false"
+                    class="absolute z-10 mt-2 left-0 bg-white border rounded-lg shadow-md p-4 w-64"
+                    style="display: none;">
 
-                        <div class="mt-2">
+                    <div class="space-y-4">
+
+                        <div>
+                            <p class="text-gray-600 font-medium mb-2 text-sm">Barangay</p>
                             <input
                                 type="text"
-                                placeholder="Search categories"
-                                class="w-full border rounded px-3 py-2 text-sm focus:ring focus:ring-blue-300" />
+                                placeholder="Deparo"
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
                         </div>
 
-                        <div class="flex flex-col md:flex-row md:items-start md:space-x-8 space-y-4 md:space-y-0 mt-2">
-
-                            <div>
-
-                                <h3 class="text-lg font-semibold text-blue-800 mb-2">Home Cleaning</h3>
-
-                                <ul class="space-y-2 text-sm text-gray-700">
-                                    <template x-for="category in ['Laundry', 'Upholstery Cleaning', 'Regular Cleaning', 'Deep Cleaning', 'Carpet Cleaning', 'Aircon Cleaning']">
-                                        <li>
-                                            <label class="flex items-center space-x-2">
-                                                <input
-                                                    type="checkbox"
-                                                    :value="category"
-                                                    @change="(e) => { if(e.target.checked) selectedCategories.push(category); else selectedCategories = selectedCategories.filter(c => c !== category); }"
-                                                    class="form-checkbox" />
-                                                <span x-text="category"></span>
-                                            </label>
-                                        </li>
-                                    </template>
-                                </ul>
-                            </div>
-
-
-                            <div>
-
-                                <h3 class="text-lg font-semibold text-blue-800 mb-2">House Repair</h3>
-
-                                <ul class="space-y-2 text-sm text-gray-700">
-                                    <template x-for="category in ['Electrical Repair', 'Lighting Repair', 'Wiring Repair', 'Appliance Repair', 'Furniture Repair']">
-                                        <li>
-                                            <label class="flex items-center space-x-2">
-                                                <input
-                                                    type="checkbox"
-                                                    :value="category"
-                                                    @change="(e) => { if(e.target.checked) selectedCategories.push(category); else selectedCategories = selectedCategories.filter(c => c !== category); }"
-                                                    class="form-checkbox" />
-                                                <span x-text="category"></span>
-                                            </label>
-                                        </li>
-                                    </template>
-                                </ul>
+                        <div>
+                            <p class="text-gray-600 font-medium mb-2 text-sm">Distance</p>
+                            <div class="flex items-center space-x-2">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="5"
+                                    value="0"
+                                    step="1"
+                                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer focus:outline-none"
+                                    @input="updateDistanceLabel()" />
+                                <span id="distanceLabel" class="text-gray-700 text-sm">5km</span>
                             </div>
                         </div>
-
-
 
                         <div class="flex justify-between mt-4">
                             <button
@@ -382,17 +436,18 @@ $conn->close();
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="flex flex-wrap items-center gap-2 md:gap-4">
 
-                <div x-data="{ open: false }" class="relative">
+                <div x-data="{ open: false, priceIndex: 0, priceRanges: ['₱50 - ₱100/hour', '₱50 - ₱150/hour', '₱50 - ₱200/hour', '₱50 - ₱250/hour', '₱50 - ₱300/hour', '₱50 - ₱350/hour', '₱50 - ₱400/hour', '₱50 - ₱450/hour', '₱50 - ₱500/hour'] }" class="relative">
 
                     <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
-                        <span>Location</span>
+                        <span>Prices</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-
 
                     <div
                         x-show="open"
@@ -400,162 +455,41 @@ $conn->close();
                         @click.away="open = false"
                         class="absolute z-10 mt-2 left-0 bg-white border rounded-lg shadow-md p-4 w-64"
                         style="display: none;">
+                        <div>
+                            <p class="text-gray-600 font-medium mb-2 text-sm">Job Price</p>
+                            <div class="flex flex-col items-center space-y-4">
 
-                        <div class="space-y-4">
-
-                            <div>
-                                <p class="text-gray-600 font-medium mb-2 text-sm">Barangay</p>
                                 <input
-                                    type="text"
-                                    placeholder="Deparo"
-                                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
-                            </div>
+                                    type="range"
+                                    min="0"
+                                    max="8"
+                                    step="1"
+                                    x-model="priceIndex"
+                                    class="w-full h-2 bg-blue-300 rounded-lg appearance-none cursor-pointer focus:outline-none" />
 
-                            <div>
-                                <p class="text-gray-600 font-medium mb-2 text-sm">Distance</p>
-                                <div class="flex items-center space-x-2">
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="5"
-                                        value="0"
-                                        step="1"
-                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer focus:outline-none"
-                                        @input="updateDistanceLabel()" />
-                                    <span id="distanceLabel" class="text-gray-700 text-sm">5km</span>
-                                </div>
+                                <span class="text-gray-700 font-bold text-base md:text-lg" x-text="priceRanges[priceIndex]"></span>
                             </div>
+                        </div>
 
-                            <div class="flex justify-between mt-4">
-                                <button
-                                    @click="open = false"
-                                    class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded-md hover:bg-gray-200 text-sm">
-                                    Cancel
-                                </button>
-                                <button class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 text-sm">Apply</button>
-                            </div>
+                        <div class="flex justify-between mt-4">
+                            <button
+                                @click="open = false"
+                                class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded-md hover:bg-gray-200 text-sm">
+                                Cancel
+                            </button>
+                            <button
+                                @click="open = false"
+                                class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 text-sm">
+                                Apply
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2 md:gap-4">
-
-                    <div x-data="{ open: false, priceIndex: 0, priceRanges: ['₱50 - ₱100/hour', '₱50 - ₱150/hour', '₱50 - ₱200/hour', '₱50 - ₱250/hour', '₱50 - ₱300/hour', '₱50 - ₱350/hour', '₱50 - ₱400/hour', '₱50 - ₱450/hour', '₱50 - ₱500/hour'] }" class="relative">
-
-                        <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
-                            <span>Prices</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-
-                        <div
-                            x-show="open"
-                            x-transition
-                            @click.away="open = false"
-                            class="absolute z-10 mt-2 left-0 bg-white border rounded-lg shadow-md p-4 w-64"
-                            style="display: none;">
-                            <div>
-                                <p class="text-gray-600 font-medium mb-2 text-sm">Job Price</p>
-                                <div class="flex flex-col items-center space-y-4">
-
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="8"
-                                        step="1"
-                                        x-model="priceIndex"
-                                        class="w-full h-2 bg-blue-300 rounded-lg appearance-none cursor-pointer focus:outline-none" />
-
-                                    <span class="text-gray-700 font-bold text-base md:text-lg" x-text="priceRanges[priceIndex]"></span>
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between mt-4">
-                                <button
-                                    @click="open = false"
-                                    class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded-md hover:bg-gray-200 text-sm">
-                                    Cancel
-                                </button>
-                                <button
-                                    @click="open = false"
-                                    class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 text-sm">
-                                    Apply
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div x-data="{ open: false, availableTasksOnly: true, noOffersOnly: false }" class="relative">
-
-                        <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
-                            <span>Other Filters</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-
-                        <div
-                            x-show="open"
-                            x-transition
-                            @click.away="open = false"
-                            class="absolute z-10 mt-2 left-0 bg-white border rounded-lg shadow-md p-4 w-72"
-                            style="display: none;">
-
-                            <div>
-                                <p class="text-gray-600 font-medium mb-4 text-sm">OTHER FILTERS</p>
-
-                                <div class="flex items-center justify-between mb-4">
-                                    <div>
-                                        <p class="text-gray-800 font-medium text-sm">Available jobs only</p>
-                                        <p class="text-gray-500 text-xs">Hide jobs that are already assigned</p>
-                                    </div>
-                                    <button
-                                        @click="availableTasksOnly = !availableTasksOnly"
-                                        :class="availableTasksOnly ? 'bg-blue-950' : 'bg-gray-300'"
-                                        class="w-10 h-5 flex items-center rounded-full p-1 transition duration-300">
-                                        <div
-                                            :class="availableTasksOnly ? 'translate-x-5' : 'translate-x-0'"
-                                            class="w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300"></div>
-                                    </button>
-                                </div>
-
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-gray-800 font-medium text-sm">Jobs with no offers only</p>
-                                        <p class="text-gray-500 text-xs">Hide jobs that have offers</p>
-                                    </div>
-                                    <button
-                                        @click="noOffersOnly = !noOffersOnly"
-                                        :class="noOffersOnly ? 'bg-blue-950' : 'bg-gray-300'"
-                                        class="w-10 h-5 flex items-center rounded-full p-1 transition duration-300">
-                                        <div
-                                            :class="noOffersOnly ? 'translate-x-5' : 'translate-x-0'"
-                                            class="w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300"></div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between mt-6">
-                                <button
-                                    @click="open = false"
-                                    class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded-md hover:bg-gray-200 text-sm">
-                                    Cancel
-                                </button>
-                                <button
-                                    @click="open = false"
-                                    class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 text-sm">
-                                    Apply
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div x-data="{ open: false, sortOptions: ['Price: High to low', 'Price: Low to high', 'Due date: Earliest', 'Due date: Latest', 'Newest jobs', 'Oldest jobs', 'Closest to me'], selectedSort: 'Sort' }" class="relative">
+                <div x-data="{ open: false, availableTasksOnly: true, noOffersOnly: false }" class="relative">
 
                     <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
-                        <span x-text="selectedSort"></span>
+                        <span>Other Filters</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
@@ -565,24 +499,90 @@ $conn->close();
                         x-show="open"
                         x-transition
                         @click.away="open = false"
-                        class="absolute z-10 mt-2 right-0 bg-white border rounded-lg shadow-md p-4 w-64"
+                        class="absolute z-10 mt-2 left-0 bg-white border rounded-lg shadow-md p-4 w-72"
                         style="display: none;">
-                        <ul>
-                            <template x-for="(option, index) in sortOptions" :key="index">
-                                <li
-                                    @click="selectedSort = option; open = false"
-                                    class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-blue-500 cursor-pointer rounded-md text-sm">
-                                    <span x-text="option"></span>
-                                </li>
-                            </template>
-                        </ul>
+
+                        <div>
+                            <p class="text-gray-600 font-medium mb-4 text-sm">OTHER FILTERS</p>
+
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <p class="text-gray-800 font-medium text-sm">Available jobs only</p>
+                                    <p class="text-gray-500 text-xs">Hide jobs that are already assigned</p>
+                                </div>
+                                <button
+                                    @click="availableTasksOnly = !availableTasksOnly"
+                                    :class="availableTasksOnly ? 'bg-blue-950' : 'bg-gray-300'"
+                                    class="w-10 h-5 flex items-center rounded-full p-1 transition duration-300">
+                                    <div
+                                        :class="availableTasksOnly ? 'translate-x-5' : 'translate-x-0'"
+                                        class="w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300"></div>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-800 font-medium text-sm">Jobs with no offers only</p>
+                                    <p class="text-gray-500 text-xs">Hide jobs that have offers</p>
+                                </div>
+                                <button
+                                    @click="noOffersOnly = !noOffersOnly"
+                                    :class="noOffersOnly ? 'bg-blue-950' : 'bg-gray-300'"
+                                    class="w-10 h-5 flex items-center rounded-full p-1 transition duration-300">
+                                    <div
+                                        :class="noOffersOnly ? 'translate-x-5' : 'translate-x-0'"
+                                        class="w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between mt-6">
+                            <button
+                                @click="open = false"
+                                class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded-md hover:bg-gray-200 text-sm">
+                                Cancel
+                            </button>
+                            <button
+                                @click="open = false"
+                                class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 text-sm">
+                                Apply
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <div class="flex flex-col lg:flex-row w-full p-2 md:p-4 bg-blue-50 min-h-screen"
-            x-data='{
+            <div x-data="{ open: false, sortOptions: ['Price: High to low', 'Price: Low to high', 'Due date: Earliest', 'Due date: Latest', 'Newest jobs', 'Oldest jobs', 'Closest to me'], selectedSort: 'Sort' }" class="relative">
+
+                <button @click="open = !open" class="text-gray-700 hover:text-blue-500 flex items-center space-x-2 text-sm md:text-base">
+                    <span x-text="selectedSort"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div
+                    x-show="open"
+                    x-transition
+                    @click.away="open = false"
+                    class="absolute z-10 mt-2 right-0 bg-white border rounded-lg shadow-md p-4 w-64"
+                    style="display: none;">
+                    <ul>
+                        <template x-for="(option, index) in sortOptions" :key="index">
+                            <li
+                                @click="selectedSort = option; open = false"
+                                class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-blue-500 cursor-pointer rounded-md text-sm">
+                                <span x-text="option"></span>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<div class="flex flex-col lg:flex-row w-full p-2 md:p-4 bg-blue-50 min-h-screen"
+    x-data='{
         jobs: <?php echo htmlspecialchars(json_encode($jobs), ENT_QUOTES, "UTF-8"); ?>, 
         selectedJob: null, 
         open: false, 
@@ -639,314 +639,486 @@ $conn->close();
             });
         }
     }'>
+    
+    
 
 
+    <div x-data="{
+    showMyJobs: false,
+    userId: <?php echo $_SESSION['user_id']; ?>, 
+    get filteredJobs() {
+        return this.showMyJobs 
+            ? jobs.filter(job => job.user_id === this.userId)  // Show only user's jobs when toggled
+            : jobs.filter(job => job.user_id !== this.userId); // Hide user's jobs in default view
+    }
+        }" class="w-full lg:w-1/4 bg-white shadow-md rounded-xl p-4 h-[300px] lg:h-[550px] overflow-y-auto border border-gray-400 mb-4 lg:mb-0">
+
+            <h2 class="text-xl font-bold text-blue-800 mb-3 flex items-center">
+                <img src="../img/pin.svg" alt="Pin Icon" class="w-6 h-6 mr-2"> Available Jobs
+            </h2>
+
+        <!-- My Posted Jobs Toggle Button -->
+        <button @click="showMyJobs = !showMyJobs" 
+            class="px-3 py-1 text-xs font-semibold rounded border border-blue-600 text-blue-600 
+                hover:bg-blue-600 hover:text-white transition">
+            <span x-text="showMyJobs ? 'All Jobs' : 'My Jobs'"></span>
+        </button>
+        
+
+    <ul class="space-y-3">
+        <template x-for="job in filteredJobs" :key="job.id">
+            <li @click="
+                selectedJob = (selectedJob && selectedJob.id === job.id) ? null : job;
+                localStorage.setItem('selectedJobId', selectedJob ? selectedJob.id : '');
+            "
+                class="p-3 md:p-4 rounded-lg cursor-pointer transition duration-200 shadow-sm border border-gray-300 
+                    bg-gray-100 hover:bg-blue-100 hover:border-blue-400 transform hover:scale-[1.03] hover:shadow-md relative"
+                :class="{
+                    'bg-green-200': job.has_offered,  
+                    'bg-blue-600 text-white scale-[1.05] shadow-lg': selectedJob && selectedJob.id === job.id
+                }"
+                :id="'job-' + job.id">
+
+                <!-- Budget Tag -->
+                <span class="absolute top-2 right-3 text-xs font-bold px-2 md:px-3 py-1 rounded-lg transition duration-200"
+                    :class="selectedJob && selectedJob.id === job.id ? 'bg-white text-blue-800' : 'bg-blue-800 text-white'">
+                    ₱<span x-text="formatBudget(job.budget)"></span>
+                </span>
+
+                <div class="flex items-start">
+                    <div class="flex-1">
+                        <h3 class="text-sm md:text-md font-semibold flex items-center">
+                            <img src="../img/location-info.svg" alt="Loc Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                            <span x-text="job.job_title" class="text-blue-800"></span>
+                        </h3>
+                        <p class="text-xs flex items-center mt-1">
+                            <span x-text="job.location"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div x-show="job.has_offered" class="mt-2 flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold px-2 md:px-3 py-1 rounded-lg bg-green-500 text-white">
+                        Offer Submitted
+                    </span>
+                    <button @click="withdrawOffer(job.id)"
+                        class="text-xs font-bold px-2 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600 transition">
+                        Withdraw Offer
+                    </button>
+                </div>
+
+            </li>
+        </template>
+    </ul>
+</div>
 
 
-            <div class="w-full lg:w-1/4 bg-white shadow-md rounded-xl p-4 h-[300px] lg:h-[550px] overflow-y-auto border border-gray-400 mb-4 lg:mb-0">
-                <h2 class="text-xl font-bold text-blue-800 mb-3 flex items-center">
-                    <img src="../img/pin.svg" alt="Pin Icon" class="w-6 h-6 mr-2"> Available Jobs
-                </h2>
-                <ul class="space-y-3">
-                    <template x-for="job in jobs" :key="job.id">
-                        <li @click="
-    selectedJob = (selectedJob && selectedJob.id === job.id) ? null : job;
-    localStorage.setItem('selectedJobId', selectedJob ? selectedJob.id : '');
-"
+        <div class="w-full lg:w-1/3 bg-white shadow-xl rounded-2xl p-4 md:p-5 h-auto lg:h-[550px] overflow-y-auto transition-all duration-300 
+            transform scale-100 hover:scale-[1.02] backdrop-blur-lg border border-gray-300 mb-4 lg:mb-0 lg:mx-4"
+            x-show="selectedJob" x-transition x-data="{ showPosterProfile: false, profileHover: false }">
+    
+    <template x-if="selectedJob">
+        <div class="relative">
+            <button @click="selectedJob = null"
+                class="absolute top-2 right-4 text-gray-500 hover:text-red-500 transition duration-200 text-sm">
+                ✖ Close
+            </button>
+            
+            <h2 class="text-lg md:text-xl font-bold text-blue-800" x-text="selectedJob.job_title"></h2>
 
-                            class="p-3 md:p-4 rounded-lg cursor-pointer transition duration-200 shadow-sm border border-gray-300 
-                            bg-gray-100 hover:bg-blue-100 hover:border-blue-400 transform hover:scale-[1.03] hover:shadow-md relative"
-                            :class="{
-                        'bg-green-200': job.has_offered,  // Highlight green if offer exists
-                        'bg-blue-600 text-white scale-[1.05] shadow-lg': selectedJob && selectedJob.id === job.id
-                    }"
-                            :id="'job-' + job.id">
+            <!-- Profile Section with Verification Badge & Mini Profile Toggle -->
+            <div class="flex items-center gap-3 mt-2 relative">
+                <img :src="selectedJob.profile_picture || 'default-profile.png'" class="w-10 h-10 rounded-full border shadow"
+                    :class="{
+                        'ring-2 ring-blue-500': selectedJob.verification_status === 'fully_verified',
+                        'ring-2 ring-green-500': selectedJob.verification_status === 'identity_verified',
+                        'ring-2 ring-red-500': selectedJob.verification_status === 'not_verified'
+                    }">
+                <div>
+                    <p class="text-xs md:text-sm font-semibold text-blue-800 relative">
+                        <a @mouseenter="showPosterProfile = true" 
+                           @mouseleave="setTimeout(() => { if (!profileHover) showPosterProfile = false; }, 200)" 
+                           @click="showPosterProfile = !showPosterProfile"
+                           class="cursor-pointer hover:underline">
+                            <span x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></span>
+                        </a>
 
-                            <span class="absolute top-2 right-3 text-xs font-bold px-2 md:px-3 py-1 rounded-lg transition duration-200"
-                                :class="selectedJob && selectedJob.id === job.id ? 'bg-white text-blue-800' : 'bg-blue-800 text-white'">
-                                ₱<span x-text="formatBudget(job.budget)"></span>
-                            </span>
+                        <!-- Mini Profile Popup -->
+                        <div x-show="showPosterProfile" x-transition.opacity x-cloak
+                            class="absolute top-8 left-0 bg-gradient-to-b from-blue-50 to-white shadow-2xl border border-gray-200/60 
+                                   rounded-2xl p-4 w-72 z-50 transition-all duration-300 ease-in-out transform origin-top scale-95 hover:scale-100"
+                            @mouseenter="profileHover = true"
+                            @mouseleave="profileHover = false; setTimeout(() => showPosterProfile = false, 200)">
 
-                            <div class="flex items-start">
-                                <div class="flex-1">
-                                    <h3 class="text-sm md:text-md font-semibold flex items-center">
-                                        <img src="../img/location-info.svg" alt="Loc Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                                        <span x-text="job.job_title" class="text-blue-800"></span>
-                                    </h3>
-                                    <p class="text-xs flex items-center mt-1">
-                                        <span x-text="job.location"></span>
+                            <div class="flex items-center gap-4">
+                                <img :src="selectedJob.profile_picture || 'default-profile.png'" alt="Profile Picture"
+                                    class="w-16 h-16 rounded-full shadow-md"
+                                    :class="{
+                                        'ring-4 ring-blue-500': selectedJob.verification_status === 'fully_verified',
+                                        'ring-4 ring-green-500': selectedJob.verification_status === 'identity_verified',
+                                        'ring-4 ring-red-500': selectedJob.verification_status === 'not_verified'
+                                    }">
+                                <div>
+                                    <h3 class="text-md font-semibold text-gray-800" x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></h3>
+                                    
+                                    <!-- Verification Badge -->
+                                    <p class="text-xs flex items-center gap-1 mt-1 text-gray-600">
+                                        <i class="fas"
+                                            :class="{
+                                                'fa-shield-check text-blue-500': selectedJob.verification_status === 'fully_verified',
+                                                'fa-user-check text-green-500': selectedJob.verification_status === 'identity_verified',
+                                                'fa-exclamation-circle text-red-500': selectedJob.verification_status === 'not_verified'
+                                            }"></i>
+                                        <span x-text="selectedJob.verification_status === 'fully_verified' ? 'Fully Verified' :
+                                                    selectedJob.verification_status === 'identity_verified' ? 'Identity Verified' : 'Not Verified'"></span>
                                     </p>
                                 </div>
                             </div>
 
-                            <div x-show="job.has_offered" class="mt-2 flex flex-wrap items-center gap-2">
-                                <span class="text-xs font-bold px-2 md:px-3 py-1 rounded-lg bg-green-500 text-white">
-                                    Offer Submitted
-                                </span>
-                                <button @click="withdrawOffer(job.id)"
-                                    class="text-xs font-bold px-2 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600 transition">
-                                    Withdraw Offer
-                                </button>
-                            </div>
+                            <!-- "View Profile" Button -->
+                            <a :href="'public_profile.php?user_id=' + selectedJob.user_id + '&job_id=' + selectedJob.id"
+                                class="block mt-3 text-xs text-blue-600 hover:underline text-center">
+                                View Full Profile
+                            </a>
+                        </div>
+                    </p>
 
-                        </li>
-                    </template>
-                </ul>
+                    <!-- Verification Badge -->
+                    <p class="text-xs px-2 py-1 rounded text-white inline-block"
+                        :class="{
+                            'bg-blue-500': selectedJob.verification_status === 'fully_verified',
+                            'bg-green-500': selectedJob.verification_status === 'identity_verified',
+                            'bg-red-500': selectedJob.verification_status === 'not_verified'
+                        }">
+                        <span x-text="selectedJob.verification_status === 'fully_verified' ? 'Fully Verified' :
+                                    selectedJob.verification_status === 'identity_verified' ? 'Identity Verified' : 'Not Verified'">
+                        </span>
+                    </p>
+                </div>
             </div>
 
+            <p class="text-gray-700 text-xs mt-1" x-text="selectedJob.location"></p>
+            <p class="text-gray-600 text-xs mt-1 flex items-center">
+                <img src="../img/date-range-job.svg" alt="Date Icon" class="w-4 h-4 mr-1">
+                <span x-text="selectedJob.job_date"></span>
+                <span class="mx-2">|</span>
+                <img src="../img/time-job.svg" alt="Time Icon" class="w-4 h-4 mr-1">
+                <span x-text="selectedJob.job_time"></span>
+            </p>
 
-            <div class="w-full lg:w-1/3 bg-white shadow-xl rounded-2xl p-4 md:p-5 h-auto lg:h-[550px] overflow-y-auto transition-all duration-300 
-            transform scale-100 hover:scale-[1.02] backdrop-blur-lg border border-gray-300 mb-4 lg:mb-0 lg:mx-4"
-                x-show="selectedJob" x-transition>
-                <template x-if="selectedJob">
-                    <div class="relative">
-                        <button @click="selectedJob = null"
-                            class="absolute top-2 right-4 text-gray-500 hover:text-red-500 transition duration-200 text-sm">
-                            ✖ Close
-                        </button>
-                        <h2 class="text-lg md:text-xl font-bold text-blue-800" x-text="selectedJob.job_title"></h2>
-                        <!-- Alpine.js Mini Profile -->
-                        <div x-data="{ showPosterProfile: false, profileHover: false }">
-                            <p class="text-gray-700 mt-1 text-xs md:text-sm relative">
-                                Posted by:
-                                <a @mouseenter="showPosterProfile = true"
-                                    @mouseleave="setTimeout(() => { if (!profileHover) showPosterProfile = false; }, 200)"
-                                    @click="showPosterProfile = !showPosterProfile"
-                                    class="font-semibold text-blue-800 cursor-pointer hover:underline relative">
-                                    <span x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></span>
-                                </a>
+                    <p class="text-xs md:text-sm font-semibold text-gray-700 mt-3 flex items-center">
+                <img src="../img/category-job.svg" alt="Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.category_name"></span>
+            </p>
 
-                                <!-- Mini Profile Pop-up -->
-                            <div x-show="showPosterProfile" x-transition.opacity x-cloak
-                                class="absolute top-8 left-0 bg-gradient-to-b from-blue-50 to-white shadow-2xl border border-gray-200/60 
-                   rounded-2xl p-4 w-72 z-50 transition-all duration-300 ease-in-out transform origin-top scale-95 hover:scale-100"
-                                @mouseenter="profileHover = true"
-                                @mouseleave="profileHover = false; setTimeout(() => showPosterProfile = false, 200)">
+            <p class="text-xs md:text-sm font-semibold text-gray-700 mt-3 flex items-center">
+                <img src="../img/sub-category-job.svg" alt="Sub-Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                Sub-Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.sub_category_name"></span>
+            </p>
 
-                                <div class="flex items-center gap-4">
-                                    <!-- Profile Image with Verification Glow Effect -->
-                                    <div class="relative">
-                                        <img :src="selectedJob.profile_picture || 'default-profile.png'" alt="Profile Picture"
-                                            class="w-16 h-16 rounded-full shadow-md"
-                                            :class="{
-                            'ring-4 ring-blue-500': selectedJob.verification_status === 'fully_verified',
-                            'ring-4 ring-green-500': selectedJob.verification_status === 'identity_verified',
-                            'ring-4 ring-red-500': selectedJob.verification_status === 'not_verified'
-                        }">
-                                    </div>
+            <p class="text-sm md:text-md font-bold text-gray-700 mt-3 flex items-center">
+                <img src="../img/budget-job.svg" alt="Budget Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                Budget: <span class="text-blue-800 font-bold ml-1"> ₱<span x-text="selectedJob.budget.toLocaleString()"></span></span>
+            </p>
 
-                                    <div>
-                                        <h3 class="text-md font-semibold text-gray-800" x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></h3>
+            <!-- Job Images Section -->
+            <div x-show="selectedJob.images" x-cloak x-transition>
+                <h3 class="text-sm md:text-md font-semibold text-gray-700 mt-3 flex items-center">
+                    <img src="../img/image-job.svg" alt="Job Images Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                    Job Images
+                </h3>
+                <div class="flex space-x-3 overflow-x-auto p-2">
+                    <template x-for="image in selectedJob.images.split(',')" :key="image">
+                        <img :src="image.trim()"
+                            class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg shadow-md border border-gray-300 cursor-pointer hover:scale-105 transition"
+                            @click="enlargedImage = image.trim()">
+                    </template>
+                </div>
+            </div>
+           
+<div x-data="{ 
+    comments: [], 
+    newComment: '', 
+    replyComment: '', 
+    replyTo: null, 
 
-                                        <!-- Verification Badge -->
-                                        <p class="text-xs flex items-center gap-1 mt-1 text-gray-600">
-                                            <i class="fas"
-                                                :class="{
-                                'fa-shield-check text-blue-500': selectedJob.verification_status === 'fully_verified',
-                                'fa-user-check text-green-500': selectedJob.verification_status === 'identity_verified',
-                                'fa-exclamation-circle text-red-500': selectedJob.verification_status === 'not_verified'
-                            }"></i>
-                                            <span x-text="selectedJob.verification_status === 'fully_verified' ? 'Fully Verified' :
-                                    selectedJob.verification_status === 'identity_verified' ? 'Identity Verified' : 'Not Verified'"></span>
-                                        </p>
+    loadComments() {
+        fetch('fetch_comments.php?job_id=' + selectedJob.id)
+            .then(res => res.json())
+            .then(data => {
+                let map = {};
+                let rootComments = [];
+
+                data.forEach(comment => {
+                    comment.replies = [];
+                    map[comment.id] = comment;
+
+                    if (comment.parent_id) {
+                        if (map[comment.parent_id]) {
+                            map[comment.parent_id].replies.push(comment);
+                        }
+                    } else {
+                        rootComments.push(comment);
+                    }
+                });
+
+                this.comments = rootComments;
+            });
+    },
+
+    deleteComment(commentId, parentId = null) {
+        if (confirm('Are you sure you want to delete this comment?')) {
+            fetch('delete_comment.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'comment_id=' + commentId
+            })
+            .then(res => res.json())
+            .then(response => {
+                if (response.success) {
+                    if (parentId) {
+                        // If it's a reply, find parent and remove reply
+                        let parentComment = this.comments.find(c => c.id === parentId);
+                        if (parentComment) {
+                            parentComment.replies = parentComment.replies.filter(r => r.id !== commentId);
+                        }
+                    } else {
+                        // Remove main comment
+                        this.comments = this.comments.filter(c => c.id !== commentId);
+                    }
+                } else {
+                    alert(response.error);
+                }
+            });
+        }
+    }
+}" x-init="loadComments()" class="max-w-2xl mx-auto mt-6">
+
+
+    <h3 class="text-lg font-semibold text-gray-900">Questions</h3>
+    <p class="text-sm text-gray-500">* Please don't share personal info! </p>
+
+    <!-- Comment List -->
+    <div class="mt-4">
+        <template x-if="comments.length > 0">
+            <ul class="space-y-4">
+                <template x-for="comment in comments" :key="comment.id">
+                    <li class="bg-white shadow-sm p-4 rounded-lg border">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                                <span x-text="comment.first_name[0] + comment.last_name[0]"></span>
+                            </div>
+                            <div class="w-full">
+                                <p class="text-sm font-semibold text-gray-800" x-text="comment.first_name + ' ' + comment.last_name"></p>
+                                <p class="text-sm text-gray-700 mt-1" x-text="comment.comment"></p>
+                                <p class="text-xs text-gray-400 mt-1" x-text="new Date(comment.created_at).toLocaleString()"></p>
+
+                                <div class="flex space-x-3 mt-1">
+                                    <button class="text-blue-600 text-xs hover:underline" @click="replyTo = (replyTo === comment.id) ? null : comment.id">
+                                        Reply
+                                    </button>
+                                    <button class="text-red-600 text-xs hover:underline" @click="deleteComment(comment.id)">
+                                        Delete
+                                    </button>
+                                </div>
+
+                                <!-- Reply Input -->
+                                <div x-show="replyTo === comment.id" class="mt-3">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" x-model="replyComment" placeholder="Write a reply..." class="w-full px-3 py-1 border rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
+                                        <button @click="
+                                            if(replyComment.trim() !== '') {
+                                                fetch('add_comment.php', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                                    body: 'job_id=' + selectedJob.id + '&comment=' + encodeURIComponent(replyComment) + '&parent_id=' + comment.id
+                                                }).then(res => res.json())
+                                                .then(response => {
+                                                    if(response.success) {
+                                                        comment.replies.push({
+                                                            id: response.id,
+                                                            first_name: response.first_name,
+                                                            last_name: response.last_name,
+                                                            comment: response.comment,
+                                                            created_at: response.created_at
+                                                        });
+                                                        replyComment = '';
+                                                        replyTo = null;
+                                                    } else {
+                                                        alert(response.error);
+                                                    }
+                                                });
+
+                                            } else {
+                                                alert('Reply cannot be empty');
+                                            }"
+                                            class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700">
+                                            Reply
+                                        </button>
                                     </div>
                                 </div>
 
-                                <!-- "View Profile" Button -->
-                                <a :href="'public_profile.php?user_id=' + selectedJob.user_id + '&job_id=' + selectedJob.id"
-                                    class="block mt-3 text-xs text-blue-600 hover:underline text-center">
-                                    View Full Profile
-                                </a>
-                            </div>
-                            </p>
-                        </div>
+                                <!-- Replies -->
+                                <div x-show="comment.replies.length > 0" class="mt-3 space-y-3 border-l-2 border-gray-200 pl-4">
+                                    <template x-for="reply in comment.replies" :key="reply.id">
+                                        <div class="flex items-start space-x-3">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                                                <span x-text="reply.first_name[0] + reply.last_name[0]"></span>
+                                            </div>
+                                            <div class="w-full">
+                                                <p class="text-xs font-semibold text-gray-800" x-text="reply.first_name + ' ' + reply.last_name"></p>
+                                                <p class="text-xs text-gray-700 mt-1" x-text="reply.comment"></p>
+                                                <p class="text-xs text-gray-400 mt-1" x-text="new Date(reply.created_at).toLocaleString()"></p>
 
-                        <!-- Removed Job Poster ID display -->
-                        <!-- <p class="text-xs text-gray-500">
-                            Job Poster ID: <span x-text="selectedJob.user_id"></span> 
-                        </p> -->
-
-                        <p class="text-gray-700 text-xs mt-1" x-text="selectedJob.location"></p>
-                        <p class="text-gray-600 text-xs mt-1 flex items-center">
-                            <img src="../img/date-range-job.svg" alt="Date Icon" class="w-4 h-4 mr-1">
-                            <span x-text="selectedJob.job_date"></span>
-                            <span class="mx-2">|</span>
-                            <img src="../img/time-job.svg" alt="Time Icon" class="w-4 h-4 mr-1">
-                            <span x-text="selectedJob.job_time"></span>
-                        </p>
-
-                        <p class="text-gray-800 mt-2 text-xs md:text-sm leading-relaxed" x-text="selectedJob.description"></p>
-
-                        <p class="text-xs md:text-sm font-semibold text-gray-700 mt-3 flex items-center">
-                            <img src="../img/category-job.svg" alt="Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                            Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.category_name"></span>
-                        </p>
-
-                        <p class="text-xs md:text-sm font-semibold text-gray-700 mt-3 flex items-center">
-                            <img src="../img/sub-category-job.svg" alt="Sub-Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                            Sub-Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.sub_category_name"></span>
-                        </p>
-
-
-                        <p class="text-sm md:text-md font-bold text-gray-700 mt-3 flex items-center">
-                            <img src="../img/budget-job.svg" alt="Budget Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                            Budget: <span class="text-blue-800"> ₱<span x-text="formatBudget(selectedJob.budget)"></span></span>
-                        </p>
-
-
-                        <div x-show="selectedJob" x-cloak x-transition>
-                            <h3 class="text-sm md:text-md font-semibold text-gray-700 mt-3 flex items-center">
-                                <img src="../img/image-job.svg" alt="Job Images Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                                Job Images
-                            </h3>
-                            <div class="flex space-x-3 overflow-x-auto p-2">
-                                <template x-for="image in selectedJob.images.split(',')" :key="image">
-                                    <img :src="image.trim()"
-                                        class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg shadow-md border border-gray-300 cursor-pointer hover:scale-105 transition"
-                                        @click="enlargedImage = image.trim()">
-                                </template>
+                                                <button class="text-red-600 text-xs mt-1 hover:underline" @click="deleteComment(reply.id, comment.id)">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
-
-                        <div x-show="enlargedImage" x-cloak
-                            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 backdrop-blur-md z-50"
-                            @click.away="enlargedImage = null"
-                            @keydown.escape.window="enlargedImage = null">
-
-
-                            <div class="relative">
-
-                                <button @click="enlargedImage = null"
-                                    class="absolute top-4 right-6 text-white text-4xl font-bold hover:text-gray-300 transition">
-                                    &times;
-                                </button>
-
-                                <img :src="enlargedImage" class="max-w-[90vw] max-h-[85vh] rounded-lg shadow-lg border-4 border-white">
-                            </div>
-                        </div>
-                        <button class="mt-12 w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm md:text-md font-semibold hover:bg-blue-700 
-                shadow-md hover:shadow-lg transition transform hover:scale-[1.05] flex items-center justify-center"
-                            @click="open = true">
-                            <img src="../img/offer-job.svg" alt="Offer Icon" class="w-4 h-4 md:w-5 md:h-5 mr-2 ">
-                            Make an Offer
-                        </button>
-                    </div>
+                    </li>
                 </template>
+            </ul>
+        </template>
+
+        <p x-show="comments.length === 0" class="text-sm text-gray-500">No questions yet. Be the first to ask!</p>
+    </div>
+
+    <!-- Add Comment -->
+    <div class="mt-5 flex items-center space-x-2">
+        <input type="text" x-model="newComment" placeholder="Write a comment..." class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
+        <button @click="
+            if(newComment.trim() !== '') {
+                fetch('add_comment.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'job_id=' + selectedJob.id + '&comment=' + encodeURIComponent(newComment)
+                }).then(res => res.json())
+                .then(response => {
+                    if(response.success) {
+                        comments.unshift({
+                            id: response.id,
+                            first_name: response.first_name,
+                            last_name: response.last_name,
+                            comment: response.comment,
+                            created_at: response.created_at,
+                            replies: []
+                        });
+                        newComment = '';
+                    } else {
+                        alert(response.error);
+                    }
+                });
+
+            } else {
+                alert('Comment cannot be empty');
+            }"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
+            Post
+        </button>
+    </div>
+
+</div>
+
+
+
+
+<button x-show="selectedJob.user_id !== <?php echo $_SESSION['user_id']; ?>" 
+        class="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm md:text-md font-semibold hover:bg-blue-700 
+               shadow-md hover:shadow-lg transition transform hover:scale-[1.05] flex items-center justify-center"
+        @click="open = true">
+    <img src="../img/offer-job.svg" alt="Offer Icon" class="w-4 h-4 md:w-5 md:h-5 mr-2 ">
+    Make an Offer
+</button>
+        </div>
+    </template>
+</div>
+
+
+        <div x-show="enlargedImage" x-cloak
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 backdrop-blur-md z-50"
+            @click.away="enlargedImage = null"
+            @keydown.escape.window="enlargedImage = null">
+
+            <div class="relative">
+
+                <button @click="enlargedImage = null"
+                    class="absolute top-4 right-6 text-white text-4xl font-bold hover:text-gray-300 transition">
+                    &times;
+                </button>
+
+                <img :src="enlargedImage" class="max-w-[90vw] max-h-[85vh] rounded-lg shadow-lg border-4 border-white">
             </div>
+        </div>
 
-            <div x-show="profileData" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
-                    <button @click="profileData = null" class="absolute top-2 right-3 text-gray-500 hover:text-red-500 text-lg">✖</button>
 
-                    <div class="flex items-center gap-4">
-                        <img :src="profileData.profile_picture" class="w-16 h-16 rounded-full border-2 shadow">
-                        <div>
-                            <h2 class="text-lg font-semibold text-gray-800" x-text="profileData.name"></h2>
-                            <span class="text-xs px-2 py-1 rounded text-white"
-                                :class="{
-                         'bg-blue-500': profileData.verification_status === 'fully_verified',
-                         'bg-green-500': profileData.verification_status === 'identity_verified',
-                         'bg-red-500': profileData.verification_status === 'not_verified'
-                     }"
-                                x-text="profileData.verification_text">
-                            </span>
-                        </div>
+        <div id="offerModal" x-show="open" x-cloak style="display: none;" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl p-4 max-w-md w-full relative transform transition-all scale-95 hover:scale-100 duration-200">
+
+                <button @click="open = false" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg">&times;</button>
+
+                <h2 class="text-lg font-bold text-gray-800 mb-3 text-center">Make an Offer</h2>
+
+                <form id="offerForm" action="submit-offer.php" method="POST" class="space-y-3">
+                    <input type="hidden" name="job_id" :value="selectedJob.id">
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Offer Amount (₱)</label>
+                        <input type="number" name="offerAmount" required min="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                     </div>
 
-                    <p class="text-gray-600 text-sm mt-2" x-text="profileData.about_me"></p>
-                    <p class="text-gray-500 text-xs flex items-center gap-1 mt-1">
-                        <i class="fas fa-map-marker-alt text-blue-500"></i> <span x-text="profileData.general_location"></span>
-                    </p>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Message to Job Poster</label>
+                        <textarea name="message" required class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 h-20 resize-none text-sm"></textarea>
+                    </div>
 
-                    <a :href="'userPublicProfile.php?user_id=' + profileData.id"
-                        class="block mt-4 text-blue-600 hover:underline text-sm font-semibold">
-                        View Full Profile →
-                    </a>
-                </div>
-            </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Estimated Completion Time</label>
+                        <input type="text" name="completionTime" required class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    </div>
 
-
-            <div x-show="enlargedImage" x-cloak
-                class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 backdrop-blur-md z-50"
-                @click.away="enlargedImage = null"
-                @keydown.escape.window="enlargedImage = null">
-
-                <div class="relative">
-
-                    <button @click="enlargedImage = null"
-                        class="absolute top-4 right-6 text-white text-4xl font-bold hover:text-gray-300 transition">
-                        &times;
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
+                        Submit Offer
                     </button>
-
-                    <img :src="enlargedImage" class="max-w-[90vw] max-h-[85vh] rounded-lg shadow-lg border-4 border-white">
-                </div>
-            </div>
-
-
-            <div id="offerModal" x-show="open" x-cloak style="display: none;" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 z-50 p-4">
-                <div class="bg-white rounded-2xl shadow-2xl p-4 max-w-md w-full relative transform transition-all scale-95 hover:scale-100 duration-200">
-
-                    <button @click="open = false" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg">&times;</button>
-
-                    <h2 class="text-lg font-bold text-gray-800 mb-3 text-center">Make an Offer</h2>
-
-                    <form id="offerForm" action="submit-offer.php" method="POST" class="space-y-3">
-                        <input type="hidden" name="job_id" :value="selectedJob.id">
-
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700">Offer Amount (₱)</label>
-                            <input type="number" name="offerAmount" required min="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700">Message to Job Poster</label>
-                            <textarea name="message" required class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 h-20 resize-none text-sm"></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700">Estimated Completion Time</label>
-                            <input type="text" name="completionTime" required class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                        </div>
-
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
-                            Submit Offer
-                        </button>
-                        <button type="button" @click="open = false" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
-                            Cancel
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-
-            <div id="confirmReplaceModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 z-50 p-4" style="display: none;">
-                <div class="bg-white rounded-2xl shadow-2xl p-4 max-w-md w-full text-center transform transition-all scale-95 hover:scale-100 duration-200">
-                    <h2 class="text-lg font-bold text-gray-800 mb-3">You Already Made an Offer for This Job</h2>
-                    <p class="text-sm mb-4">Would you like to replace your previous offer with this one?</p>
-                    <button onclick="replaceOffer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm mb-2">
-                        Yes, Replace Offer
+                    <button type="button" @click="open = false" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
+                        Cancel
                     </button>
-                    <button onclick="closeConfirmReplaceModal()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
-                        No, Keep Previous Offer
-                    </button>
-                </div>
+                </form>
             </div>
-
-            <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 z-50 p-4" style="display: none;">
-                <div class="bg-white rounded-2xl shadow-2xl p-4 max-w-md w-full text-center transform transition-all scale-95 hover:scale-100 duration-200">
-                    <h2 class="text-lg font-bold text-gray-800 mb-3">Offer Submitted Successfully!</h2>
-                    <button onclick="closeSuccessModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
-                        Close
-                    </button>
-                </div>
-            </div>
-
-
-            <div id="map-container" class="w-full lg:w-1/2 pt-0 lg:pt-3 pl-0 lg:pl-3 pb-0 transition-all duration-500 relative z-0">
-                <div id="map" class="h-[300px] lg:h-[550px] w-full shadow-lg border-2 border-gray-400 rounded-2xl sticky top-0"></div>
-            </div>
-
         </div>
+
+
+        <div id="confirmReplaceModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 z-50 p-4" style="display: none;">
+            <div class="bg-white rounded-2xl shadow-2xl p-4 max-w-md w-full text-center transform transition-all scale-95 hover:scale-100 duration-200">
+                <h2 class="text-lg font-bold text-gray-800 mb-3">You Already Made an Offer for This Job</h2>
+                <p class="text-sm mb-4">Would you like to replace your previous offer with this one?</p>
+                <button onclick="replaceOffer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm mb-2">
+                    Yes, Replace Offer
+                </button>
+                <button onclick="closeConfirmReplaceModal()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
+                    No, Keep Previous Offer
+                </button>
+            </div>
+        </div>
+
+        <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 z-50 p-4" style="display: none;">
+            <div class="bg-white rounded-2xl shadow-2xl p-4 max-w-md w-full text-center transform transition-all scale-95 hover:scale-100 duration-200">
+                <h2 class="text-lg font-bold text-gray-800 mb-3">Offer Submitted Successfully!</h2>
+                <button onclick="closeSuccessModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition-all duration-300 text-sm">
+                    Close
+                </button>
+            </div>
+        </div>
+
+
+        <div id="map-container" class="w-full lg:w-1/2 pt-0 lg:pt-3 pl-0 lg:pl-3 pb-0 transition-all duration-500 relative z-0">
+            <div id="map" class="h-[300px] lg:h-[550px] w-full shadow-lg border-2 border-gray-400 rounded-2xl sticky top-0"></div>
+        </div>
+
+</div>
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -1156,14 +1328,17 @@ $conn->close();
             function closeConfirmReplaceModal() {
                 document.getElementById("confirmReplaceModal").style.display = "none";
             }
-
-
+            
+            
             function formatBudget(budget) {
-                if (typeof budget === 'string' && budget.includes('-')) {
-                    return budget.split('-').map(num => parseInt(num.trim())).join(' - ');
-                }
-                return parseInt(budget).toLocaleString();
-            }
+    if (typeof budget === 'string' && budget.includes('-')) {
+        return budget.split('-').map(num => parseInt(num.trim())).join(' - ');
+    }
+    return parseInt(budget).toLocaleString();
+}
+
+
+            
         </script>
 
 
@@ -1287,37 +1462,35 @@ $conn->close();
             });
         </script>
 
-        <script>
-            function resetAnimation() {
-                const letters = document.querySelectorAll('.letter');
-                letters.forEach(letter => letter.classList.add('fadeOut'));
-                setTimeout(() => {
-                    letters.forEach(letter => {
-                        letter.classList.remove('fadeOut');
-                        letter.style.opacity = 0;
-                        void letter.offsetWidth;
-                        letter.style.animation = 'none';
-                        setTimeout(() => {
-                            letter.style.animation = '';
-                        }, 10);
-                    });
-                }, 800);
-            }
+    <script>
+        function resetAnimation() {
+            const letters = document.querySelectorAll('.letter');
+            letters.forEach(letter => letter.classList.add('fadeOut'));
+            setTimeout(() => {
+                letters.forEach(letter => {
+                    letter.classList.remove('fadeOut');
+                    letter.style.opacity = 0;
+                    void letter.offsetWidth;
+                    letter.style.animation = 'none';
+                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                });
+            }, 800);
+        }
 
-            // Adjust totalFadeInTime due to faster animation
-            const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
-            const displayTime = 1.2; // optional tweak
-            const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
-            setInterval(() => resetAnimation(), cycleTime);
+        // Adjust totalFadeInTime due to faster animation
+        const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
+        const displayTime = 1.2; // optional tweak
+        const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
+        setInterval(() => resetAnimation(), cycleTime);
 
-            // Show main content after loader
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    document.getElementById('loader-overlay').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                }, 2000); // Show loader for 3 seconds
-            });
-        </script>
+        // Show main content after loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 2000); // Show loader for 3 seconds
+        });
+    </script>
 
 
 
@@ -1337,26 +1510,26 @@ $conn->close();
         </script>
 
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                let savedJobId = localStorage.getItem('selectedJobId');
-                if (savedJobId) {
-                    let jobElement = document.querySelector(`[id='job-${savedJobId}']`);
-                    if (jobElement) {
-                        jobElement.click(); // Simulate a click to restore selection
-                    }
-                }
-            });
-        </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let savedJobId = localStorage.getItem('selectedJobId');
+    if (savedJobId) {
+        let jobElement = document.querySelector(`[id='job-${savedJobId}']`);
+        if (jobElement) {
+            jobElement.click(); // Simulate a click to restore selection
+        }
+    }
+});
+</script>
 
 
 
 
 
-    <?php } else { ?>
-        <?php include 'assesment.php'; ?>
-    <?php } ?>
-    </div>
+<?php } else { ?>
+    <?php include 'assesment.php'; ?>
+<?php } ?>
+</div>
 </body>
 
 </html>

@@ -1,9 +1,9 @@
 <?php
 // /config/db_connection.php
 $servername = "localhost";
- $username = "root"; 
- $password = ""; 
- $database = "quickfix_db"; 
+$username = "root";
+$password = "";
+$database = "quickfix_db";
 
 
 // Create a connection

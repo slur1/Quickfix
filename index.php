@@ -23,101 +23,153 @@ $categoryresult = $conn->query($query);
     html {
       scroll-behavior: smooth;
     }
+
     #loader-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .loader-container {
-            width: 30vw;
-            max-width: 200px;
-            height: 30vw;
-            max-height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .logo {
-            width: 90%;
-            height: 90%;
-            animation: heartbeat 1.5s infinite;
-            object-fit: contain;
-        }
-        .text-container {
-            height: 40px;
-            width: 100%;
-            text-align: center;
-        }
-        .letter {
-            display: inline-block;
-            font-size: 24px;
-            font-weight: bold;
-            color: #3498db;
-            opacity: 0;
-            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
-            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
-        }
-        .fadeOut { animation: fadeOut 0.7s forwards; }
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
 
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.2); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.2); }
-            70% { transform: scale(1); }
-        }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-10px); }
-        }
+    .loader-container {
+      width: 30vw;
+      max-width: 200px;
+      height: 30vw;
+      max-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-        @media (max-width: 480px) {
-            .loader-container { width: 80vw !important; height: auto; }
-            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
-            .letter { font-size: 28px; }
-        }
+    .logo {
+      width: 90%;
+      height: 90%;
+      animation: heartbeat 1.5s infinite;
+      object-fit: contain;
+    }
+
+    .text-container {
+      height: 40px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .letter {
+      display: inline-block;
+      font-size: 24px;
+      font-weight: bold;
+      color: #3498db;
+      opacity: 0;
+      animation: fadeIn 0.4s forwards;
+      /* Faster fadeIn */
+      animation-delay: calc(var(--index) * 0.15s);
+      /* Faster delay between letters */
+    }
+
+    .fadeOut {
+      animation: fadeOut 0.7s forwards;
+    }
+
+    @keyframes heartbeat {
+      0% {
+        transform: scale(1);
+      }
+
+      14% {
+        transform: scale(1.2);
+      }
+
+      28% {
+        transform: scale(1);
+      }
+
+      42% {
+        transform: scale(1.2);
+      }
+
+      70% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .loader-container {
+        width: 80vw !important;
+        height: auto;
+      }
+
+      .logo {
+        width: 70%;
+        height: 70%;
+        margin-bottom: 30px;
+      }
+
+      .letter {
+        font-size: 28px;
+      }
+    }
   </style>
 </head>
 
 <body class="bg-white min-h-screen">
-<?php include('loader.php'); ?>
+  <?php include('loader.php'); ?>
   <!-- Navigation -->
   <div id="main-content" style="display:none;">
-  <nav class="flex justify-between items-center p-4 bg-white shadow-md sticky top-0 z-50">
-    <!-- Logo Section -->
-    <a href="#" class="flex items-center space-x-2">
-      <img src="./img/logo1.png" alt="Company Logo" class="h-12 w-auto">
-      <span class="text-2xl font-bold text-blue-900">QuickFix</span>
-    </a>
-    <!-- Hamburger Button (visible on small screens) -->
-    <button id="nav-toggle" @click="mobileOpen = !mobileOpen" class="block lg:hidden p-2 text-gray-900 focus:outline-none">
-      <svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-        <title>Menu</title>
-        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-      </svg>
-    </button>
-    <!-- Full Menu -->
-    <div id="nav-content" x-data="{ mobileOpen: false, categoryOpen: false, userType: null }"
-      :class="{'hidden': !mobileOpen, 'flex': mobileOpen}"
-      class="lg:flex lg:items-center flex-col lg:flex-row lg:space-x-6 lg:space-y-0 absolute lg:relative top-full left-0 w-full lg:w-auto bg-white shadow-md lg:shadow-none lg:bg-transparent">
-      <!-- Links Section -->
-      <div class="flex flex-col lg:flex-row items-start lg:items-center lg:space-x-4">
-        <a href="#download" class="block lg:inline text-blue-600 hover:text-blue-800 font-medium py-2 px-4">Download</a>
-        <!--
+    <nav class="flex justify-between items-center p-4 bg-white shadow-md sticky top-0 z-50">
+      <!-- Logo Section -->
+      <a href="#" class="flex items-center space-x-2">
+        <img src="./img/logo1.png" alt="Company Logo" class="h-12 w-auto">
+        <span class="text-2xl font-bold text-blue-900">QuickFix</span>
+      </a>
+      <!-- Hamburger Button (visible on small screens) -->
+      <button id="nav-toggle" @click="mobileOpen = !mobileOpen" class="block lg:hidden p-2 text-gray-900 focus:outline-none">
+        <svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <title>Menu</title>
+          <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+        </svg>
+      </button>
+      <!-- Full Menu -->
+      <div id="nav-content" x-data="{ mobileOpen: false, categoryOpen: false, userType: null }"
+        :class="{'hidden': !mobileOpen, 'flex': mobileOpen}"
+        class="lg:flex lg:items-center flex-col lg:flex-row lg:space-x-6 lg:space-y-0 absolute lg:relative top-full left-0 w-full lg:w-auto bg-white shadow-md lg:shadow-none lg:bg-transparent">
+        <!-- Links Section -->
+        <div class="flex flex-col lg:flex-row items-start lg:items-center lg:space-x-4">
+          <a href="#download" class="block lg:inline text-blue-600 hover:text-blue-800 font-medium py-2 px-4">Download</a>
+          <!--
         <a href="./user/how_it_works.php" class="block lg:inline text-blue-600 hover:text-blue-800 font-medium py-2 px-4">How it Works</a>-->
-        <!-- Categories Dropdown -->
-        <!--
+          <!-- Categories Dropdown -->
+          <!--
         <div class="relative" @click.away="categoryOpen = false">
           <button @click="categoryOpen = !categoryOpen"
             class="flex items-center text-blue-600 hover:text-blue-800 font-medium py-2 px-4">
@@ -126,8 +178,8 @@ $categoryresult = $conn->query($query);
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
             </svg>
           </button>-->
-        <!-- Categories Menu -->
-        <!--
+          <!-- Categories Menu -->
+          <!--
         <div x-show="categoryOpen"
           x-transition:enter="transition ease-out duration-100"
           x-transition:enter-start="transform opacity-0 scale-95"
@@ -137,8 +189,8 @@ $categoryresult = $conn->query($query);
           x-transition:leave-end="transform opacity-0 scale-95"
           class="absolute left-0 mt-2 w-screen max-w-md bg-white rounded-md shadow-lg z-50">
   -->
-        <!-- User Type Selection -->
-        <!--
+          <!-- User Type Selection -->
+          <!--
         <div class="p-4 border-b">
           <div class="flex space-x-4">
             <button @click="userType = 'tasker'"
@@ -156,14 +208,14 @@ $categoryresult = $conn->query($query);
           </div>
         </div>
   -->
-        <!-- Categories Grid -->
-        <!--
+          <!-- Categories Grid -->
+          <!--
         <div class="max-h-96 overflow-y-auto p-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <template x-if="userType === 'tasker'">
   -->
-        <!-- Job Seeker Categories -->
-        <!--
+          <!-- Job Seeker Categories -->
+          <!--
         <div>
           <h3 class="font-semibold text-lg text-blue-900 mb-2">Home Cleaning</h3>
           <div class="grid grid-cols-1 gap-2">
@@ -197,8 +249,8 @@ $categoryresult = $conn->query($query);
         </template>
         <template x-if="userType === 'poster'">
             -->
-        <!-- Job Provider Categories -->
-        <!--
+          <!-- Job Provider Categories -->
+          <!--
         <div>
           <h3 class="font-semibold text-lg text-blue-900 mb-2">Home Cleaning Services</h3>
           <div class="grid grid-cols-1 gap-2">
@@ -237,111 +289,113 @@ $categoryresult = $conn->query($query);
     </div>
             -->
 
-        <!-- Buttons Section -->
-        <div class="flex justify-center space-x-4 py-4 lg:py-0">
-          <a href="./user/userLogin.php"><button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Sign In</button></a>
-          <a href="./job-seeker/become-a-job-seeker.php"><button class="px-4 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900">Join Us</button></a>
-        </div>
-      </div>
-  </nav>
-
-  <!-- Hero Section -->
-  <div class="relative overflow-hidden">
-
-
-    <!-- Main content -->
-    <!-- Main content container -->
-    <div class="container mx-auto px-4 py-12 relative z-10">
-      <!-- Fancy Decorations: Left -->
-      <div class="absolute top-0 left-0 w-48 h-48 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10"></div>
-      <div class="absolute bottom-0 left-0 w-32 h-32 bg-blue-400 rounded-full blur-2xl opacity-30 -z-10"></div>
-
-      <!-- Fancy Decorations: Right -->
-      <div class="absolute top-10 right-0 w-40 h-40 bg-blue-300 rounded-full blur-3xl opacity-50 -z-10"></div>
-      <div class="absolute bottom-10 right-0 w-28 h-28 bg-blue-500 rounded-full blur-2xl opacity-30 -z-10"></div>
-    </div>
-
-
-    <!-- Heading -->
-    <div class="text-center mb-12">
-      <h1 class="text-5xl font-bold text-blue-800 mb-2">Find trusted help</h1>
-      <h1 class="text-5xl font-bold text-blue-800">for home tasks</h1>
-    </div>
-
-    <!-- Search bar -->
-    <div class="max-w-3xl mx-auto mb-16 relative">
-      <input type="text" placeholder="What do you need help with?" class="w-full px-6 py-4 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <button class="absolute right-0 top-0 h-full bg-blue-700 text-white px-6 rounded-r-full hover:bg-blue-800 transition">
-        <i class="fas fa-search"></i>
-      </button>
-    </div>
-
-    <!-- Service categories -->
-    <div class="flex flex-col items-center max-w-5xl mx-auto mb-8">
-      <div class="flex justify-center gap-8">
-        <!-- Cleaning -->
-        <div class="flex flex-col items-center cursor-pointer relative pb-2 w-20 service-category" data-category="cleaning">
-          <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-300 ease-in-out bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-800">
-            <i class="fas fa-broom"></i>
+          <!-- Buttons Section -->
+          <div class="flex justify-center space-x-4 py-4 lg:py-0">
+            <a href="./user/userLogin.php"><button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Sign In</button></a>
+            <a href="./job-seeker/become-a-job-seeker.php"><button class="px-4 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900">Join Us</button></a>
           </div>
-          <div class="text-center mt-2 text-gray-600 hover:text-blue-800">Cleaning</div>
-          <div class="absolute bottom-0 w-0 h-0.5 bg-blue-800 transition-all duration-300 ease-in-out highlight"></div>
         </div>
+    </nav>
 
-        <!-- Repair -->
-        <div class="flex flex-col items-center cursor-pointer relative pb-2 w-20 service-category" data-category="repair">
-          <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 ease-in-out bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-800">
-            <i class="fas fa-tools"></i>
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden">
+
+
+      <!-- Main content -->
+      <div class="container mx-auto px-4 py-12 relative z-10">
+        <!-- Fancy Decorations: Left -->
+        <div class="absolute top-0 left-0 w-48 h-48 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10"></div>
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-blue-400 rounded-full blur-2xl opacity-30 -z-10"></div>
+
+        <!-- Fancy Decorations: Right -->
+        <div class="absolute top-10 right-0 w-40 h-40 bg-blue-300 rounded-full blur-3xl opacity-50 -z-10"></div>
+        <div class="absolute bottom-10 right-0 w-28 h-28 bg-blue-500 rounded-full blur-2xl opacity-30 -z-10"></div>
+      </div>
+
+
+      <!-- Heading -->
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-blue-800 mb-2">Find trusted help</h1>
+        <h1 class="text-5xl font-bold text-blue-800">for home tasks</h1>
+      </div>
+
+      <!-- Search bar -->
+      <div class="max-w-3xl mx-auto mb-16 relative">
+        <input type="text" placeholder="What do you need help with?" class="w-full px-6 py-4 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button class="absolute right-0 top-0 h-full bg-blue-700 text-white px-6 rounded-r-full hover:bg-blue-800 transition">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+
+      <!-- Service categories -->
+      <div class="flex flex-col items-center max-w-5xl mx-auto mb-8">
+        <div class="flex justify-center gap-8">
+          <!-- Cleaning -->
+          <div class="flex flex-col items-center cursor-pointer relative pb-2 w-20 service-category" data-category="cleaning">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-300 ease-in-out bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-800">
+              <i class="fas fa-broom"></i>
+            </div>
+            <div class="text-center mt-2 text-gray-600 hover:text-blue-800">Cleaning</div>
+            <div class="absolute bottom-0 w-0 h-0.5 bg-blue-800 transition-all duration-300 ease-in-out highlight"></div>
           </div>
-          <div class="text-center mt-2 text-gray-600 hover:text-blue-800">Repair</div>
-          <div class="absolute bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 ease-in-out highlight"></div>
+
+          <!-- Repair -->
+          <div class="flex flex-col items-center cursor-pointer relative pb-2 w-20 service-category" data-category="repair">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 ease-in-out bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-800">
+              <i class="fas fa-tools"></i>
+            </div>
+            <div class="text-center mt-2 text-gray-600 hover:text-blue-800">Repair</div>
+            <div class="absolute bottom-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 ease-in-out highlight"></div>
+          </div>
+        </div>
+
+        <!-- Cleaning Subcategories -->
+        <div id="cleaning-subcategories" class="hidden mt-4 flex-wrap justify-center gap-3">
+          <a href="laundry.php" class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300 inline-block text-center">
+            Laundry
+          </a>
+
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Upholstery Cleaning</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Regular Cleaning</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Deep Cleaning</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Carpet Cleaning</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Aircon Cleaning</button>
+        </div>
+
+        <!-- Repair Subcategories -->
+        <div id="repair-subcategories" class="hidden mt-4 flex-wrap justify-center gap-3">
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Electrical Repair</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Lighting Repair</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Wiring Repair</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Appliance Repair</button>
+          <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Furniture Repair</button>
         </div>
       </div>
 
-      <!-- Cleaning Subcategories -->
-      <div id="cleaning-subcategories" class="hidden mt-4 flex-wrap justify-center gap-3">
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Laundry</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Upholstery Cleaning</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Regular Cleaning</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Deep Cleaning</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Carpet Cleaning</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Aircon Cleaning</button>
+
+      <!-- Image display area -->
+      <div class="max-w-6xl mx-auto mt-12 mb-8">
+        <div id="category-image" class="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+          <img src="./img/cleaning-service.svg"
+            alt="IMG"
+            class="w-full h-full object-cover transition-opacity duration-300 ease-in-out">
+        </div>
       </div>
 
-      <!-- Repair Subcategories -->
-      <div id="repair-subcategories" class="hidden mt-4 flex-wrap justify-center gap-3">
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Electrical Repair</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Lighting Repair</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Wiring Repair</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Appliance Repair</button>
-        <button class="px-4 py-2 bg-white rounded-full text-black hover:bg-blue-800 hover:text-white border border-gray-300">Furniture Repair</button>
-      </div>
     </div>
-
-
-    <!-- Image display area -->
-    <div class="max-w-6xl mx-auto mt-12 mb-8">
-      <div id="category-image" class="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-        <img src="./img/cleaning-service.svg"
-          alt="IMG"
-          class="w-full h-full object-cover transition-opacity duration-300 ease-in-out">
-      </div>
-    </div>
-
-  </div>
   </div>
 
 
 
   <!-- Post Your First Job Section -->
-  <section class="py-20 px-4 relative">
+  <section class="py-20 px-4 relative overflow-hidden max-w-screen-xl mx-auto">
     <!-- Fancy Decorations: Left -->
-    <div class="absolute -top-12 -left-10 w-36 h-36 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10"></div>
-    <div class="absolute top-1/3 -left-16 w-28 h-28 bg-blue-400 rounded-full blur-2xl opacity-30 -z-10"></div>
+    <div class="absolute -top-10 left-0 lg:-left-10 w-36 h-36 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10 lg:block hidden"></div>
+    <div class="absolute top-1/3 left-4 lg:-left-16 w-28 h-28 bg-blue-400 rounded-full blur-2xl opacity-30 -z-10 lg:block hidden"></div>
 
     <!-- Fancy Decorations: Right -->
-    <div class="absolute -top-16 -right-8 w-32 h-32 bg-blue-300 rounded-full blur-3xl opacity-50 -z-10"></div>
-    <div class="absolute bottom-5 -right-14 w-40 h-40 bg-blue-500 rounded-full blur-2xl opacity-30 -z-10"></div>
+    <div class="absolute -top-16 right-0 lg:-right-8 w-32 h-32 bg-blue-300 rounded-full blur-3xl opacity-50 -z-10 lg:block hidden"></div>
+    <div class="absolute bottom-5 right-4 lg:-right-14 w-40 h-40 bg-blue-500 rounded-full blur-2xl opacity-30 -z-10 lg:block hidden"></div>
 
     <div class="max-w-4xl mx-auto text-center relative">
       <h2 class="text-4xl font-bold text-blue-900 mb-8">Post your first Job in seconds</h2>
@@ -366,68 +420,38 @@ $categoryresult = $conn->query($query);
   </section>
 
 
+
   <!-- Popular Jobs Section -->
-  <section class="bg-gray-50 py-20 px-4 relative">
-    <!-- Fancy Decorations: Left -->
-    <div class="absolute top-5 -left-10 w-36 h-36 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10"></div>
-    <div class="absolute bottom-10 -left-16 w-28 h-28 bg-blue-400 rounded-full blur-2xl opacity-30 -z-10"></div>
+  <!--
+<section class="bg-gray-50 py-20 px-4 relative overflow-hidden max-w-screen-xl mx-auto">
 
-    <!-- Fancy Decorations: Right -->
-    <div class="absolute top-16 -right-8 w-32 h-32 bg-blue-300 rounded-full blur-3xl opacity-50 -z-10"></div>
-    <div class="absolute bottom-5 -right-14 w-40 h-40 bg-blue-500 rounded-full blur-2xl opacity-30 -z-10"></div>
+  <div class="absolute top-5 left-0 lg:-left-10 w-36 h-36 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10 lg:block hidden"></div>
+  <div class="absolute bottom-10 left-4 lg:-left-16 w-28 h-28 bg-blue-400 rounded-full blur-2xl opacity-30 -z-10 lg:block hidden"></div>
 
-    <div class="max-w-6xl mx-auto relative">
-      <h2 class="text-4xl font-bold mb-12 text-blue-900 text-center">Popular Jobs</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <!-- Job 1 -->
-        <?php while ($row = $categoryresult->fetch_assoc()) { ?>
-          <a href="categories.php?category_id=<?= $row['id'] ?>">
-            <div class="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
-              <img src="./img/laundry.svg" alt="Cleaning" class="w-full h-48 object-cover">
-              <div class="p-4">
-                <h3 class="font-semibold text-lg mb-2"><?= $row['name'] ?></h3>
-              </div>
+
+  <div class="absolute top-16 right-0 lg:-right-8 w-32 h-32 bg-blue-300 rounded-full blur-3xl opacity-50 -z-10 lg:block hidden"></div>
+  <div class="absolute bottom-5 right-4 lg:-right-14 w-40 h-40 bg-blue-500 rounded-full blur-2xl opacity-30 -z-10 lg:block hidden"></div>
+
+  <div class="max-w-6xl mx-auto relative">
+    <h2 class="text-4xl font-bold mb-12 text-blue-900 text-center">Popular Jobs</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+      <?php while ($row = $categoryresult->fetch_assoc()) { ?>
+        <a href="categories.php?category_id=<?= $row['id'] ?>">
+          <div class="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
+            <img src="./img/laundry.svg" alt="Cleaning" class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h3 class="font-semibold text-lg mb-2"><?= $row['name'] ?></h3>
             </div>
-          </a>
-        <?php } ?>
-      </div>
+          </div>
+        </a>
+      <?php } ?>
     </div>
-  </section>
+  </div>
+</section>
+-->
 
-  <!-- Trust and Safety Section -->
-  <section class="bg-blue-50 py-20 px-4 relative">
-    <!-- Fancy Decorations: Left -->
-    <div class="absolute -top-16 -left-10 w-32 h-32 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10"></div>
-    <div class="absolute bottom-1/3 -left-14 w-28 h-28 bg-blue-400 rounded-full blur-2xl opacity-30 -z-10"></div>
 
-    <!-- Fancy Decorations: Right -->
-    <div class="absolute top-12 -right-8 w-40 h-40 bg-blue-300 rounded-full blur-3xl opacity-50 -z-10"></div>
-    <div class="absolute bottom-12 -right-16 w-36 h-36 bg-blue-500 rounded-full blur-2xl opacity-30 -z-10"></div>
-
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center relative">
-      <div class="md:w-1/2 mb-10 md:mb-0">
-        <h2 class="text-4xl font-bold text-blue-900 mb-6">Trust and safety features for your protection</h2>
-        <ul class="space-y-4">
-          <li class="flex items-center">
-            <div class="w-8 h-8 bg-blue-100 rounded-full mr-4"></div>
-            <span>Secure payments platform</span>
-          </li>
-          <li class="flex items-center">
-            <div class="w-8 h-8 bg-blue-100 rounded-full mr-4"></div>
-            <span>Customer support team</span>
-          </li>
-          <li class="flex items-center">
-            <div class="w-8 h-8 bg-blue-100 rounded-full mr-4"></div>
-            <span>Information privacy controls</span>
-          </li>
-        </ul>
-        <button class="mt-8 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">Learn more</button>
-      </div>
-      <div class="md:w-1/2">
-        <img src="./img/secured.svg" alt="Trust and safety" class="rounded-lg w-full">
-      </div>
-    </div>
-  </section>
 
   </div>
 
@@ -527,6 +551,7 @@ $categoryresult = $conn->query($query);
   </section>
 
   <!-- Be Your Own Boss Section -->
+  <!--
   <section class="bg-blue-50 text-white py-20 px-4">
     <div class="max-w-5xl mx-auto text-center">
       <h2 class="text-4xl font-bold text-blue-900 mb-6">Be Your Own Boss</h2>
@@ -553,6 +578,7 @@ $categoryresult = $conn->query($query);
       </div>
     </div>
   </section>
+  -->
 
 
 
@@ -772,35 +798,37 @@ $categoryresult = $conn->query($query);
     });
   </script>
 
-    <script>
-        function resetAnimation() {
-            const letters = document.querySelectorAll('.letter');
-            letters.forEach(letter => letter.classList.add('fadeOut'));
-            setTimeout(() => {
-                letters.forEach(letter => {
-                    letter.classList.remove('fadeOut');
-                    letter.style.opacity = 0;
-                    void letter.offsetWidth;
-                    letter.style.animation = 'none';
-                    setTimeout(() => { letter.style.animation = ''; }, 10);
-                });
-            }, 800);
-        }
-
-        // Adjust totalFadeInTime due to faster animation
-        const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
-        const displayTime = 1.2; // optional tweak
-        const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
-        setInterval(() => resetAnimation(), cycleTime);
-
-        // Show main content after loader
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader-overlay').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-            }, 2000); // Show loader for 3 seconds
+  <script>
+    function resetAnimation() {
+      const letters = document.querySelectorAll('.letter');
+      letters.forEach(letter => letter.classList.add('fadeOut'));
+      setTimeout(() => {
+        letters.forEach(letter => {
+          letter.classList.remove('fadeOut');
+          letter.style.opacity = 0;
+          void letter.offsetWidth;
+          letter.style.animation = 'none';
+          setTimeout(() => {
+            letter.style.animation = '';
+          }, 10);
         });
-    </script>
+      }, 800);
+    }
+
+    // Adjust totalFadeInTime due to faster animation
+    const totalFadeInTime = 0.15 * 8 + 0.4; // = 1.6s approx
+    const displayTime = 1.2; // optional tweak
+    const cycleTime = (totalFadeInTime + displayTime + 0.8) * 1000; // ~3.6s
+    setInterval(() => resetAnimation(), cycleTime);
+
+    // Show main content after loader
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader-overlay').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+      }, 2000); // Show loader for 3 seconds
+    });
+  </script>
 
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 

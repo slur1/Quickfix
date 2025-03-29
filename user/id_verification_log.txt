@@ -68204,3 +68204,2010 @@ error was encountered while trying to use an ErrorDocument to handle the request
     "executionTime": 0.878635509
 }
 2025-03-24 12:12:37 - Decision: reject - Status: rejected
+2025-03-28 22:15:27 - Response: {
+    "success": true,
+    "transactionId": "a36ab724e2cf416993cfc6a9414161f8",
+    "data": {
+        "address1": [
+            {
+                "value": "BLK31 LOT31 CELINA HOMES II DEPARO, BARANGAY 168",
+                "confidence": 0.975,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        314,
+                        397
+                    ],
+                    [
+                        363,
+                        396
+                    ],
+                    [
+                        378,
+                        1478
+                    ],
+                    [
+                        329,
+                        1479
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        293,
+                        896
+                    ],
+                    [
+                        292,
+                        860
+                    ],
+                    [
+                        1088,
+                        855
+                    ],
+                    [
+                        1089,
+                        891
+                    ]
+                ]
+            }
+        ],
+        "address2": [
+            {
+                "value": "CITY OF CALOOCAN, NCR. THIRD DISTRICT",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        264,
+                        399
+                    ],
+                    [
+                        315,
+                        398
+                    ],
+                    [
+                        326,
+                        1230
+                    ],
+                    [
+                        275,
+                        1231
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        294,
+                        933
+                    ],
+                    [
+                        294,
+                        895
+                    ],
+                    [
+                        905,
+                        892
+                    ],
+                    [
+                        906,
+                        929
+                    ]
+                ]
+            }
+        ],
+        "age": [
+            {
+                "value": "23",
+                "confidence": 0.987,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        431,
+                        1041
+                    ],
+                    [
+                        431,
+                        1589
+                    ],
+                    [
+                        482,
+                        1589
+                    ],
+                    [
+                        482,
+                        1041
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        767,
+                        776
+                    ],
+                    [
+                        767,
+                        814
+                    ],
+                    [
+                        1170,
+                        817
+                    ],
+                    [
+                        1170,
+                        779
+                    ]
+                ]
+            }
+        ],
+        "backSideId": [
+            {
+                "value": "2446",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "countryFull": [
+            {
+                "value": "Philippines",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "countryIso2": [
+            {
+                "value": "PH",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "countryIso3": [
+            {
+                "value": "PHL",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "dob": [
+            {
+                "value": "2001-09-21",
+                "confidence": 0.987,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        431,
+                        1041
+                    ],
+                    [
+                        431,
+                        1589
+                    ],
+                    [
+                        482,
+                        1589
+                    ],
+                    [
+                        482,
+                        1041
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        767,
+                        776
+                    ],
+                    [
+                        767,
+                        814
+                    ],
+                    [
+                        1170,
+                        817
+                    ],
+                    [
+                        1170,
+                        779
+                    ]
+                ]
+            }
+        ],
+        "dobDay": [
+            {
+                "value": "21",
+                "confidence": 0.987,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        432,
+                        1392
+                    ],
+                    [
+                        481,
+                        1392
+                    ],
+                    [
+                        481,
+                        1467
+                    ],
+                    [
+                        432,
+                        1467
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        1025,
+                        815
+                    ],
+                    [
+                        1025,
+                        779
+                    ],
+                    [
+                        1081,
+                        779
+                    ],
+                    [
+                        1080,
+                        815
+                    ]
+                ]
+            }
+        ],
+        "dobMonth": [
+            {
+                "value": "9",
+                "confidence": 0.994,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        431,
+                        1041
+                    ],
+                    [
+                        482,
+                        1041
+                    ],
+                    [
+                        482,
+                        1359
+                    ],
+                    [
+                        431,
+                        1359
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        767,
+                        814
+                    ],
+                    [
+                        767,
+                        776
+                    ],
+                    [
+                        1001,
+                        778
+                    ],
+                    [
+                        1001,
+                        816
+                    ]
+                ]
+            }
+        ],
+        "dobYear": [
+            {
+                "value": "2001",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        432,
+                        1476
+                    ],
+                    [
+                        481,
+                        1476
+                    ],
+                    [
+                        481,
+                        1589
+                    ],
+                    [
+                        432,
+                        1589
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        1087,
+                        815
+                    ],
+                    [
+                        1087,
+                        779
+                    ],
+                    [
+                        1170,
+                        780
+                    ],
+                    [
+                        1170,
+                        816
+                    ]
+                ]
+            }
+        ],
+        "document": [
+            {
+                "value": "",
+                "confidence": 0.8879133462905884,
+                "index": 0,
+                "inputBox": [
+                    [
+                        1230,
+                        273
+                    ],
+                    [
+                        215,
+                        273
+                    ],
+                    [
+                        215,
+                        1938
+                    ],
+                    [
+                        1230,
+                        1938
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        207,
+                        222
+                    ],
+                    [
+                        201,
+                        968
+                    ],
+                    [
+                        1425,
+                        978
+                    ],
+                    [
+                        1431,
+                        231
+                    ]
+                ]
+            }
+        ],
+        "documentName": [
+            {
+                "value": "National ID",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "documentNumber": [
+            {
+                "value": "3420-4519-6502-3189",
+                "confidence": 0.974,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        920,
+                        922
+                    ],
+                    [
+                        927,
+                        402
+                    ],
+                    [
+                        976,
+                        403
+                    ],
+                    [
+                        969,
+                        923
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        682,
+                        453
+                    ],
+                    [
+                        300,
+                        445
+                    ],
+                    [
+                        301,
+                        409
+                    ],
+                    [
+                        683,
+                        417
+                    ]
+                ]
+            }
+        ],
+        "documentSide": [
+            {
+                "value": "FRONT",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "documentType": [
+            {
+                "value": "I",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "face": [
+            {
+                "value": "",
+                "confidence": 1,
+                "index": 0,
+                "inputBox": [
+                    [
+                        879,
+                        377
+                    ],
+                    [
+                        882,
+                        771
+                    ],
+                    [
+                        487,
+                        774
+                    ],
+                    [
+                        484,
+                        380
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        281,
+                        481
+                    ],
+                    [
+                        571,
+                        481
+                    ],
+                    [
+                        571,
+                        771
+                    ],
+                    [
+                        281,
+                        771
+                    ]
+                ]
+            }
+        ],
+        "firstName": [
+            {
+                "value": "JERICO",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        700,
+                        1211
+                    ],
+                    [
+                        700,
+                        1037
+                    ],
+                    [
+                        749,
+                        1037
+                    ],
+                    [
+                        749,
+                        1211
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        894,
+                        617
+                    ],
+                    [
+                        766,
+                        616
+                    ],
+                    [
+                        766,
+                        580
+                    ],
+                    [
+                        894,
+                        581
+                    ]
+                ]
+            }
+        ],
+        "fullName": [
+            {
+                "value": "JERICO GENCIANA",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        700,
+                        1030
+                    ],
+                    [
+                        700,
+                        1296
+                    ],
+                    [
+                        863,
+                        1296
+                    ],
+                    [
+                        863,
+                        1030
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        760,
+                        616
+                    ],
+                    [
+                        956,
+                        617
+                    ],
+                    [
+                        957,
+                        498
+                    ],
+                    [
+                        761,
+                        496
+                    ]
+                ]
+            }
+        ],
+        "internalId": [
+            {
+                "value": "1807",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "lastName": [
+            {
+                "value": "GENCIANA",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        818,
+                        1030
+                    ],
+                    [
+                        863,
+                        1030
+                    ],
+                    [
+                        863,
+                        1296
+                    ],
+                    [
+                        818,
+                        1296
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        761,
+                        529
+                    ],
+                    [
+                        761,
+                        496
+                    ],
+                    [
+                        957,
+                        498
+                    ],
+                    [
+                        957,
+                        531
+                    ]
+                ]
+            }
+        ],
+        "nationalityFull": [
+            {
+                "value": "Philippines",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "nationalityIso2": [
+            {
+                "value": "PH",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "nationalityIso3": [
+            {
+                "value": "PHL",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "reverseId": [
+            {
+                "value": "2446",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ]
+    },
+    "outputImage": {
+        "front": "http://api2-us2.idanalyzer.com/image/a36ab724e2cf416993cfc6a9414161f8/e1c49e494e338188f96f4d2bc4c1727290ef6da3b52d77b8f5d8d665fcc2a6f9/front.jpg",
+        "face": "http://api2-us2.idanalyzer.com/image/a36ab724e2cf416993cfc6a9414161f8/e1c49e494e338188f96f4d2bc4c1727290ef6da3b52d77b8f5d8d665fcc2a6f9/face.jpg"
+    },
+    "missingFields": [
+        "middleName",
+        "placeOfBirth",
+        "optionalData"
+    ],
+    "profileId": "e574604c2952418bb47c199d776cbcb4",
+    "reviewScore": 0,
+    "rejectScore": 0,
+    "decision": "accept",
+    "quota": 5,
+    "credit": 22,
+    "executionTime": 2.5190096889999998
+}
+2025-03-28 22:15:27 - Decision: accept - Status: approved
+2025-03-28 22:17:15 - Response: {
+    "success": true,
+    "transactionId": "0969ca6e3168497baa0b26cfe4d5cc64",
+    "data": {
+        "barcode": [
+            {
+                "value": "https://www.youtube.com/watch?v=vRXZj0DzXIA",
+                "confidence": 1,
+                "index": 0,
+                "inputBox": [
+                    [
+                        543,
+                        258
+                    ],
+                    [
+                        655,
+                        258
+                    ],
+                    [
+                        655,
+                        370
+                    ],
+                    [
+                        543,
+                        370
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        543,
+                        257
+                    ],
+                    [
+                        655,
+                        257
+                    ],
+                    [
+                        655,
+                        369
+                    ],
+                    [
+                        543,
+                        369
+                    ]
+                ]
+            },
+            {
+                "value": "",
+                "confidence": 0.9112873673439026,
+                "index": 0,
+                "inputBox": [
+                    [
+                        537,
+                        254
+                    ],
+                    [
+                        661,
+                        254
+                    ],
+                    [
+                        661,
+                        371
+                    ],
+                    [
+                        537,
+                        371
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        537,
+                        253
+                    ],
+                    [
+                        661,
+                        253
+                    ],
+                    [
+                        661,
+                        370
+                    ],
+                    [
+                        537,
+                        370
+                    ]
+                ]
+            }
+        ],
+        "document": [
+            {
+                "value": "",
+                "confidence": 0.7851618528366089,
+                "index": 0,
+                "inputBox": [
+                    [
+                        9,
+                        4
+                    ],
+                    [
+                        671,
+                        4
+                    ],
+                    [
+                        671,
+                        427
+                    ],
+                    [
+                        9,
+                        427
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        8,
+                        4
+                    ],
+                    [
+                        670,
+                        3
+                    ],
+                    [
+                        671,
+                        426
+                    ],
+                    [
+                        9,
+                        427
+                    ]
+                ]
+            }
+        ],
+        "face": [
+            {
+                "value": "",
+                "confidence": 1,
+                "index": 0,
+                "inputBox": [
+                    [
+                        82,
+                        224
+                    ],
+                    [
+                        139,
+                        224
+                    ],
+                    [
+                        139,
+                        304
+                    ],
+                    [
+                        82,
+                        304
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        82,
+                        224
+                    ],
+                    [
+                        139,
+                        224
+                    ],
+                    [
+                        139,
+                        304
+                    ],
+                    [
+                        82,
+                        304
+                    ]
+                ]
+            }
+        ]
+    },
+    "outputImage": {
+        "front": "http://api2-us2.idanalyzer.com/image/0969ca6e3168497baa0b26cfe4d5cc64/2b9cde9762bbaba1c8abb273455f755491a13e93c48f05d0a38cb36e64eb7a95/front.jpg",
+        "face": "http://api2-us2.idanalyzer.com/image/0969ca6e3168497baa0b26cfe4d5cc64/2b9cde9762bbaba1c8abb273455f755491a13e93c48f05d0a38cb36e64eb7a95/face.jpg"
+    },
+    "warning": [
+        {
+            "code": "UNRECOGNIZED_DOCUMENT",
+            "description": "Document not recognized.",
+            "severity": "high",
+            "confidence": 1,
+            "decision": "reject"
+        }
+    ],
+    "profileId": "e574604c2952418bb47c199d776cbcb4",
+    "reviewScore": 0,
+    "rejectScore": 1,
+    "decision": "reject",
+    "quota": 5,
+    "credit": 21,
+    "executionTime": 1.028830001
+}
+2025-03-28 22:17:15 - Decision: reject - Status: rejected
+2025-03-28 22:20:38 - Response: {
+    "success": true,
+    "transactionId": "03dba208195f4ed3a4453f3d52a545ad",
+    "data": {
+        "address1": [
+            {
+                "value": "BLK31 LOT31 CELINA HOMES II DEPARO, BARANGAY 168",
+                "confidence": 0.975,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        314,
+                        397
+                    ],
+                    [
+                        363,
+                        396
+                    ],
+                    [
+                        378,
+                        1478
+                    ],
+                    [
+                        329,
+                        1479
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        293,
+                        896
+                    ],
+                    [
+                        292,
+                        860
+                    ],
+                    [
+                        1088,
+                        855
+                    ],
+                    [
+                        1089,
+                        891
+                    ]
+                ]
+            }
+        ],
+        "address2": [
+            {
+                "value": "CITY OF CALOOCAN, NCR. THIRD DISTRICT",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        264,
+                        399
+                    ],
+                    [
+                        315,
+                        398
+                    ],
+                    [
+                        326,
+                        1230
+                    ],
+                    [
+                        275,
+                        1231
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        294,
+                        933
+                    ],
+                    [
+                        294,
+                        895
+                    ],
+                    [
+                        905,
+                        892
+                    ],
+                    [
+                        906,
+                        929
+                    ]
+                ]
+            }
+        ],
+        "age": [
+            {
+                "value": "23",
+                "confidence": 0.987,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        431,
+                        1041
+                    ],
+                    [
+                        431,
+                        1589
+                    ],
+                    [
+                        482,
+                        1589
+                    ],
+                    [
+                        482,
+                        1041
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        767,
+                        776
+                    ],
+                    [
+                        767,
+                        814
+                    ],
+                    [
+                        1170,
+                        817
+                    ],
+                    [
+                        1170,
+                        779
+                    ]
+                ]
+            }
+        ],
+        "backSideId": [
+            {
+                "value": "2446",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "countryFull": [
+            {
+                "value": "Philippines",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "countryIso2": [
+            {
+                "value": "PH",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "countryIso3": [
+            {
+                "value": "PHL",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "dob": [
+            {
+                "value": "2001-09-21",
+                "confidence": 0.987,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        431,
+                        1041
+                    ],
+                    [
+                        431,
+                        1589
+                    ],
+                    [
+                        482,
+                        1589
+                    ],
+                    [
+                        482,
+                        1041
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        767,
+                        776
+                    ],
+                    [
+                        767,
+                        814
+                    ],
+                    [
+                        1170,
+                        817
+                    ],
+                    [
+                        1170,
+                        779
+                    ]
+                ]
+            }
+        ],
+        "dobDay": [
+            {
+                "value": "21",
+                "confidence": 0.987,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        432,
+                        1392
+                    ],
+                    [
+                        481,
+                        1392
+                    ],
+                    [
+                        481,
+                        1467
+                    ],
+                    [
+                        432,
+                        1467
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        1025,
+                        815
+                    ],
+                    [
+                        1025,
+                        779
+                    ],
+                    [
+                        1081,
+                        779
+                    ],
+                    [
+                        1080,
+                        815
+                    ]
+                ]
+            }
+        ],
+        "dobMonth": [
+            {
+                "value": "9",
+                "confidence": 0.994,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        431,
+                        1041
+                    ],
+                    [
+                        482,
+                        1041
+                    ],
+                    [
+                        482,
+                        1359
+                    ],
+                    [
+                        431,
+                        1359
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        767,
+                        814
+                    ],
+                    [
+                        767,
+                        776
+                    ],
+                    [
+                        1001,
+                        778
+                    ],
+                    [
+                        1001,
+                        816
+                    ]
+                ]
+            }
+        ],
+        "dobYear": [
+            {
+                "value": "2001",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        432,
+                        1476
+                    ],
+                    [
+                        481,
+                        1476
+                    ],
+                    [
+                        481,
+                        1589
+                    ],
+                    [
+                        432,
+                        1589
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        1087,
+                        815
+                    ],
+                    [
+                        1087,
+                        779
+                    ],
+                    [
+                        1170,
+                        780
+                    ],
+                    [
+                        1170,
+                        816
+                    ]
+                ]
+            }
+        ],
+        "document": [
+            {
+                "value": "",
+                "confidence": 0.8879133462905884,
+                "index": 0,
+                "inputBox": [
+                    [
+                        1230,
+                        273
+                    ],
+                    [
+                        215,
+                        273
+                    ],
+                    [
+                        215,
+                        1938
+                    ],
+                    [
+                        1230,
+                        1938
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        207,
+                        222
+                    ],
+                    [
+                        201,
+                        968
+                    ],
+                    [
+                        1425,
+                        978
+                    ],
+                    [
+                        1431,
+                        231
+                    ]
+                ]
+            }
+        ],
+        "documentName": [
+            {
+                "value": "National ID",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "documentNumber": [
+            {
+                "value": "3420-4519-6502-3189",
+                "confidence": 0.974,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        920,
+                        922
+                    ],
+                    [
+                        927,
+                        402
+                    ],
+                    [
+                        976,
+                        403
+                    ],
+                    [
+                        969,
+                        923
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        682,
+                        453
+                    ],
+                    [
+                        300,
+                        445
+                    ],
+                    [
+                        301,
+                        409
+                    ],
+                    [
+                        683,
+                        417
+                    ]
+                ]
+            }
+        ],
+        "documentSide": [
+            {
+                "value": "FRONT",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "documentType": [
+            {
+                "value": "I",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "face": [
+            {
+                "value": "",
+                "confidence": 1,
+                "index": 0,
+                "inputBox": [
+                    [
+                        879,
+                        377
+                    ],
+                    [
+                        882,
+                        771
+                    ],
+                    [
+                        487,
+                        774
+                    ],
+                    [
+                        484,
+                        380
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        281,
+                        481
+                    ],
+                    [
+                        571,
+                        481
+                    ],
+                    [
+                        571,
+                        771
+                    ],
+                    [
+                        281,
+                        771
+                    ]
+                ]
+            }
+        ],
+        "firstName": [
+            {
+                "value": "JERICO",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        700,
+                        1211
+                    ],
+                    [
+                        700,
+                        1037
+                    ],
+                    [
+                        749,
+                        1037
+                    ],
+                    [
+                        749,
+                        1211
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        894,
+                        617
+                    ],
+                    [
+                        766,
+                        616
+                    ],
+                    [
+                        766,
+                        580
+                    ],
+                    [
+                        894,
+                        581
+                    ]
+                ]
+            }
+        ],
+        "fullName": [
+            {
+                "value": "JERICO GENCIANA",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        700,
+                        1030
+                    ],
+                    [
+                        700,
+                        1296
+                    ],
+                    [
+                        863,
+                        1296
+                    ],
+                    [
+                        863,
+                        1030
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        760,
+                        616
+                    ],
+                    [
+                        956,
+                        617
+                    ],
+                    [
+                        957,
+                        498
+                    ],
+                    [
+                        761,
+                        496
+                    ]
+                ]
+            }
+        ],
+        "internalId": [
+            {
+                "value": "1807",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "lastName": [
+            {
+                "value": "GENCIANA",
+                "confidence": 0.993,
+                "source": "visual",
+                "index": 0,
+                "inputBox": [
+                    [
+                        818,
+                        1030
+                    ],
+                    [
+                        863,
+                        1030
+                    ],
+                    [
+                        863,
+                        1296
+                    ],
+                    [
+                        818,
+                        1296
+                    ]
+                ],
+                "outputBox": [
+                    [
+                        761,
+                        529
+                    ],
+                    [
+                        761,
+                        496
+                    ],
+                    [
+                        957,
+                        498
+                    ],
+                    [
+                        957,
+                        531
+                    ]
+                ]
+            }
+        ],
+        "nationalityFull": [
+            {
+                "value": "Philippines",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "nationalityIso2": [
+            {
+                "value": "PH",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "nationalityIso3": [
+            {
+                "value": "PHL",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ],
+        "reverseId": [
+            {
+                "value": "2446",
+                "confidence": 1,
+                "source": "visual",
+                "index": 0,
+                "outputBox": [
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ],
+                    [
+                        0,
+                        1125
+                    ]
+                ]
+            }
+        ]
+    },
+    "outputImage": {
+        "front": "http://api2-us3.idanalyzer.com/image/03dba208195f4ed3a4453f3d52a545ad/06bebfaab76c2178c78f12b5f6dd2c2135b5854c13cd115620b1099aae5c7064/front.jpg",
+        "face": "http://api2-us3.idanalyzer.com/image/03dba208195f4ed3a4453f3d52a545ad/06bebfaab76c2178c78f12b5f6dd2c2135b5854c13cd115620b1099aae5c7064/face.jpg"
+    },
+    "missingFields": [
+        "middleName",
+        "placeOfBirth",
+        "optionalData"
+    ],
+    "profileId": "e574604c2952418bb47c199d776cbcb4",
+    "reviewScore": 0,
+    "rejectScore": 0,
+    "decision": "accept",
+    "quota": 5,
+    "credit": 20,
+    "executionTime": 2.685087653
+}
+2025-03-28 22:20:38 - Decision: accept - Status: approved

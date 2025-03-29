@@ -1,18 +1,48 @@
 <?php
-session_start();
+session_start(); // Start the session
 
+// Redirect if user is not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: userLogin.php");
     exit;
 }
 
+$user_id = $_SESSION['user_id']; // Store user ID
+
+// Check if job_id is provided
+$job_id = isset($_GET['job_id']) ? $_GET['job_id'] : null;
+
 include '../config/db_connection.php';
 
-$user_id = $_SESSION['user_id'];
+// Initialize default job data
+$job = [
+    "job_title" => "",
+    "job_date" => "",
+    "job_time" => "",
+    "location" => "",
+    "description" => "",
+    "category_id" => "",
+    "sub_category_id" => "",
+    "budget" => "",
+    "images" => ""
+];
+
+// If editing, fetch job details
+if ($job_id) {
+    $stmt = $conn->prepare("SELECT * FROM jobs WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $job_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $job = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$job) {
+        die("Error: Job not found or you do not have permission to edit this job.");
+    }
+}
 
 // Fetch user verification status
-$query = "SELECT verification_status FROM user WHERE id = ?";
-$stmt = $conn->prepare($query);
+$stmt = $conn->prepare("SELECT verification_status FROM user WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $stmt->bind_result($verification_status);
@@ -21,19 +51,22 @@ $stmt->close();
 
 $isUnverified = ($verification_status === 'unverified');
 
-
+// Handle form submission (Add/Edit job)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $errors = [];
-
+    $job_id = isset($_POST['job_id']) ? $_POST['job_id'] : null;
     $job_title = trim($_POST['job_title']);
     $job_date = !empty($_POST['job_date']) ? trim($_POST['job_date']) : NULL;
     $job_time = !empty($_POST['job_time']) ? trim($_POST['job_time']) : NULL;
     $location = trim($_POST['location']);
     $description = trim($_POST['description']);
-    $category_id = isset($_POST['category_id']) ? $_POST['category_id'] : null;
-    $sub_category_id = isset($_POST['sub_category_id']) ? $_POST['sub_category_id'] : null;
+    $category_id = $_POST['category_id'] ?? null;
+    $sub_category_id = $_POST['sub_category_id'] ?? null;
     $budget = $_POST['budget'];
 
+    $budget = isset($_POST['budget']) ? trim($_POST['budget']) : '';
+
+
+    // Handle image upload
     $imagePaths = [];
     if (!empty($_FILES['images']['name'][0])) {
         $uploadDir = "user-uploads/";
@@ -45,15 +78,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
-    $images = !empty($imagePaths) ? implode(',', $imagePaths) : NULL;
 
-    $stmt = $conn->prepare("INSERT INTO jobs (user_id, job_title, job_date, job_time, location, description, category_id, sub_category_id, budget, images) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $images = !empty($imagePaths) ? implode(',', $imagePaths) : ($job_id ? $job['images'] : NULL);
 
-    $stmt->bind_param("issssssiss", $user_id, $job_title, $job_date, $job_time, $location, $description, $category_id, $sub_category_id, $budget, $images);
+    // Insert or update job
+    if ($job_id) {
+        $stmt = $conn->prepare("UPDATE jobs SET job_title=?, job_date=?, job_time=?, location=?, description=?, category_id=?, sub_category_id=?, budget=?, images=? WHERE id=? AND user_id=?");
+        $stmt->bind_param("ssssssisssi", $job_title, $job_date, $job_time, $location, $description, $category_id, $sub_category_id, $budget, $images, $job_id, $user_id);
+    } else {
+        $stmt = $conn->prepare("INSERT INTO jobs (user_id, job_title, job_date, job_time, location, description, category_id, sub_category_id, budget, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issssssiss", $user_id, $job_title, $job_date, $job_time, $location, $description, $category_id, $sub_category_id, $budget, $images);
+    }
 
     if ($stmt->execute()) {
-        header("Location: userPostJob.php?success=1");
+        header("Location: myJobs.php?success=1");
         exit;
     } else {
         echo "Error: " . $stmt->error;
@@ -61,31 +99,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 
+// Fetch all jobs
 $sql = "SELECT id, user_id, job_title, job_date, job_time, location, description, category_id, sub_category_id, budget, images, status FROM jobs";
 $result = $conn->query($sql);
+$jobs = $result->fetch_all(MYSQLI_ASSOC);
 
-$jobs = [];
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $jobs[] = $row;
-    }
-}
-
+// Fetch categories
 $query = "SELECT * FROM categories";
-$result = $conn->query($query);
+$categories = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
 
+// Fetch subcategories if category is selected
 if (isset($_POST['category_id'])) {
     $category_id = $_POST['category_id'];
     $query = "SELECT * FROM sub_categories WHERE category_id = $category_id";
-    $result = $conn->query($query);
+    $subCategories = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
 
-    while ($row = $result->fetch_assoc()) {
+    foreach ($subCategories as $row) {
         echo "<option value='{$row['id']}'>{$row['name']}</option>";
     }
 }
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -189,12 +223,16 @@ if (isset($_POST['category_id'])) {
     <?php include './userHeader.php'; ?>
 <div id="main-content" style="display:none;">
     <div class="flex justify-center items-start mt-10">
+
             <form id="jobForm" method="POST" enctype="multipart/form-data" class="w-full max-w-4xl p-6 shadow-lg bg-white rounded-lg border border-gray-300">
+            <input type="hidden" name="job_id" value="<?= isset($job['id']) ? htmlspecialchars($job['id']) : ''; ?>">
+
                 <h1 class="text-3xl font-bold text-blue-900 mb-8">Post a Job</h1>
                 <div class="space-y-6">
                     <div>
                         <label for="job_title" class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
                         <input type="text" id="job_title" name="job_title" placeholder="Enter a job title"
+                            value="<?= isset($job['job_title']) ? htmlspecialchars($job['job_title']) : ''; ?>"
                             class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
                         <span class="text-xs text-red-500 hidden error-message"></span>
                     </div>
@@ -203,21 +241,21 @@ if (isset($_POST['category_id'])) {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Job date</label>
                         <div class="flex flex-wrap gap-3 items-center">
-                            <button type="button" id="onDateBtn" class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
+                            <button type="button" id="onDateBtn" class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700" value="<?= isset($job['job_date']) ? htmlspecialchars($job['job_date']) : ''; ?>">
                                 On date
                             </button>
-                            <input type="date" id="onDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                            <input type="date" id="onDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300" value="<?= isset($job['job_date']) ? htmlspecialchars($job['job_date']) : ''; ?>">
 
                             <button type="button" id="beforeDateBtn" class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
                                 Before date
                             </button>
-                            <input type="date" id="beforeDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300">
+                            <input type="date" id="beforeDateInput" class="hidden mt-2 p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-blue-300" value="<?= isset($job['job_date']) ? htmlspecialchars($job['job_date']) : ''; ?>">
 
                             <button type="button" id="flexibleBtn"
                                 class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
                                 I'm flexible
                             </button>
-                            <input type="hidden" id="job_date" name="job_date">
+                            <input type="hidden" id="job_date" name="job_date"value="<?= isset($job['job_date']) ? htmlspecialchars($job['job_date']) : ''; ?>">
                         </div>
                     </div>
 
@@ -240,13 +278,14 @@ if (isset($_POST['category_id'])) {
                                 Evening<br><span class="text-sm opacity-80">After 6pm</span>
                             </button>
                         </div>
-                        <input type="hidden" id="job_time" name="job_time">
+                        <input type="hidden" id="job_time" name="job_time" value="<?= isset($job['job_time']) ? htmlspecialchars($job['job_time']) : ''; ?>">
                     </div>
 
                     <div class="w-full relative">
                         <label for="location" class="block text-gray-700 font-semibold mb-1">Location:</label>
                         <div class="flex items-center gap-2">
                             <input type="text" id="location" name="location" placeholder="Enter address..."
+                                value="<?= isset($job['location']) ? htmlspecialchars($job['location']) : ''; ?>"
                                 class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
                             <span class="text-xs text-red-500 hidden error-message"></span>
                             <button type="button" onclick="openMapModal()"
@@ -275,14 +314,26 @@ if (isset($_POST['category_id'])) {
                     <div>
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                         <textarea id="description" name="description" rows="4" placeholder="Describe the job"
-                            class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 resize-none"></textarea>
+                            class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 resize-none"><?= isset($job['description']) ? htmlspecialchars($job['description']) : ''; ?></textarea>
                         <span class="text-xs text-red-500 hidden error-message"></span>
                     </div>
 
-                    <div x-data="{ categories: [], selectedCategory: '', subcategories: [], selectedSubcategory: '' }" x-init="
-                        fetch('get_categories.php')
-                        .then(response => response.json())
-                        .then(data => categories = data)">
+
+                    <div x-data="{
+                            categories: [],
+                            selectedCategory: '<?= isset($job['category_id']) ? htmlspecialchars($job['category_id']) : '' ?>',
+                            subcategories: [],
+                            selectedSubcategory: '<?= isset($job['sub_category_id']) ? htmlspecialchars($job['sub_category_id']) : '' ?>'
+                        }" 
+                        x-init="
+                            fetch('get_categories.php')
+                            .then(response => response.json())
+                            .then(data => {
+                                categories = data;
+                                if (selectedCategory) {
+                                    subcategories = categories.find(cat => cat.id == selectedCategory)?.sub_categories || [];
+                                }
+                            })">
 
                         <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
                         <select id="category" x-model="selectedCategory" @change="
@@ -290,7 +341,7 @@ if (isset($_POST['category_id'])) {
                             class="block w-full mt-1 p-2 border rounded-md">
                             <option value="">Select Category</option>
                             <template x-for="category in categories" :key="category.id">
-                                <option :value="category.id" x-text="category.name"></option>
+                                <option :value="category.id" x-text="category.name" :selected="category.id == selectedCategory"></option>
                             </template>
                         </select>
                         <input type="hidden" name="category_id" x-model="selectedCategory">
@@ -299,12 +350,12 @@ if (isset($_POST['category_id'])) {
                         <select id="sub_category" x-model="selectedSubcategory" class="block w-full mt-1 p-2 border rounded-md">
                             <option value="">Select Subcategory</option>
                             <template x-for="sub in subcategories" :key="sub.id">
-                                <option :value="sub.id" x-text="sub.name"></option>
+                                <option :value="sub.id" x-text="sub.name" :selected="sub.id == selectedSubcategory"></option>
                             </template>
                         </select>
                         <input type="hidden" name="sub_category_id" x-model="selectedSubcategory">
-
                     </div>
+
 
 
                     <div>
@@ -315,30 +366,51 @@ if (isset($_POST['category_id'])) {
 
                         <!-- Current -->
                         <input type="text" id="budget" name="budget" placeholder="Enter budget ranging amount (0 - 100)"
+                            value="<?= isset($job['budget']) ? htmlspecialchars($job['budget']) : ''; ?>"
                             class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
                         <span class="text-xs text-red-500 hidden error-message"></span>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Add images (optional)</label>
-                        <input type="file" id="images" name="images[]" multiple accept="image/*" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none">
+                        <input type="file" id="images" name="images[]" multiple accept="image/*"
+                            class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none">
                         <p class="text-sm text-gray-500 mt-2">You can upload up to 5 images.</p>
                         <span class="text-xs text-red-500 hidden error-message"></span>
+
+                        <!-- Show Existing Images -->
+                        <?php if (!empty($job['images'])): ?>
+                            <div class="mt-3">
+                                <p class="text-sm font-medium text-gray-700">Current Images:</p>
+                                <div class="flex gap-2 flex-wrap mt-2">
+                                    <?php 
+                                    $imagePaths = explode(',', $job['images']);
+                                    foreach ($imagePaths as $image): ?>
+                                        <div class="relative image-container">
+                                            <img src="<?= htmlspecialchars($image) ?>" alt="Job Image" class="w-20 h-20 object-cover rounded-lg border">
+                                            <button type="button" class="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded delete-image-btn" 
+                                                    data-image="<?= $image ?>">X</button>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
+
 
                     <div class="flex justify-end space-x-4 pt-4">
                     <button type="button" id="resetButton" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
                         Reset
                     </button>
 
-                        <button type="submit" id="postJobBtn" data-unverified="<?= $isUnverified ? 'true' : 'false'; ?>" 
-                            class="px-6 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors">
-                            Post
-                        </button>
+                    <button type="submit" id="postJobBtn" data-unverified="<?= $isUnverified ? 'true' : 'false'; ?>" 
+                        class="px-6 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors">
+                        <?= isset($job['id']) ? 'Update' : 'Post'; ?>
+                    </button>
                     </div>
                 </div>
-                </main>
             </form>
+        </main>
 
             <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg">
@@ -911,6 +983,59 @@ if (budget === "") {
                     Alpine.store('selectedSubcategory', '');
                 }
             });
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            let jobTimeValue = document.getElementById("job_time").value;
+            if (jobTimeValue) {
+                document.querySelectorAll(".time-btn").forEach(btn => {
+                    if (btn.dataset.time === jobTimeValue) {
+                        btn.classList.add("bg-blue-500", "text-white");
+                    }
+                });
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".delete-image-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const imagePath = this.getAttribute("data-image");
+                const jobId = document.querySelector('input[name="job_id"]').value;
+                const imageContainer = this.closest(".image-container");
+
+                if (!jobId) {
+                    alert("Job ID is missing.");
+                    return;
+                }
+
+                if (!confirm("Are you sure you want to delete this image?")) {
+                    return;
+                }
+
+                fetch("delete_job_image.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({ 
+                        job_id: jobId, 
+                        image_path: imagePath 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        imageContainer.remove(); // Remove image from UI
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+    });
+
         </script>
 
 
