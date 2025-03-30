@@ -127,13 +127,13 @@ try {
             $front_id_path,     
             $back_id_path,             
             $selfie_path,           
-            'fully_verified'               
+            'identity_verified'               
         ];
 
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
 
-        $sqlUpdate = "UPDATE user set verification_status = 'fully_verified'";
+        $sqlUpdate = "UPDATE user set verification_status = 'identity_verified'";
         $stmtUp = $conn->prepare($sqlUpdate);
         $stmtUp->execute();
 
