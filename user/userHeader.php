@@ -32,9 +32,7 @@ if (isset($_SESSION['user_id'])) {
 $userFirstName = $_SESSION['user_first_name'] ?? 'Guest';
 $userLastName = $_SESSION['user_last_name'] ?? '';
 $profileImage = $_SESSION['user_profile_image'] ?? '../img/default-profile.png';
-
 ?>
-
 
 
 <!DOCTYPE html>

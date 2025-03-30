@@ -19,6 +19,7 @@ if (!isset($_SESSION['user_id'])) {
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
   <link rel="icon" type="logo" href="../img/logo1.png">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
@@ -31,6 +32,13 @@ if (!isset($_SESSION['user_id'])) {
 <body class="bg-gray-50">
   <?php include './userHeader.php'; ?>
 
+  <?php 
+  if ($verificationStatus === 'fully_verified') {
+  ?>
+    <h1> PALAGYAN NA LANG NG UI TO JE.... VERIFIED NA KAPAG GANITO YUNG NAG SHOW!!!</h1>
+  <?php 
+  } else {
+  ?>
   <div class="flex min-h-screen">
 
     <aside class="hidden md:block w-64 bg-white p-6 shadow-sm flex-shrink-0">
@@ -98,6 +106,7 @@ if (!isset($_SESSION['user_id'])) {
           </div>
 
           <form id="idVerificationForm" class="space-y-6">
+          <input type="hidden" id="user_id" value="<?php echo $_SESSION['user_id']; ?>">
             <!-- Front ID Upload -->
             <div class="border border-gray-200 rounded-lg p-4">
               <label for="front_id" class="block text-base font-medium text-gray-700 mb-2">Front of ID:</label>
@@ -198,7 +207,9 @@ if (!isset($_SESSION['user_id'])) {
       </div>
     </main>
   </div>
-
+  <?php 
+  }
+  ?>
 
   <div id="mobileSidebar" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-40 hidden">
     <div class="absolute right-0 top-0 p-4">
@@ -381,33 +392,141 @@ if (!isset($_SESSION['user_id'])) {
         });
       }
 
-      // Form submission
+// ==================   ETO YUNG SCRIPT PARA MAPASA SA BACKEND YUNG IMAGES PARA MA-VERFIY  ============================
       if (form) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
+            document.getElementById('idVerificationForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
 
-          // Check if all required fields are filled
-          const frontId = document.getElementById('front_id').files[0];
-          const backId = document.getElementById('back_id').files[0];
+                let submitButton = document.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.classList.add('bg-gray-400', 'cursor-not-allowed'); 
+                submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-800'); 
+                submitButton.innerHTML = '<span class="spinner"></span> Verifying...'; 
 
-          if (!frontId || !backId || !photoTaken) {
-            alert('Please complete all required fields before submitting.');
-            return;
-          }
+                let userId = document.getElementById('user_id').value;
+                let formData = new FormData(this);
+                let jsonObject = {};
 
+                jsonObject['user_id'] = userId;
+                formData.forEach((value, key) => {
+                    if (value instanceof File) {
+                        jsonObject[key] = value;
+                    } else {
+                        jsonObject[key] = value;
+                    }
+                });
 
-          alert('Verification submitted successfully!');
+                async function convertFileToBase64(file) {
+                    return new Promise((resolve, reject) => {
+                        let reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                    });
+                }
 
-          // For demo purposes, you could display the uploaded images and form data
-          console.log('Form data:', {
-            frontId: frontId.name,
-            backId: backId.name,
-            selfieData: 'Data URL (too long to display)'
-          });
-        });
-      }
+                if (jsonObject['front_id']) {
+                    jsonObject['front_id'] = await convertFileToBase64(jsonObject['front_id']);
+                }
+                if (jsonObject['back_id']) {
+                    jsonObject['back_id'] = await convertFileToBase64(jsonObject['back_id']);
+                }
+
+                let selfieCanvas = document.getElementById('photo_preview');
+                if (photoTaken) {
+                    selfieCanvas.toBlob(async function (blob) {
+                        jsonObject['selfie_data'] = await convertFileToBase64(blob);
+                        await sendVerificationData(jsonObject);
+                    }, 'image/png');
+                } else {
+                    await sendVerificationData(jsonObject);
+                }
+            });
+
+            async function sendVerificationData(jsonData) {
+                try {
+                    let response = await fetch('submit_verification.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(jsonData)
+                    });
+
+                    let result = await response.json();
+                    if (result.decision) {
+                        if (result.decision === 'accept') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Verification Approved',
+                                text: 'Your Identification has been successfully verified!',
+                                confirmButtonColor: '#3085d6'
+                            }).then(() => {
+                                window.location.href = 'findJobs.php';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Verification Rejected',
+                                text: result.message,
+                                confirmButtonColor: '#d33'
+                            });
+                        }
+                    } else if (result.error) {
+                        let warningText = "";
+                        if (result.warnings && result.warnings.length > 0) {
+                            warningText = `<strong style="color: #f27474; font-weight: 500;">Reasons:</strong><br>`;
+                            warningText += `<div style="font-size: 0.9em; margin-top: 5px;">`;
+                            warningText += result.warnings.map((warning, index) => `${index + 1}. ${warning}`).join('<br>');
+                            warningText += `</div>`;
+                        }
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Verification Issues',
+                            html: warningText,
+                            confirmButtonColor: '#f27474'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error submitting verification:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Submission Error',
+                        text: 'Please check your internet connection and try again.',
+                        confirmButtonColor: '#d33'
+                    });
+                } finally {
+                    let submitButton = document.querySelector('button[type="submit"]');
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('bg-gray-400', 'cursor-not-allowed'); 
+                    submitButton.classList.add('bg-blue-600', 'hover:bg-blue-800');
+                    submitButton.innerHTML = 'Submit Verification'; 
+                }
+            }
+        } // ==================   END OF THE SCRIPT  ============================
+
     });
   </script>
+<!-- PARA SA LOADER -->
+  <style>
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+  </style>
 </body>
 
 </html>
