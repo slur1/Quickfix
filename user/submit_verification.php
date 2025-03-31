@@ -90,7 +90,12 @@ $warningMessages = [
     'IMAGE_EDITED' => 'Image Edited',
     'FACE_MISMATCH' => 'Face Mismatch',
     'SELFIE_FACE_NOT_FOUND' => 'Selfie Face Not Found',
-    'IMAGE_FORGERY' => 'Image Forgery'
+    'IMAGE_FORGERY' => 'Image Forgery',
+    'UNRECOGNIZED_DOCUMENT' => 'Unrecognized Document',
+    'UNRECOGNIZED_BACK_DOCUMENT' => 'Unrecognized Back Document',
+    'FACE_LIVENESS_ERR' => 'Face Liveness',
+    'INVALID_BACK_DOCUMENT' => 'Invalid Back Document',
+    'RECAPTURED_FACE' => 'Recaptured Face',
 ];
 
 if (isset($response_data['warning']) && is_array($response_data['warning'])) {

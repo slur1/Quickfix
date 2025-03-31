@@ -33,7 +33,7 @@ if (!isset($_SESSION['user_id'])) {
   <?php include './userHeader.php'; ?>
 
   <?php 
-  if ($verificationStatus === 'fully_verified') {
+  if ($verificationStatus === 'identity_verified') {
   ?>
   <!-- ETO LAGYAN MO NG UI JE -->
     <h1> PALAGYAN NA LANG NG UI TO JE.... VERIFIED NA KAPAG GANITO YUNG NAG SHOW!!!</h1>
