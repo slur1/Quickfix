@@ -919,9 +919,14 @@ $conn->close();
                                     <button class="text-blue-600 text-xs hover:underline" @click="replyTo = (replyTo === comment.id) ? null : comment.id">
                                         Reply
                                     </button>
-                                    <button class="text-red-600 text-xs hover:underline" @click="deleteComment(comment.id)">
-                                        Delete
-                                    </button>
+                                    
+                                    <?php if (isset($_SESSION['user_id'])) { ?>
+                                        <template x-if="comment.user_id == <?php echo $_SESSION['user_id']; ?>">
+                                            <button class="text-red-600 text-xs hover:underline" @click="deleteComment(comment.id)">
+                                                Delete
+                                            </button>
+                                        </template>
+                                    <?php } ?>
                                 </div>
 
                                 <!-- Reply Input -->
@@ -971,10 +976,13 @@ $conn->close();
                                                 <p class="text-xs font-semibold text-gray-800" x-text="reply.first_name + ' ' + reply.last_name"></p>
                                                 <p class="text-xs text-gray-700 mt-1" x-text="reply.comment"></p>
                                                 <p class="text-xs text-gray-400 mt-1" x-text="new Date(reply.created_at).toLocaleString()"></p>
-
-                                                <button class="text-red-600 text-xs mt-1 hover:underline" @click="deleteComment(reply.id, comment.id)">
-                                                    Delete
-                                                </button>
+                                                <?php if (isset($_SESSION['user_id'])) { ?>
+                                                    <template x-if="comment.user_id == <?php echo $_SESSION['user_id']; ?>">
+                                                        <button class="text-red-600 text-xs mt-1 hover:underline" @click="deleteComment(reply.id, comment.id)">
+                                                            Delete
+                                                        </button>
+                                                    </template>
+                                                <?php } ?>
                                             </div>
                                         </div>
                                     </template>
