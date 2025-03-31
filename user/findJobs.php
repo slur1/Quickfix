@@ -716,7 +716,7 @@ $conn->close();
 
 
         <div class="w-full lg:w-1/3 bg-white shadow-xl rounded-2xl p-4 md:p-5 h-auto lg:h-[550px] overflow-y-auto transition-all duration-300 
-            transform scale-100 hover:scale-[1.02] backdrop-blur-lg border border-gray-300 mb-4 lg:mb-0 lg:mx-4"
+            transform scale-100 hover:scale-[1.02] border border-gray-300 mb-4 lg:mb-0 lg:mx-4"
             x-show="selectedJob" x-transition x-data="{ showPosterProfile: false, profileHover: false }">
     
     <template x-if="selectedJob">
