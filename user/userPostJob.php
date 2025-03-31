@@ -136,9 +136,10 @@ if (isset($_POST['category_id'])) {
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-          #loader-overlay {
+        #loader-overlay {
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
             background: white;
@@ -147,6 +148,7 @@ if (isset($_POST['category_id'])) {
             align-items: center;
             z-index: 9999;
         }
+
         .loader-container {
             width: 30vw;
             max-width: 200px;
@@ -157,75 +159,124 @@ if (isset($_POST['category_id'])) {
             align-items: center;
             justify-content: center;
         }
+
         .logo {
             width: 90%;
             height: 90%;
             animation: heartbeat 1.5s infinite;
             object-fit: contain;
         }
+
         .text-container {
             height: 40px;
             width: 100%;
             text-align: center;
         }
+
         .letter {
             display: inline-block;
             font-size: 24px;
             font-weight: bold;
             color: #3498db;
             opacity: 0;
-            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
-            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
+            animation: fadeIn 0.4s forwards;
+            /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s);
+            /* Faster delay between letters */
         }
-        .fadeOut { animation: fadeOut 0.7s forwards; }
+
+        .fadeOut {
+            animation: fadeOut 0.7s forwards;
+        }
 
         @keyframes heartbeat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.2); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.2); }
-            70% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            14% {
+                transform: scale(1.2);
+            }
+
+            28% {
+                transform: scale(1);
+            }
+
+            42% {
+                transform: scale(1.2);
+            }
+
+            70% {
+                transform: scale(1);
+            }
         }
+
         @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         @keyframes fadeOut {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-10px); }
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
         }
 
         @media (max-width: 480px) {
-            .loader-container { width: 80vw !important; height: auto; }
-            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
-            .letter { font-size: 28px; }
+            .loader-container {
+                width: 80vw !important;
+                height: auto;
+            }
+
+            .logo {
+                width: 70%;
+                height: 70%;
+                margin-bottom: 30px;
+            }
+
+            .letter {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- loader.php -->
-<div id="loader-overlay">
-    <div class="loader-container">
-        <img src="../img/logo1.png" alt="Logo" class="logo">
-        <div class="text-container">
-            <span class="letter" style="--index: 1;">Q</span>
-            <span class="letter" style="--index: 2;">U</span>
-            <span class="letter" style="--index: 3;">I</span>
-            <span class="letter" style="--index: 4;">C</span>
-            <span class="letter" style="--index: 5;">K</span>
-            <span class="letter" style="--index: 6;">F</span>
-            <span class="letter" style="--index: 7;">I</span>
-            <span class="letter" style="--index: 8;">X</span>
+    <div id="loader-overlay">
+        <div class="loader-container">
+            <img src="../img/logo1.png" alt="Logo" class="logo">
+            <div class="text-container">
+                <span class="letter" style="--index: 1;">Q</span>
+                <span class="letter" style="--index: 2;">U</span>
+                <span class="letter" style="--index: 3;">I</span>
+                <span class="letter" style="--index: 4;">C</span>
+                <span class="letter" style="--index: 5;">K</span>
+                <span class="letter" style="--index: 6;">F</span>
+                <span class="letter" style="--index: 7;">I</span>
+                <span class="letter" style="--index: 8;">X</span>
+            </div>
         </div>
     </div>
-</div>
     <?php include './userHeader.php'; ?>
-<div id="main-content" style="display:none;">
-    <div class="flex justify-center items-start mt-10">
+    <div id="main-content" style="display:none;">
+        <div class="flex justify-center items-start mt-10">
 
             <form id="jobForm" method="POST" enctype="multipart/form-data" class="w-full max-w-4xl p-6 shadow-lg bg-white rounded-lg border border-gray-300">
-            <input type="hidden" name="job_id" value="<?= isset($job['id']) ? htmlspecialchars($job['id']) : ''; ?>">
+                <input type="hidden" name="job_id" value="<?= isset($job['id']) ? htmlspecialchars($job['id']) : ''; ?>">
 
                 <h1 class="text-3xl font-bold text-blue-900 mb-8">Post a Job</h1>
                 <div class="space-y-6">
@@ -255,7 +306,7 @@ if (isset($_POST['category_id'])) {
                                 class="px-4 py-2 rounded-full border transition-colors bg-white text-gray-700">
                                 I'm flexible
                             </button>
-                            <input type="hidden" id="job_date" name="job_date"value="<?= isset($job['job_date']) ? htmlspecialchars($job['job_date']) : ''; ?>">
+                            <input type="hidden" id="job_date" name="job_date" value="<?= isset($job['job_date']) ? htmlspecialchars($job['job_date']) : ''; ?>">
                         </div>
                     </div>
 
@@ -324,7 +375,7 @@ if (isset($_POST['category_id'])) {
                             selectedCategory: '<?= isset($job['category_id']) ? htmlspecialchars($job['category_id']) : '' ?>',
                             subcategories: [],
                             selectedSubcategory: '<?= isset($job['sub_category_id']) ? htmlspecialchars($job['sub_category_id']) : '' ?>'
-                        }" 
+                        }"
                         x-init="
                             fetch('get_categories.php')
                             .then(response => response.json())
@@ -383,13 +434,13 @@ if (isset($_POST['category_id'])) {
                             <div class="mt-3">
                                 <p class="text-sm font-medium text-gray-700">Current Images:</p>
                                 <div class="flex gap-2 flex-wrap mt-2">
-                                    <?php 
+                                    <?php
                                     $imagePaths = explode(',', $job['images']);
                                     foreach ($imagePaths as $image): ?>
                                         <div class="relative image-container">
                                             <img src="<?= htmlspecialchars($image) ?>" alt="Job Image" class="w-20 h-20 object-cover rounded-lg border">
-                                            <button type="button" class="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded delete-image-btn" 
-                                                    data-image="<?= $image ?>">X</button>
+                                            <button type="button" class="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded delete-image-btn"
+                                                data-image="<?= $image ?>">X</button>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -399,18 +450,18 @@ if (isset($_POST['category_id'])) {
 
 
                     <div class="flex justify-end space-x-4 pt-4">
-                    <button type="button" id="resetButton" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
-                        Reset
-                    </button>
+                        <button type="button" id="resetButton" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
+                            Reset
+                        </button>
 
-                    <button type="submit" id="postJobBtn" data-unverified="<?= $isUnverified ? 'true' : 'false'; ?>" 
-                        class="px-6 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors">
-                        <?= isset($job['id']) ? 'Update' : 'Post'; ?>
-                    </button>
+                        <button type="submit" id="postJobBtn" data-unverified="<?= $isUnverified ? 'true' : 'false'; ?>"
+                            class="px-6 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors">
+                            <?= isset($job['id']) ? 'Update' : 'Post'; ?>
+                        </button>
                     </div>
                 </div>
             </form>
-        </main>
+            </main>
 
             <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg">
@@ -422,7 +473,7 @@ if (isset($_POST['category_id'])) {
                 </div>
             </div>
 
-            <!-- Verification Modal -->
+            <!-- Verification Modal --> <!-- TITEEE -->
             <div id="requiredModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md hidden">
                 <div class="bg-white p-6 rounded-2xl shadow-xl w-[90%] max-w-sm relative">
                     <div class="flex flex-col items-center text-center">
@@ -437,10 +488,10 @@ if (isset($_POST['category_id'])) {
                     </div>
                 </div>
             </div>
+        </div>
     </div>
-</div>
 
-<script>
+    <script>
         function resetAnimation() {
             const letters = document.querySelectorAll('.letter');
             letters.forEach(letter => letter.classList.add('fadeOut'));
@@ -450,7 +501,9 @@ if (isset($_POST['category_id'])) {
                     letter.style.opacity = 0;
                     void letter.offsetWidth;
                     letter.style.animation = 'none';
-                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                    setTimeout(() => {
+                        letter.style.animation = '';
+                    }, 10);
                 });
             }, 800);
         }
@@ -470,196 +523,200 @@ if (isset($_POST['category_id'])) {
         });
     </script>
 
-<script>
-function categoryDropdown() {
-    return {
-        categories: [],
-        selectedCategory: '',
-        subcategories: [],
-        selectedSubcategory: '',
+    <script>
+        function categoryDropdown() {
+            return {
+                categories: [],
+                selectedCategory: '',
+                subcategories: [],
+                selectedSubcategory: '',
 
-        async loadCategories() {
-            try {
-                let response = await fetch('get_categories.php');
-                this.categories = await response.json();
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        },
-
-        async loadSubcategories() {
-            if (!this.selectedCategory) {
-                this.subcategories = [];
-                return;
-            }
-            
-            try {
-                let response = await fetch('get_subcategories.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ category_id: this.selectedCategory })
-                });
-                this.subcategories = await response.json();
-            } catch (error) {
-                console.error('Error fetching subcategories:', error);
-            }
-        }
-    };
-}
-</script>
-
-        <script>
-            document.getElementById("cancelButton").addEventListener("click", function() {
-                document.getElementById("jobForm").reset();
-            });
-        </script>
-
-        <script>
-            function toggleDetails(id) {
-                let content = document.getElementById(id);
-                let arrow = document.getElementById('arrow-' + id.split('-')[1]);
-
-                if (content.classList.contains('hidden')) {
-                    content.classList.remove('hidden');
-                    arrow.classList.add('rotate-180');
-                } else {
-                    content.classList.add('hidden');
-                    arrow.classList.remove('rotate-180');
-                }
-            }
-        </script>
-
-        <script>
-            function openMapModal() {
-                document.getElementById('mapModal').classList.remove('hidden');
-                if (!window.map) {
-                    window.map = L.map('map').setView([14.5995, 120.9842], 13);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; OpenStreetMap contributors'
-                    }).addTo(map);
-                    window.marker = L.marker([14.5995, 120.9842], {
-                        draggable: true
-                    }).addTo(map);
-                    window.marker.on('dragend', function(e) {
-                        var latlng = e.target.getLatLng();
-                        document.getElementById('location').value = `${latlng.lat}, ${latlng.lng}`;
-                    });
-                }
-            }
-
-            function useSelectedLocation() {
-                document.getElementById('mapModal').classList.add('hidden');
-            }
-
-            function closeMapModal() {
-                document.getElementById('mapModal').classList.add('hidden');
-            }
-        </script>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const API_KEY = "pk.8d6caae95f83ef55c3b74214f9f81424";
-                let map, marker, userLat = 14.5995,
-                    userLng = 120.9842;
-                const locationInput = document.getElementById("location");
-                const suggestionsBox = document.getElementById("suggestions");
-
-                function getUserLocation() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                userLat = position.coords.latitude;
-                                userLng = position.coords.longitude;
-                            },
-                            (error) => console.warn("Geolocation error:", error), {
-                                enableHighAccuracy: true
-                            }
-                        );
+                async loadCategories() {
+                    try {
+                        let response = await fetch('get_categories.php');
+                        this.categories = await response.json();
+                    } catch (error) {
+                        console.error('Error fetching categories:', error);
                     }
-                }
-                getUserLocation();
+                },
 
-                locationInput.addEventListener("input", function() {
-                    const query = locationInput.value.trim();
-                    if (query.length < 2) {
-                        suggestionsBox.style.display = "none";
+                async loadSubcategories() {
+                    if (!this.selectedCategory) {
+                        this.subcategories = [];
                         return;
                     }
 
-                    fetch(`https://api.locationiq.com/v1/autocomplete.php?key=${API_KEY}&q=${query}&limit=5&format=json`)
-                        .then(response => response.json())
-                        .then(data => {
-                            suggestionsBox.innerHTML = "";
-                            if (!data.length) {
-                                suggestionsBox.style.display = "none";
-                                return;
-                            }
-
-                            data.forEach(place => {
-                                const suggestion = document.createElement("div");
-                                suggestion.classList.add("px-4", "py-2", "cursor-pointer", "hover:bg-gray-100", "border-b");
-                                suggestion.textContent = place.display_name;
-                                suggestion.onclick = function() {
-                                    locationInput.value = place.display_name;
-                                    localStorage.setItem("savedAddress", place.display_name);
-                                    suggestionsBox.style.display = "none";
-                                };
-                                suggestionsBox.appendChild(suggestion);
-                            });
-
-                            suggestionsBox.style.display = "block";
-                        })
-                        .catch(error => console.error("Error fetching locations:", error));
-                });
-
-                document.addEventListener("click", function(event) {
-                    if (!locationInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
-                        suggestionsBox.style.display = "none";
+                    try {
+                        let response = await fetch('get_subcategories.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                category_id: this.selectedCategory
+                            })
+                        });
+                        this.subcategories = await response.json();
+                    } catch (error) {
+                        console.error('Error fetching subcategories:', error);
                     }
+                }
+            };
+        }
+    </script>
+
+    <script>
+        document.getElementById("cancelButton").addEventListener("click", function() {
+            document.getElementById("jobForm").reset();
+        });
+    </script>
+
+    <script>
+        function toggleDetails(id) {
+            let content = document.getElementById(id);
+            let arrow = document.getElementById('arrow-' + id.split('-')[1]);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+    </script>
+
+    <script>
+        function openMapModal() {
+            document.getElementById('mapModal').classList.remove('hidden');
+            if (!window.map) {
+                window.map = L.map('map').setView([14.5995, 120.9842], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+                window.marker = L.marker([14.5995, 120.9842], {
+                    draggable: true
+                }).addTo(map);
+                window.marker.on('dragend', function(e) {
+                    var latlng = e.target.getLatLng();
+                    document.getElementById('location').value = `${latlng.lat}, ${latlng.lng}`;
                 });
+            }
+        }
 
-                function openMapModal() {
-                    document.getElementById("mapModal").classList.remove("hidden");
+        function useSelectedLocation() {
+            document.getElementById('mapModal').classList.add('hidden');
+        }
 
-                    setTimeout(() => {
-                        if (!map) {
-                            map = L.map("map", {
-                                    zoomControl: false
-                                })
-                                .setView([userLat, userLng], 13);
+        function closeMapModal() {
+            document.getElementById('mapModal').classList.add('hidden');
+        }
+    </script>
 
-                            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const API_KEY = "pk.8d6caae95f83ef55c3b74214f9f81424";
+            let map, marker, userLat = 14.5995,
+                userLng = 120.9842;
+            const locationInput = document.getElementById("location");
+            const suggestionsBox = document.getElementById("suggestions");
 
-                            marker = L.marker([userLat, userLng], {
-                                draggable: true
-                            }).addTo(map);
-                            marker.on("dragend", updateLocation);
-
-
-                            L.control.zoom({
-                                position: "topleft"
-                            }).addTo(map);
-
-                            addCustomControls();
-                        } else {
-                            map.invalidateSize();
-                            map.setView([userLat, userLng], 13);
-                            marker.setLatLng([userLat, userLng]);
+            function getUserLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            userLat = position.coords.latitude;
+                            userLng = position.coords.longitude;
+                        },
+                        (error) => console.warn("Geolocation error:", error), {
+                            enableHighAccuracy: true
                         }
-                    }, 200);
+                    );
+                }
+            }
+            getUserLocation();
+
+            locationInput.addEventListener("input", function() {
+                const query = locationInput.value.trim();
+                if (query.length < 2) {
+                    suggestionsBox.style.display = "none";
+                    return;
                 }
 
+                fetch(`https://api.locationiq.com/v1/autocomplete.php?key=${API_KEY}&q=${query}&limit=5&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsBox.innerHTML = "";
+                        if (!data.length) {
+                            suggestionsBox.style.display = "none";
+                            return;
+                        }
 
-                function addCustomControls() {
+                        data.forEach(place => {
+                            const suggestion = document.createElement("div");
+                            suggestion.classList.add("px-4", "py-2", "cursor-pointer", "hover:bg-gray-100", "border-b");
+                            suggestion.textContent = place.display_name;
+                            suggestion.onclick = function() {
+                                locationInput.value = place.display_name;
+                                localStorage.setItem("savedAddress", place.display_name);
+                                suggestionsBox.style.display = "none";
+                            };
+                            suggestionsBox.appendChild(suggestion);
+                        });
 
-                    const controlContainer = L.control({
-                        position: "topleft"
-                    });
+                        suggestionsBox.style.display = "block";
+                    })
+                    .catch(error => console.error("Error fetching locations:", error));
+            });
 
-                    controlContainer.onAdd = function(map) {
-                        const div = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-custom-controls");
+            document.addEventListener("click", function(event) {
+                if (!locationInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                    suggestionsBox.style.display = "none";
+                }
+            });
 
-                        const buttonStyle = `
+            function openMapModal() {
+                document.getElementById("mapModal").classList.remove("hidden");
+
+                setTimeout(() => {
+                    if (!map) {
+                        map = L.map("map", {
+                                zoomControl: false
+                            })
+                            .setView([userLat, userLng], 13);
+
+                        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+
+                        marker = L.marker([userLat, userLng], {
+                            draggable: true
+                        }).addTo(map);
+                        marker.on("dragend", updateLocation);
+
+
+                        L.control.zoom({
+                            position: "topleft"
+                        }).addTo(map);
+
+                        addCustomControls();
+                    } else {
+                        map.invalidateSize();
+                        map.setView([userLat, userLng], 13);
+                        marker.setLatLng([userLat, userLng]);
+                    }
+                }, 200);
+            }
+
+
+            function addCustomControls() {
+
+                const controlContainer = L.control({
+                    position: "topleft"
+                });
+
+                controlContainer.onAdd = function(map) {
+                    const div = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-custom-controls");
+
+                    const buttonStyle = `
                     display: block;
                     font-size: 20px;
                     text-align: center;
@@ -668,325 +725,325 @@ function categoryDropdown() {
                     border-top: 1px solid gray;
                 `;
 
-                        const locateButton = document.createElement("a");
-                        locateButton.href = "#";
+                    const locateButton = document.createElement("a");
+                    locateButton.href = "#";
 
 
-                        const locationIcon = document.createElement("img");
-                        locationIcon.src = "../img/location-post-job.svg";
-                        locationIcon.alt = "Location Icon";
-                        locationIcon.style.width = "20px";
-                        locationIcon.style.height = "20px";
+                    const locationIcon = document.createElement("img");
+                    locationIcon.src = "../img/location-post-job.svg";
+                    locationIcon.alt = "Location Icon";
+                    locationIcon.style.width = "20px";
+                    locationIcon.style.height = "20px";
 
 
-                        locateButton.appendChild(locationIcon);
+                    locateButton.appendChild(locationIcon);
 
-                        locateButton.title = "Go to My Location";
-                        locateButton.style = buttonStyle;
-                        locateButton.onclick = function(e) {
-                            e.preventDefault();
-                            getCurrentLocationOnMap();
-                        };
-
-
-                        const pinButton = document.createElement("a");
-                        pinButton.href = "#";
-                        pinButton.title = "Center Marker";
-                        pinButton.style = buttonStyle;
-
-                        // Create an image element for the SVG
-                        const pinIcon = document.createElement("img");
-                        pinIcon.src = "../img/pin-post-job.svg"; // Adjust the path to your actual file location
-                        pinIcon.alt = "Pin Icon";
-                        pinIcon.style.width = "20px"; // Set appropriate width
-                        pinIcon.style.height = "20px";
-
-                        // Append the image to the button
-                        pinButton.appendChild(pinIcon);
-
-                        pinButton.onclick = function(e) {
-                            e.preventDefault();
-                            centerMarker();
-                        };
-
-
-                        div.appendChild(locateButton);
-                        div.appendChild(pinButton);
-                        return div;
+                    locateButton.title = "Go to My Location";
+                    locateButton.style = buttonStyle;
+                    locateButton.onclick = function(e) {
+                        e.preventDefault();
+                        getCurrentLocationOnMap();
                     };
 
-                    controlContainer.addTo(map);
-                }
 
-                function centerMarker() {
-                    if (marker && map) {
-                        map.setView(marker.getLatLng(), 13);
-                    }
-                }
+                    const pinButton = document.createElement("a");
+                    pinButton.href = "#";
+                    pinButton.title = "Center Marker";
+                    pinButton.style = buttonStyle;
 
-                function getCurrentLocationOnMap() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                const lat = position.coords.latitude;
-                                const lng = position.coords.longitude;
+                    // Create an image element for the SVG
+                    const pinIcon = document.createElement("img");
+                    pinIcon.src = "../img/pin-post-job.svg"; // Adjust the path to your actual file location
+                    pinIcon.alt = "Pin Icon";
+                    pinIcon.style.width = "20px"; // Set appropriate width
+                    pinIcon.style.height = "20px";
 
-                                marker.setLatLng([lat, lng]);
-                                map.setView([lat, lng], 15);
-                                updateLocation();
-                            },
-                            (error) => alert("Failed to retrieve location. Enable location services."), {
-                                enableHighAccuracy: true
-                            }
-                        );
-                    } else {
-                        alert("Geolocation is not supported by this browser.");
-                    }
-                }
+                    // Append the image to the button
+                    pinButton.appendChild(pinIcon);
 
-                function updateLocation() {
-                    const {
-                        lat,
-                        lng
-                    } = marker.getLatLng();
-
-                    fetch(`https://us1.locationiq.com/v1/reverse.php?key=${API_KEY}&lat=${lat}&lon=${lng}&format=json`)
-                        .then(response => response.json())
-                        .then(data => {
-                            locationInput.value = data.display_name;
-                            localStorage.setItem("savedAddress", data.display_name);
-                        })
-                        .catch(error => console.error("Error fetching location:", error));
-                }
-
-                function useSelectedLocation() {
-                    updateLocation();
-                    closeMapModal();
-                }
-
-                function closeMapModal() {
-                    document.getElementById("mapModal").classList.add("hidden");
-                }
-
-                window.getCurrentLocationOnMap = getCurrentLocationOnMap;
-                window.openMapModal = openMapModal;
-                window.useSelectedLocation = useSelectedLocation;
-                window.closeMapModal = closeMapModal;
-                window.centerMarker = centerMarker;
-            });
-        </script>
+                    pinButton.onclick = function(e) {
+                        e.preventDefault();
+                        centerMarker();
+                    };
 
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const onDateBtn = document.getElementById('onDateBtn');
-                const beforeDateBtn = document.getElementById('beforeDateBtn');
-                const flexibleBtn = document.getElementById('flexibleBtn');
-                const onDateInput = document.getElementById('onDateInput');
-                const beforeDateInput = document.getElementById('beforeDateInput');
-                const jobDateInput = document.querySelector('input[name="job_date"]');
-                const jobTimeInput = document.getElementById('job_time');
-                const timeButtons = document.querySelectorAll('.time-btn');
-                const specificTimeCheckbox = document.getElementById('specificTimeCheckbox');
-                const timeOptions = document.getElementById('timeOptions');
-                const imagesInput = document.getElementById('images');
-                const errorMessage = document.querySelector('.error-message');
-                const files = imagesInput.files;
-
-                const toggleVisibility = (element, isVisible) => {
-                    element.classList.toggle('hidden', !isVisible);
+                    div.appendChild(locateButton);
+                    div.appendChild(pinButton);
+                    return div;
                 };
 
-                function resetButtons() {
-                    onDateBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                    beforeDateBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                    flexibleBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                controlContainer.addTo(map);
+            }
+
+            function centerMarker() {
+                if (marker && map) {
+                    map.setView(marker.getLatLng(), 13);
                 }
+            }
 
-                onDateBtn.addEventListener('click', () => {
-                    resetButtons();
-                    onDateBtn.classList.add('bg-blue-600', 'text-black', 'border-blue-600');
-                    onDateInput.classList.remove('hidden');
-                    beforeDateInput.classList.add('hidden');
-                    beforeDateInput.value = '';
-                    jobDateInput.value = '';
-                });
+            function getCurrentLocationOnMap() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
 
-                beforeDateBtn.addEventListener('click', () => {
-                    resetButtons();
-                    beforeDateBtn.classList.add('bg-blue-600', 'text-black', 'border-blue-600');
-                    beforeDateInput.classList.remove('hidden');
-                    onDateInput.classList.add('hidden');
-                    onDateInput.value = '';
-                    jobDateInput.value = '';
-                });
+                            marker.setLatLng([lat, lng]);
+                            map.setView([lat, lng], 15);
+                            updateLocation();
+                        },
+                        (error) => alert("Failed to retrieve location. Enable location services."), {
+                            enableHighAccuracy: true
+                        }
+                    );
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            }
+
+            function updateLocation() {
+                const {
+                    lat,
+                    lng
+                } = marker.getLatLng();
+
+                fetch(`https://us1.locationiq.com/v1/reverse.php?key=${API_KEY}&lat=${lat}&lon=${lng}&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        locationInput.value = data.display_name;
+                        localStorage.setItem("savedAddress", data.display_name);
+                    })
+                    .catch(error => console.error("Error fetching location:", error));
+            }
+
+            function useSelectedLocation() {
+                updateLocation();
+                closeMapModal();
+            }
+
+            function closeMapModal() {
+                document.getElementById("mapModal").classList.add("hidden");
+            }
+
+            window.getCurrentLocationOnMap = getCurrentLocationOnMap;
+            window.openMapModal = openMapModal;
+            window.useSelectedLocation = useSelectedLocation;
+            window.closeMapModal = closeMapModal;
+            window.centerMarker = centerMarker;
+        });
+    </script>
 
 
-                flexibleBtn.addEventListener('click', () => {
-                    resetButtons();
-                    flexibleBtn.classList.add('bg-blue-600', 'text-black', 'border-blue-600');
-                    onDateInput.classList.add('hidden');
-                    beforeDateInput.classList.add('hidden');
-                    jobDateInput.value = '';
-                });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const onDateBtn = document.getElementById('onDateBtn');
+            const beforeDateBtn = document.getElementById('beforeDateBtn');
+            const flexibleBtn = document.getElementById('flexibleBtn');
+            const onDateInput = document.getElementById('onDateInput');
+            const beforeDateInput = document.getElementById('beforeDateInput');
+            const jobDateInput = document.querySelector('input[name="job_date"]');
+            const jobTimeInput = document.getElementById('job_time');
+            const timeButtons = document.querySelectorAll('.time-btn');
+            const specificTimeCheckbox = document.getElementById('specificTimeCheckbox');
+            const timeOptions = document.getElementById('timeOptions');
+            const imagesInput = document.getElementById('images');
+            const errorMessage = document.querySelector('.error-message');
+            const files = imagesInput.files;
 
-                onDateInput.addEventListener('change', () => {
-                    jobDateInput.value = onDateInput.value;
-                });
+            const toggleVisibility = (element, isVisible) => {
+                element.classList.toggle('hidden', !isVisible);
+            };
 
-                beforeDateInput.addEventListener('change', () => {
-                    jobDateInput.value = beforeDateInput.value;
-                });
+            function resetButtons() {
+                onDateBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                beforeDateBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                flexibleBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+            }
 
-                specificTimeCheckbox.addEventListener('change', () => {
-                    toggleVisibility(timeOptions, specificTimeCheckbox.checked);
-                    if (!specificTimeCheckbox.checked) {
-                        jobTimeInput.value = '';
-                    }
-                });
+            onDateBtn.addEventListener('click', () => {
+                resetButtons();
+                onDateBtn.classList.add('bg-blue-600', 'text-black', 'border-blue-600');
+                onDateInput.classList.remove('hidden');
+                beforeDateInput.classList.add('hidden');
+                beforeDateInput.value = '';
+                jobDateInput.value = '';
+            });
 
-                timeButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        timeButtons.forEach(btn => btn.classList.remove('bg-blue-500', 'text-white'));
-                        button.classList.add('bg-blue-500', 'text-white');
-                        jobTimeInput.value = button.getAttribute('data-time');
-                    });
-                });
+            beforeDateBtn.addEventListener('click', () => {
+                resetButtons();
+                beforeDateBtn.classList.add('bg-blue-600', 'text-black', 'border-blue-600');
+                beforeDateInput.classList.remove('hidden');
+                onDateInput.classList.add('hidden');
+                onDateInput.value = '';
+                jobDateInput.value = '';
+            });
 
-                document.querySelectorAll('button[type="button"]').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        event.preventDefault();
-                    });
+
+            flexibleBtn.addEventListener('click', () => {
+                resetButtons();
+                flexibleBtn.classList.add('bg-blue-600', 'text-black', 'border-blue-600');
+                onDateInput.classList.add('hidden');
+                beforeDateInput.classList.add('hidden');
+                jobDateInput.value = '';
+            });
+
+            onDateInput.addEventListener('change', () => {
+                jobDateInput.value = onDateInput.value;
+            });
+
+            beforeDateInput.addEventListener('change', () => {
+                jobDateInput.value = beforeDateInput.value;
+            });
+
+            specificTimeCheckbox.addEventListener('change', () => {
+                toggleVisibility(timeOptions, specificTimeCheckbox.checked);
+                if (!specificTimeCheckbox.checked) {
+                    jobTimeInput.value = '';
+                }
+            });
+
+            timeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    timeButtons.forEach(btn => btn.classList.remove('bg-blue-500', 'text-white'));
+                    button.classList.add('bg-blue-500', 'text-white');
+                    jobTimeInput.value = button.getAttribute('data-time');
                 });
             });
 
-            $(document).ready(function() {
-                $("#jobForm").submit(function(event) {
+            document.querySelectorAll('button[type="button"]').forEach(button => {
+                button.addEventListener('click', (event) => {
                     event.preventDefault();
-
-                    let isValid = true;
-                    $(".error-message").text("").addClass("hidden");
-                    $("input, textarea").removeClass("border-red-500");
-
-                    let jobTitle = $("#job_title").val().trim();
-                    if (jobTitle === "") {
-                        $("#job_title").addClass("border-red-500");
-                        $("#job_title").next(".error-message").text("Job title is required.").removeClass("hidden");
-                        isValid = false;
-                    }
-
-                    let location = $("#location").val().trim();
-                    if (location === "") {
-                        $("#location").addClass("border-red-500");
-                        $("#location").next(".error-message").text("Location is required.").removeClass("hidden");
-                        isValid = false;
-                    }
-
-                    let description = $("#description").val().trim();
-                    if (description === "") {
-                        $("#description").addClass("border-red-500");
-                        $("#description").next(".error-message").text("Description is required.").removeClass("hidden");
-                        isValid = false;
-                    }
-
-                    let budget = $("#budget").val().trim();
-let rangePattern = /^\d+\s*-\s*\d+$/; // Regex for "number-number" format
-
-if (budget === "") {
-    $("#budget").addClass("border-red-500");
-    $("#budget").next(".error-message").text("Budget is required (Enter a range like '100-500')").removeClass("hidden");
-    isValid = false;
-} else if (!rangePattern.test(budget)) {
-    $("#budget").addClass("border-red-500");
-    $("#budget").next(".error-message").text("Budget must be in range format (e.g., '100-500')").removeClass("hidden");
-    isValid = false;
-} else {
-    let [min, max] = budget.split("-").map(num => parseInt(num.trim()));
-
-    if (isNaN(min) || isNaN(max) || min <= 100 || max <= 100 || min >= max) {
-        $("#budget").addClass("border-red-500");
-        $("#budget").next(".error-message").text("Enter a valid range (e.g., '101-500' where min < max)").removeClass("hidden");
-        isValid = false;
-    } else {
-        $("#budget").removeClass("border-red-500");
-        $("#budget").next(".error-message").addClass("hidden");
-    }
-}
-                 if (isValid) {
-                        this.submit();
-                    }
                 });
-
-
             });
+        });
 
-            document.addEventListener("DOMContentLoaded", function() {
+        $(document).ready(function() {
+            $("#jobForm").submit(function(event) {
+                event.preventDefault();
 
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has("success")) {
-                    document.getElementById("successModal").classList.remove("hidden");
+                let isValid = true;
+                $(".error-message").text("").addClass("hidden");
+                $("input, textarea").removeClass("border-red-500");
 
-                    const newUrl = window.location.pathname;
-                    history.replaceState({}, document.title, newUrl);
+                let jobTitle = $("#job_title").val().trim();
+                if (jobTitle === "") {
+                    $("#job_title").addClass("border-red-500");
+                    $("#job_title").next(".error-message").text("Job title is required.").removeClass("hidden");
+                    isValid = false;
                 }
 
-                document.getElementById("closeSuccessModal").addEventListener("click", function() {
-                    document.getElementById("successModal").classList.add("hidden");
-                });
-            });
+                let location = $("#location").val().trim();
+                if (location === "") {
+                    $("#location").addClass("border-red-500");
+                    $("#location").next(".error-message").text("Location is required.").removeClass("hidden");
+                    isValid = false;
+                }
 
-            document.addEventListener("DOMContentLoaded", function () {
-                const postJobBtn = document.getElementById("postJobBtn");
-                const modal = document.getElementById("requiredModal");
-                const closeModalBtn = document.getElementById("closeRequiredModal");
+                let description = $("#description").val().trim();
+                if (description === "") {
+                    $("#description").addClass("border-red-500");
+                    $("#description").next(".error-message").text("Description is required.").removeClass("hidden");
+                    isValid = false;
+                }
 
-                postJobBtn.addEventListener("click", function (event) {
-                    const isUnverified = postJobBtn.getAttribute("data-unverified") === "true";
+                let budget = $("#budget").val().trim();
+                let rangePattern = /^\d+\s*-\s*\d+$/; // Regex for "number-number" format
 
-                    if (isUnverified) {
-                        event.preventDefault(); // ⛔ Stop form submission
-                        modal.classList.remove("hidden"); // 🔥 Show verification modal
+                if (budget === "") {
+                    $("#budget").addClass("border-red-500");
+                    $("#budget").next(".error-message").text("Budget is required (Enter a range like '100-500')").removeClass("hidden");
+                    isValid = false;
+                } else if (!rangePattern.test(budget)) {
+                    $("#budget").addClass("border-red-500");
+                    $("#budget").next(".error-message").text("Budget must be in range format (e.g., '100-500')").removeClass("hidden");
+                    isValid = false;
+                } else {
+                    let [min, max] = budget.split("-").map(num => parseInt(num.trim()));
+
+                    if (isNaN(min) || isNaN(max) || min <= 100 || max <= 100 || min >= max) {
+                        $("#budget").addClass("border-red-500");
+                        $("#budget").next(".error-message").text("Enter a valid range (e.g., '101-500' where min < max)").removeClass("hidden");
+                        isValid = false;
+                    } else {
+                        $("#budget").removeClass("border-red-500");
+                        $("#budget").next(".error-message").addClass("hidden");
                     }
-                });
-
-                closeModalBtn.addEventListener("click", function () {
-                    modal.classList.add("hidden");
-                    window.location.href = "userVerifyAccount.php"; // Redirect to verification page
-                });
-            });
-        </script>
-
-        <script>
-            document.getElementById('resetButton').addEventListener('click', function() {
-                let form = document.getElementById('jobForm');
-                form.reset(); // Resets all standard inputs and selects
-
-                // Reset manually for Alpine.js-bound fields
-                document.getElementById('onDateInput').classList.add('hidden');
-                document.getElementById('beforeDateInput').classList.add('hidden');
-                document.getElementById('timeOptions').classList.add('hidden');
-                document.getElementById('job_date').value = "";
-                document.getElementById('job_time').value = "";
-                
-                // Reset any error messages
-                document.querySelectorAll('.error-message').forEach(el => {
-                    el.classList.add('hidden');
-                    el.textContent = '';
-                });
-
-                // Clear file input
-                document.getElementById('images').value = '';
-
-                // If using Alpine.js, reset bound values
-                if (typeof Alpine !== 'undefined') {
-                    Alpine.store('selectedCategory', '');
-                    Alpine.store('selectedSubcategory', '');
+                }
+                if (isValid) {
+                    this.submit();
                 }
             });
-        </script>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
+
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has("success")) {
+                document.getElementById("successModal").classList.remove("hidden");
+
+                const newUrl = window.location.pathname;
+                history.replaceState({}, document.title, newUrl);
+            }
+
+            document.getElementById("closeSuccessModal").addEventListener("click", function() {
+                document.getElementById("successModal").classList.add("hidden");
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const postJobBtn = document.getElementById("postJobBtn");
+            const modal = document.getElementById("requiredModal");
+            const closeModalBtn = document.getElementById("closeRequiredModal");
+
+            postJobBtn.addEventListener("click", function(event) {
+                const isUnverified = postJobBtn.getAttribute("data-unverified") === "true";
+
+                if (isUnverified) {
+                    event.preventDefault(); // ⛔ Stop form submission
+                    modal.classList.remove("hidden"); // 🔥 Show verification modal
+                }
+            });
+
+            closeModalBtn.addEventListener("click", function() {
+                modal.classList.add("hidden");
+                window.location.href = "userVerifyAccount.php"; // Redirect to verification page
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById('resetButton').addEventListener('click', function() {
+            let form = document.getElementById('jobForm');
+            form.reset(); // Resets all standard inputs and selects
+
+            // Reset manually for Alpine.js-bound fields
+            document.getElementById('onDateInput').classList.add('hidden');
+            document.getElementById('beforeDateInput').classList.add('hidden');
+            document.getElementById('timeOptions').classList.add('hidden');
+            document.getElementById('job_date').value = "";
+            document.getElementById('job_time').value = "";
+
+            // Reset any error messages
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.add('hidden');
+                el.textContent = '';
+            });
+
+            // Clear file input
+            document.getElementById('images').value = '';
+
+            // If using Alpine.js, reset bound values
+            if (typeof Alpine !== 'undefined') {
+                Alpine.store('selectedCategory', '');
+                Alpine.store('selectedSubcategory', '');
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
             let jobTimeValue = document.getElementById("job_time").value;
             if (jobTimeValue) {
                 document.querySelectorAll(".time-btn").forEach(btn => {
@@ -998,45 +1055,44 @@ if (budget === "") {
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll(".delete-image-btn").forEach(button => {
-            button.addEventListener("click", function() {
-                const imagePath = this.getAttribute("data-image");
-                const jobId = document.querySelector('input[name="job_id"]').value;
-                const imageContainer = this.closest(".image-container");
+            document.querySelectorAll(".delete-image-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    const imagePath = this.getAttribute("data-image");
+                    const jobId = document.querySelector('input[name="job_id"]').value;
+                    const imageContainer = this.closest(".image-container");
 
-                if (!jobId) {
-                    alert("Job ID is missing.");
-                    return;
-                }
-
-                if (!confirm("Are you sure you want to delete this image?")) {
-                    return;
-                }
-
-                fetch("delete_job_image.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: new URLSearchParams({ 
-                        job_id: jobId, 
-                        image_path: imagePath 
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        imageContainer.remove(); // Remove image from UI
-                    } else {
-                        alert(data.message);
+                    if (!jobId) {
+                        alert("Job ID is missing.");
+                        return;
                     }
-                })
-                .catch(error => console.error("Error:", error));
+
+                    if (!confirm("Are you sure you want to delete this image?")) {
+                        return;
+                    }
+
+                    fetch("delete_job_image.php", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: new URLSearchParams({
+                                job_id: jobId,
+                                image_path: imagePath
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                imageContainer.remove(); // Remove image from UI
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+                });
             });
         });
-    });
-
-        </script>
+    </script>
 
 
 </body>
