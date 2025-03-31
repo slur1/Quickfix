@@ -138,7 +138,7 @@ try {
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
 
-        $sqlUpdate = "UPDATE user set verification_status = 'identity_verified'";
+        $sqlUpdate = "UPDATE user set verification_status = 'identity_verified', take_assesment = '1'";
         $stmtUp = $conn->prepare($sqlUpdate);
         $stmtUp->execute();
 

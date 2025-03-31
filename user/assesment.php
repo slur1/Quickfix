@@ -48,104 +48,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 
-
-
-
 ?>
-
-<div class="max-w-5xl mx-auto p-6">
-
-    <form id="takeassesmentForm" method="POST" enctype="multipart/form-data" class="w-full max-w-4xl p-6 shadow-lg bg-white rounded-lg border border-gray-300">
-        <h1 class="text-3xl font-bold text-blue-900 mb-8">Take Assesment</h1>
-        <div class="space-y-6">
-
-            <h1 class="text-1xl font-bold text-blue-900 mb-8">Aircon Cleaning Assessment</h1>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">How often should an aircon filter be cleaned?</label>
-                <input type="text" id="answer1" name="answer1" placeholder="Answer"
-                    class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
-                <span class="text-xs text-red-500 hidden error-message"></span>
+            <div id="requiredModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md" style="z-index: 999;">
+                <div class="bg-white p-6 rounded-2xl shadow-xl w-[90%] max-w-sm relative">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-12 h-12 flex items-center justify-center bg-red-100 text-red-500 rounded-full mb-4">
+                            <i class="fas fa-exclamation-circle text-2xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">Verification Required</h2>
+                        <p class="mt-2 text-gray-600 text-sm">You must verify your account before posting a job.</p>
+                        <a href="userVerifyAccount.php" class="mt-5 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300">
+                            <button >
+                                OK, Verify Now
+                            </button>
+                        </a>
+                    </div>
+                </div>
             </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">What safety precautions should be taken before cleaning an aircon unit?</label>
-                <input type="text" id="answer2" name="answer2" placeholder="Answer"
-                    class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
-                <span class="text-xs text-red-500 hidden error-message"></span>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">A client complains that their aircon still smells bad after cleaning. What might be the issue?</label>
-                <input type="text" id="answer3" name="answer3" placeholder="Answer"
-                    class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 focus:outline-none">
-                <span class="text-xs text-red-500 hidden error-message"></span>
-            </div>
-
-            <div class="flex justify-end space-x-4 pt-4">
-                <button type="submit" class="px-6 py-2 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors">
-                    Take Assesment
-                </button>
-            </div>
-        </div>
-        </main>
-    </form>
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const form = document.getElementById("takeassesmentForm");
-
-            form.addEventListener("submit", function(event) {
-                event.preventDefault(); // Pigilan ang default form submission
-
-                let isValid = true;
-
-                // Kunin ang lahat ng input fields
-                const answerOne = document.getElementById("answer1");
-                const answerTwo = document.getElementById("answer2");
-                const answerThree = document.getElementById("answer3");
-
-                // Linisin ang error messages
-                document.querySelectorAll(".error-message").forEach(error => {
-                    error.textContent = "";
-                    error.classList.add("hidden");
-                });
-
-                document.querySelectorAll("input").forEach(input => {
-                    input.classList.remove("border-red-500");
-                });
-
-                // Field Validation
-                if (answerOne.value.trim() === "") {
-                    showError(answerOne, "Field is required.");
-                    isValid = false;
-                }
-
-                if (answerTwo.value.trim() === "") {
-                    showError(answerTwo, "Field is required.");
-                    isValid = false;
-                }
-
-                if (answerThree.value.trim() === "") {
-                    showError(answerThree, "Field is required.");
-                    isValid = false;
-                }
-
-                // I-submit lang kapag valid
-                if (isValid) {
-                    form.submit();
-                }
-            });
-
-            function showError(input, message) {
-                const errorMessage = input.nextElementSibling;
-                errorMessage.textContent = message;
-                errorMessage.classList.remove("hidden");
-                input.classList.add("border-red-500");
-            }
-        });
-    </script>
-
     <script>
         function resetAnimation() {
             const letters = document.querySelectorAll('.letter');

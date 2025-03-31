@@ -286,8 +286,10 @@ $conn->close();
 <div id="main-content" style="display:none;"></div>
     <?php include './userHeader.php'; ?>
 
+    <?php if ($take_assesmentresult->num_rows === 0) { ?>
+        <?php include 'assesment.php'; ?>
+    <?php } ?>
 
-    <?php if ($take_assesmentresult->num_rows > 0) { ?>
     <section class="bg-white shadow px-1 py-1 flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
 
         <div class="flex-1 max-w-full md:max-w-md">
@@ -1522,13 +1524,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-
-
-
-
-<?php } else { ?>
-    <?php include 'assesment.php'; ?>
-<?php } ?>
 </div>
 </body>
 
