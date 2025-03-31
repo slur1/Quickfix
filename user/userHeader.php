@@ -56,7 +56,7 @@ $profileImage = $_SESSION['user_profile_image'] ?? '../img/default-profile.png';
 </head>
 
 <body class="bg-gray-100">
-    <header class="bg-white shadow px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+    <header class="bg-white shadow px-6 py-2 flex items-center justify-between sticky top-0 z-50">
         <div class="flex items-center space-x-4">
             <img src="../img/logo1.png" alt="Logo" class="h-12">
         </div>

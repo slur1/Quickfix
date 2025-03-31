@@ -10,7 +10,7 @@ if (!$data) {
     exit;
 }
 
-$api_key = "jiYY9wGCQN1GrwYd79UZ2ghPwHDEOp3t"; 
+$api_key = "jiYY9wGCQN1GrwYd79UZ2ghPwHDEOp3t";
 $api_url = "https://api2.idanalyzer.com/scan";
 
 $uploads_dir = 'uploads';
@@ -18,12 +18,13 @@ if (!is_dir($uploads_dir)) {
     mkdir($uploads_dir, 0755, true);
 }
 
-function saveBase64Image($base64Data, $filename) {
+function saveBase64Image($base64Data, $filename)
+{
     if (!$base64Data) return null;
-    
+
     $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $base64Data);
     $imageData = base64_decode($imageData);
-    
+
     if (!$imageData) {
         return null;
     }
@@ -69,7 +70,7 @@ if ($error) {
 }
 
 $response_data = json_decode($response, true);
-$decision = $response_data['decision'] ?? 'Unknown'; 
+$decision = $response_data['decision'] ?? 'Unknown';
 
 if (isset($response_data['document']['expiry'])) {
     $expiry_date = $response_data['document']['expiry'];
@@ -120,19 +121,18 @@ try {
             'warnings' => $warnings
         ]);
         exit;
-    }
-    elseif ($decision === 'accept') {
+    } elseif ($decision === 'accept') {
         echo json_encode(['decision' => $decision]);
         $sql = "INSERT INTO user_verifications (
             user_id, front_id, back_id, selfie, verification_status
         ) VALUES (?, ?, ?, ?, ?)";
 
         $params = [
-            $user_id,           
-            $front_id_path,     
-            $back_id_path,             
-            $selfie_path,           
-            'identity_verified'               
+            $user_id,
+            $front_id_path,
+            $back_id_path,
+            $selfie_path,
+            'identity_verified'
         ];
 
         $stmt = $conn->prepare($sql);
@@ -144,10 +144,7 @@ try {
 
         exit;
     }
-
 } catch (Exception $e) {
     echo json_encode(['error' => 'Failed to process request: ' . $e->getMessage()]);
     exit;
 }
-
-?>

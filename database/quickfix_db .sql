@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 28, 2025 at 05:40 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Mar 31, 2025 at 01:57 AM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -198,14 +198,14 @@ CREATE TABLE `completed_jobs` (
 --
 
 INSERT INTO `completed_jobs` (`id`, `job_id`, `offer_id`, `provider_id`, `user_id`, `job_title`, `location`, `description`, `offer_amount`, `completion_time`, `completed_at`, `rating`, `review`, `status`) VALUES
-(27, 168, 90, 84, 90, 'Fix a Chandelier', 'Aguila Street, Pangarap, Zone 16, District 1, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'faulty or flickering lights\r\nplease bring your own tools', 400.00, '2-3 hrs', '2025-03-06 11:18:16', 4.0, 'good', 'completed'),
-(35, 173, 97, 89, 90, 'Web Developer', 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'WEb developer html css js', 10000.00, '.', '2025-03-16 06:47:58', 5.0, 'goods', 'completed'),
-(36, 174, 98, 89, 90, 'consultant', 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'consultant', 123.00, '.', '2025-03-16 12:43:37', 4.0, 'ntest', 'completed'),
-(37, 178, 101, 105, 92, 'Cleaning a house', 'Barangay 172, Goodharvest Park, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'sasasa', 2.00, 'e', '2025-03-17 13:12:40', 5.0, 'goods', 'completed'),
-(38, 180, 107, 113, 105, 'Cleaning a house', 'Barangay 178, Kasama Step Up Community, Camarin, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', '.', 700.00, 'g', '2025-03-27 18:24:52', NULL, NULL, 'completed'),
-(39, 179, 106, 113, 105, 'Cleaning a house', 'Barangay 172, Goodharvest Park, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'dd', 500.00, 'h', '2025-03-27 18:39:04', NULL, NULL, 'completed'),
-(40, 185, 105, 113, 105, 'Cleaning a house', 'A. Mabini Elementary School, Cherry Blossom Street, Barangay 187, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1438, Philippines', '.', 500.00, '..', '2025-03-28 05:48:30', 5.0, 'yeyss', 'completed'),
-(41, 185, 105, 113, 105, 'Cleaning a house', 'A. Mabini Elementary School, Cherry Blossom Street, Barangay 187, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1438, Philippines', '.', 500.00, '..', '2025-03-28 12:02:31', NULL, NULL, 'completed');
+(27, 168, 90, 84, 90, 'Fix a Chandelier', 'Aguila Street, Pangarap, Zone 16, District 1, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'faulty or flickering lights\r\nplease bring your own tools', '400.00', '2-3 hrs', '2025-03-06 11:18:16', '4.0', 'good', 'completed'),
+(35, 173, 97, 89, 90, 'Web Developer', 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'WEb developer html css js', '10000.00', '.', '2025-03-16 06:47:58', '5.0', 'goods', 'completed'),
+(36, 174, 98, 89, 90, 'consultant', 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'consultant', '123.00', '.', '2025-03-16 12:43:37', '4.0', 'ntest', 'completed'),
+(37, 178, 101, 105, 92, 'Cleaning a house', 'Barangay 172, Goodharvest Park, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'sasasa', '2.00', 'e', '2025-03-17 13:12:40', '5.0', 'goods', 'completed'),
+(38, 180, 107, 113, 105, 'Cleaning a house', 'Barangay 178, Kasama Step Up Community, Camarin, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', '.', '700.00', 'g', '2025-03-27 18:24:52', NULL, NULL, 'completed'),
+(39, 179, 106, 113, 105, 'Cleaning a house', 'Barangay 172, Goodharvest Park, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'dd', '500.00', 'h', '2025-03-27 18:39:04', NULL, NULL, 'completed'),
+(40, 185, 105, 113, 105, 'Cleaning a house', 'A. Mabini Elementary School, Cherry Blossom Street, Barangay 187, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1438, Philippines', '.', '500.00', '..', '2025-03-28 05:48:30', '5.0', 'yeyss', 'completed'),
+(41, 185, 105, 113, 105, 'Cleaning a house', 'A. Mabini Elementary School, Cherry Blossom Street, Barangay 187, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1438, Philippines', '.', '500.00', '..', '2025-03-28 12:02:31', NULL, NULL, 'completed');
 
 -- --------------------------------------------------------
 
@@ -264,18 +264,18 @@ CREATE TABLE `jobs` (
 --
 
 INSERT INTO `jobs` (`id`, `user_id`, `job_title`, `job_date`, `job_time`, `location`, `description`, `budget`, `images`, `created_at`, `status`, `latitude`, `longitude`, `category_id`, `sub_category_id`, `cancelled_at`, `cancelled_by`, `chosen_worker_id`) VALUES
-(165, 90, 'Cleaning a house', NULL, 'Midday (10am - 2pm)', 'Kasama Step Up Community, Zone 16, District 1, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'Clean a garden', '500 - 5000', 'user-uploads/philippines-siquijor-island-larena-town-street-scene-BT5NGA.jpg', '2025-03-06 10:46:10', 'open', 14.755447, 121.067568, 9, 3, NULL, NULL, NULL),
-(166, 90, 'Repair Oven', '2025-03-14', 'Afternoon (2pm - 6pm)', 'Barangay 176-A, Zone 15, Bagong Silang, District 1, Caloocan, Northern Manila District, Metro Manila, 1428, Philippines', 'Oven light fails to turn on.\r\nplease bring your own tools', '300.00', 'user-uploads/electric-ovens-most-common-faults.jpg', '2025-03-06 10:50:39', 'completed', 14.776733, 121.043048, 10, 10, NULL, NULL, NULL),
-(167, 90, 'Clean a Carpet', '2025-03-11', 'Afternoon (2pm - 6pm)', 'Silver Street, Doña Helen Subdivision, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'Clean a dirty carpet.\r\nplease  provide equipment and chemicals.', '1000.00', 'user-uploads/images (2).jpg', '2025-03-06 10:54:26', 'open', 14.755049, 121.047891, 9, 5, NULL, NULL, NULL),
-(168, 90, 'Fix a Chandelier', '2025-03-11', 'Afternoon (2pm - 6pm)', 'Aguila Street, Pangarap, Zone 16, District 1, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'faulty or flickering lights\r\nplease bring your own tools', '300.00', 'user-uploads/9114-5.jpg', '2025-03-06 10:56:18', 'completed', 14.762294, 121.092924, 10, 8, NULL, NULL, NULL),
-(173, 90, 'Web Developer', '2025-03-20', 'Morning (Before 10am)', 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'WEb developer html css js', '5000 - 10000', 'user-uploads/attachment_132674120.png', '2025-03-16 06:25:36', 'open', 14.651348, 120.972400, 9, 1, NULL, NULL, NULL),
-(174, 90, 'consultant', '2025-03-28', NULL, 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'consultant', '1000 - 20000', 'user-uploads/cereals2.jpg', '2025-03-16 12:32:52', 'open', 14.651348, 120.972400, 9, 2, NULL, NULL, NULL),
-(175, 90, 'development', '2025-03-27', NULL, 'Navotas, Northern Manila District, Metro Manila, Philippines', 'development', '100 - 200', 'user-uploads/vegetables2.jpg', '2025-03-16 12:34:43', 'open', 14.657186, 120.947969, 9, 2, NULL, NULL, NULL),
-(179, 105, 'Cleaning a house', NULL, 'Midday (10am - 2pm)', 'Barangay 172, Goodharvest Park, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'dd', '1000-5000', NULL, '2025-03-17 04:50:19', 'completed', -42.717360, 170.976750, 9, 4, NULL, NULL, NULL),
-(180, 105, 'Cleaning a house', NULL, 'Evening (After 6pm)', 'Barangay 178, Kasama Step Up Community, Camarin, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', '.', '1000-5000', NULL, '2025-03-18 17:58:09', 'completed', 14.574962, 120.990918, 0, 0, NULL, NULL, NULL),
-(185, 105, 'Cleaning a house', '2025-03-03', 'Evening (After 6pm)', 'A. Mabini Elementary School, Cherry Blossom Street, Barangay 187, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1438, Philippines', '.', '1000', '', '2025-03-18 19:53:30', 'completed', 14.766394, 121.060740, 9, 3, NULL, NULL, NULL),
-(190, 105, 'Cleaning my mansioning pleaseabless', NULL, 'Midday (10am - 2pm)', 'Katmon Street, Kasama Step Up Community, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'Sana maka graduate with them.     please lord', '4000 - 6000', 'user-uploads/istockphoto-1189357377-612x612.jpg,user-uploads/9114-5.jpg', '2025-03-27 15:09:30', 'cancelled', 14.754461, 121.067682, 9, 3, '2025-03-28 05:26:37', 105, NULL),
-(191, 105, 'Clean my garage please senpai pwiss', NULL, 'Evening (After 6pm)', 'Katmon Street, Kasama Step Up Community, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'please sana maka graduate', '2000 - 9000', 'user-uploads/room-stacked-full-of-possessions-DWJDTF.jpg,user-uploads/istockphoto-1189357377-612x612.jpg,user-uploads/9114-5.jpg,user-uploads/480948010_1832506980935620_7537748626361050051_n.jpg', '2025-03-27 15:22:18', 'cancelled', 14.754461, 121.067682, 10, 8, '2025-03-28 03:12:12', 105, NULL);
+(165, 90, 'Cleaning a house', NULL, 'Midday (10am - 2pm)', 'Kasama Step Up Community, Zone 16, District 1, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'Clean a garden', '500 - 5000', 'user-uploads/philippines-siquijor-island-larena-town-street-scene-BT5NGA.jpg', '2025-03-06 10:46:10', 'open', '14.755447', '121.067568', 9, 3, NULL, NULL, NULL),
+(166, 90, 'Repair Oven', '2025-03-14', 'Afternoon (2pm - 6pm)', 'Barangay 176-A, Zone 15, Bagong Silang, District 1, Caloocan, Northern Manila District, Metro Manila, 1428, Philippines', 'Oven light fails to turn on.\r\nplease bring your own tools', '300.00', 'user-uploads/electric-ovens-most-common-faults.jpg', '2025-03-06 10:50:39', 'completed', '14.776733', '121.043048', 10, 10, NULL, NULL, NULL),
+(167, 90, 'Clean a Carpet', '2025-03-11', 'Afternoon (2pm - 6pm)', 'Silver Street, Doña Helen Subdivision, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'Clean a dirty carpet.\r\nplease  provide equipment and chemicals.', '1000.00', 'user-uploads/images (2).jpg', '2025-03-06 10:54:26', 'open', '14.755049', '121.047891', 9, 5, NULL, NULL, NULL),
+(168, 90, 'Fix a Chandelier', '2025-03-11', 'Afternoon (2pm - 6pm)', 'Aguila Street, Pangarap, Zone 16, District 1, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'faulty or flickering lights\r\nplease bring your own tools', '300.00', 'user-uploads/9114-5.jpg', '2025-03-06 10:56:18', 'completed', '14.762294', '121.092924', 10, 8, NULL, NULL, NULL),
+(173, 90, 'Web Developer', '2025-03-20', 'Morning (Before 10am)', 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'WEb developer html css js', '5000 - 10000', 'user-uploads/attachment_132674120.png', '2025-03-16 06:25:36', 'open', '14.651348', '120.972400', 9, 1, NULL, NULL, NULL),
+(174, 90, 'consultant', '2025-03-28', NULL, 'Caloocan, Northern Manila District, Metro Manila, Philippines', 'consultant', '1000 - 20000', 'user-uploads/cereals2.jpg', '2025-03-16 12:32:52', 'open', '14.651348', '120.972400', 9, 2, NULL, NULL, NULL),
+(175, 90, 'development', '2025-03-27', NULL, 'Navotas, Northern Manila District, Metro Manila, Philippines', 'development', '100 - 200', 'user-uploads/vegetables2.jpg', '2025-03-16 12:34:43', 'open', '14.657186', '120.947969', 9, 2, NULL, NULL, NULL),
+(179, 105, 'Cleaning a house', NULL, 'Midday (10am - 2pm)', 'Barangay 172, Goodharvest Park, Camarin, District 1, Caloocan, Northern Manila District, Metro Manila, 1422, Philippines', 'dd', '1000-5000', NULL, '2025-03-17 04:50:19', 'completed', '-42.717360', '170.976750', 9, 4, NULL, NULL, NULL),
+(180, 105, 'Cleaning a house', NULL, 'Evening (After 6pm)', 'Barangay 178, Kasama Step Up Community, Camarin, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', '.', '1000-5000', NULL, '2025-03-18 17:58:09', 'completed', '14.574962', '120.990918', 0, 0, NULL, NULL, NULL),
+(185, 105, 'Cleaning a house', '2025-03-03', 'Evening (After 6pm)', 'A. Mabini Elementary School, Cherry Blossom Street, Barangay 187, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1438, Philippines', '.', '1000', '', '2025-03-18 19:53:30', 'completed', '14.766394', '121.060740', 9, 3, NULL, NULL, NULL),
+(190, 105, 'Cleaning my mansioning pleaseabless', NULL, 'Midday (10am - 2pm)', 'Katmon Street, Kasama Step Up Community, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'Sana maka graduate with them.     please lord', '4000 - 6000', 'user-uploads/istockphoto-1189357377-612x612.jpg,user-uploads/9114-5.jpg', '2025-03-27 15:09:30', 'cancelled', '14.754461', '121.067682', 9, 3, '2025-03-28 05:26:37', 105, NULL),
+(191, 105, 'Clean my garage please senpai pwiss', NULL, 'Evening (After 6pm)', 'Katmon Street, Kasama Step Up Community, Zone 16, District 3, Caloocan, Northern Manila District, Metro Manila, 1427, Philippines', 'please sana maka graduate', '2000 - 9000', 'user-uploads/room-stacked-full-of-possessions-DWJDTF.jpg,user-uploads/istockphoto-1189357377-612x612.jpg,user-uploads/9114-5.jpg,user-uploads/480948010_1832506980935620_7537748626361050051_n.jpg', '2025-03-27 15:22:18', 'cancelled', '14.754461', '121.067682', 10, 8, '2025-03-28 03:12:12', 105, NULL);
 
 -- --------------------------------------------------------
 
@@ -329,12 +329,12 @@ CREATE TABLE `offers` (
 --
 
 INSERT INTO `offers` (`id`, `job_id`, `provider_id`, `offer_amount`, `message`, `status`, `completion_time`, `creation_time`) VALUES
-(104, 167, 105, 2.00, 'd', 'pending', 'd', '2025-03-24 10:51:11'),
-(105, 185, 113, 500.00, '..', 'accepted', '..', '2025-03-27 10:27:38'),
-(106, 179, 113, 500.00, 'h', 'accepted', 'h', '2025-03-27 10:27:50'),
-(107, 180, 113, 700.00, 'g', 'accepted', 'g', '2025-03-27 10:28:04'),
-(108, 190, 114, 23.00, 'dd', 'pending', 'dd', '2025-03-28 12:25:07'),
-(109, 191, 114, 3.00, 'dawa', 'pending', 'da', '2025-03-28 12:25:20');
+(104, 167, 105, '2.00', 'd', 'pending', 'd', '2025-03-24 10:51:11'),
+(105, 185, 113, '500.00', '..', 'accepted', '..', '2025-03-27 10:27:38'),
+(106, 179, 113, '500.00', 'h', 'accepted', 'h', '2025-03-27 10:27:50'),
+(107, 180, 113, '700.00', 'g', 'accepted', 'g', '2025-03-27 10:28:04'),
+(108, 190, 114, '23.00', 'dd', 'pending', 'dd', '2025-03-28 12:25:07'),
+(109, 191, 114, '3.00', 'dawa', 'pending', 'da', '2025-03-28 12:25:20');
 
 -- --------------------------------------------------------
 
@@ -446,9 +446,10 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `id_type`, `id_file_path`, `contact_number`, `password_hash`, `created_at`, `email_verified`, `verification_code`, `status`, `take_assesment`, `profile_picture`, `skills`, `about_me`, `general_location`, `portfolio`, `verification_status`, `id_image`) VALUES
-(105, 'Monica', 'Alburo', 'monicarumbide12@gmail.com', 'national_id', '../uploads/ids/id_67d94afa9afb34.31116672.jpg', '09276245261', '$2y$10$tq1p5ygYmHqnM3euHPaGG.5pcZqQGNX.0nWKWVtI.tzJFCitUta5u', '2025-03-17 10:11:32', 1, 'f8dd8d', 'approved', 1, '../uploads/profile_pictures/1742236941_momo.jpg', 'Backend Dev,            Expert Cleaner,          songerist', 'Too boring to be with.\r\nI cannot code without ai and you need to have the tools and equipment when you want me to clean your house or something. duhh', 'North Caloocan, Metro Manila', 'https://www.facebook.com/monica.alburo.3', 'identity_verified', NULL),
-(113, 'Bitch na', 'Peke', 'secreswallowtail112@gmail.com', '', '', '', '$2y$10$T7.Lg2gm7dxgNVvlPjHHJ.EupeHtwlA6idwnqSlh.yjK08fd15Dp6', '2025-03-18 01:48:55', 1, '75042e', 'approved', 1, '../uploads/profile_pictures/default-avatar.jpg', '', '', '', '', 'identity_verified', NULL),
-(114, 'Monica', 'Swallowtail', 'monicalburo12@gmail.com', '', '', '9817562749', '$2y$10$nxSNrY8hr5ac0UcdZ8aFfeG9kxn8pCL72l4ddNDz6Sikpupx8lmZm', '2025-03-19 02:17:36', 1, '15ecf1', 'approved', 1, '../uploads/profile_pictures/1742803180_535361b1eaf3a871024ad773933751d4.jpg', 'Dev', 'hey hey hey', 'North Caloocan, Metro Manila', '', 'unverified', NULL);
+(105, 'Monica', 'Alburo', 'monicarumbide12@gmail.com', 'national_id', '../uploads/ids/id_67d94afa9afb34.31116672.jpg', '09276245261', '$2y$10$tq1p5ygYmHqnM3euHPaGG.5pcZqQGNX.0nWKWVtI.tzJFCitUta5u', '2025-03-17 10:11:32', 1, 'f8dd8d', 'approved', 1, '../uploads/profile_pictures/1742236941_momo.jpg', 'Backend Dev,            Expert Cleaner,          songerist', 'Too boring to be with.\r\nI cannot code without ai and you need to have the tools and equipment when you want me to clean your house or something. duhh', 'North Caloocan, Metro Manila', 'https://www.facebook.com/monica.alburo.3', 'fully_verified', NULL),
+(113, 'Bitch na', 'Peke', 'secreswallowtail112@gmail.com', '', '', '', '$2y$10$T7.Lg2gm7dxgNVvlPjHHJ.EupeHtwlA6idwnqSlh.yjK08fd15Dp6', '2025-03-18 01:48:55', 1, '75042e', 'approved', 1, '../uploads/profile_pictures/default-avatar.jpg', '', '', '', '', 'fully_verified', NULL),
+(114, 'Monica', 'Swallowtail', 'monicalburo12@gmail.com', '', '', '9817562749', '$2y$10$nxSNrY8hr5ac0UcdZ8aFfeG9kxn8pCL72l4ddNDz6Sikpupx8lmZm', '2025-03-19 02:17:36', 1, '15ecf1', 'approved', 1, '../uploads/profile_pictures/1742803180_535361b1eaf3a871024ad773933751d4.jpg', 'Dev', 'hey hey hey', 'North Caloocan, Metro Manila', '', 'fully_verified', NULL),
+(115, 'Ajhay', 'Arendayen', 'ajhayarendayen@gmail.com', '', '', '9121213234', '$2y$10$BhYHIWCoMsqmIADapYmUweQ.g5dnnkOPeZCKZlwQVouRxBJdfxg1W', '2025-03-30 09:37:05', 1, 'fa7e4a', 'approved', 0, '../uploads/profile_pictures/default-avatar.jpg', 'Php, MySQL', 'Wala lang', 'Caloocan City', '', 'identity_verified', NULL);
 
 -- --------------------------------------------------------
 
@@ -459,9 +460,10 @@ INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `id_type`, `id_fil
 CREATE TABLE `user_verifications` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `id_type` varchar(50) NOT NULL,
-  `id_file_path` varchar(255) NOT NULL,
-  `verification_status` enum('unverified','identity_verified','fully_verified') NOT NULL DEFAULT 'unverified',
+  `front_id` varchar(500) NOT NULL,
+  `back_id` varchar(500) NOT NULL,
+  `selfie` varchar(500) NOT NULL,
+  `verification_status` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -679,13 +681,13 @@ ALTER TABLE `sub_categories`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
 
 --
 -- AUTO_INCREMENT for table `user_verifications`
 --
 ALTER TABLE `user_verifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables
@@ -706,13 +708,6 @@ ALTER TABLE `in_progress_jobs`
   ADD CONSTRAINT `in_progress_jobs_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `in_progress_jobs_ibfk_3` FOREIGN KEY (`provider_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `in_progress_jobs_ibfk_4` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `jobs`
---
-ALTER TABLE `jobs`
-  ADD CONSTRAINT `fk_jobs_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `job_comments`
