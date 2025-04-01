@@ -193,7 +193,7 @@ $email = $_GET['email'] ?? '';
     function startCooldown() {
       cooldownActive = true;
       const cooldownDuration = 300; // 5 minutes
-      const cooldownEndTime = Date.now() + cooldownDuration * 1000; // Store timestamp
+      const cooldownEndTime = Date.now() + cooldownDuration * 1000; 
 
       localStorage.setItem("cooldownEndTime", cooldownEndTime);
 
@@ -209,7 +209,7 @@ $email = $_GET['email'] ?? '';
         if (remainingTime > 0) {
           runCountdown(cooldownEndTime);
         } else {
-          localStorage.removeItem("cooldownEndTime"); // Clear expired cooldown
+          localStorage.removeItem("cooldownEndTime")
         }
       }
     }
