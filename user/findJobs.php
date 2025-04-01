@@ -88,7 +88,7 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $row['budget'] = $row['budget']; // Keep budget as a string (e.g., "200-500")
         $row['has_offered'] = intval($row['has_offered']);
-        
+
         // Fetch coordinates based on the address
         if (!empty($row['location'])) {
             $coords = getCoordinates($row['id'], $row['location'], $locationiq_api_key);
@@ -193,9 +193,11 @@ $conn->close();
         body {
             font-family: 'Montserrat', sans-serif;
         }
+
         #loader-overlay {
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
             background: white;
@@ -204,6 +206,7 @@ $conn->close();
             align-items: center;
             z-index: 9999;
         }
+
         .loader-container {
             width: 30vw;
             max-width: 200px;
@@ -214,48 +217,97 @@ $conn->close();
             align-items: center;
             justify-content: center;
         }
+
         .logo {
             width: 90%;
             height: 90%;
             animation: heartbeat 1.5s infinite;
             object-fit: contain;
         }
+
         .text-container {
             height: 40px;
             width: 100%;
             text-align: center;
         }
+
         .letter {
             display: inline-block;
             font-size: 24px;
             font-weight: bold;
             color: #3498db;
             opacity: 0;
-            animation: fadeIn 0.4s forwards; /* Faster fadeIn */
-            animation-delay: calc(var(--index) * 0.15s); /* Faster delay between letters */
+            animation: fadeIn 0.4s forwards;
+            /* Faster fadeIn */
+            animation-delay: calc(var(--index) * 0.15s);
+            /* Faster delay between letters */
         }
-        .fadeOut { animation: fadeOut 0.7s forwards; }
+
+        .fadeOut {
+            animation: fadeOut 0.7s forwards;
+        }
 
         @keyframes heartbeat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.2); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.2); }
-            70% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            14% {
+                transform: scale(1.2);
+            }
+
+            28% {
+                transform: scale(1);
+            }
+
+            42% {
+                transform: scale(1.2);
+            }
+
+            70% {
+                transform: scale(1);
+            }
         }
+
         @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         @keyframes fadeOut {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-10px); }
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
         }
 
         @media (max-width: 480px) {
-            .loader-container { width: 80vw !important; height: auto; }
-            .logo { width: 70%; height: 70%; margin-bottom: 30px; }
-            .letter { font-size: 28px; }
+            .loader-container {
+                width: 80vw !important;
+                height: auto;
+            }
+
+            .logo {
+                width: 70%;
+                height: 70%;
+                margin-bottom: 30px;
+            }
+
+            .letter {
+                font-size: 28px;
+            }
         }
     </style>
 
@@ -267,30 +319,30 @@ $conn->close();
 </head>
 
 <body>
-<!-- loader.php -->
-<div id="loader-overlay">
-    <div class="loader-container">
-        <img src="../img/logo1.png" alt="Logo" class="logo">
-        <div class="text-container">
-            <span class="letter" style="--index: 1;">Q</span>
-            <span class="letter" style="--index: 2;">U</span>
-            <span class="letter" style="--index: 3;">I</span>
-            <span class="letter" style="--index: 4;">C</span>
-            <span class="letter" style="--index: 5;">K</span>
-            <span class="letter" style="--index: 6;">F</span>
-            <span class="letter" style="--index: 7;">I</span>
-            <span class="letter" style="--index: 8;">X</span>
+    <!-- loader.php -->
+    <div id="loader-overlay">
+        <div class="loader-container">
+            <img src="../img/logo1.png" alt="Logo" class="logo">
+            <div class="text-container">
+                <span class="letter" style="--index: 1;">Q</span>
+                <span class="letter" style="--index: 2;">U</span>
+                <span class="letter" style="--index: 3;">I</span>
+                <span class="letter" style="--index: 4;">C</span>
+                <span class="letter" style="--index: 5;">K</span>
+                <span class="letter" style="--index: 6;">F</span>
+                <span class="letter" style="--index: 7;">I</span>
+                <span class="letter" style="--index: 8;">X</span>
+            </div>
         </div>
     </div>
-</div>
-<div id="main-content" style="display:none;"></div>
+    <div id="main-content" style="display:none;"></div>
     <?php include './userHeader.php'; ?>
 
     <?php if ($take_assesmentresult->num_rows === 0) { ?>
         <?php include 'assesment.php'; ?>
     <?php } ?>
 
-    <section class="bg-white shadow px-1 py-1 flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
+    <!--<section class="bg-white shadow px-1 py-1 flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
 
         <div class="flex-1 max-w-full md:max-w-md">
             <input
@@ -581,10 +633,10 @@ $conn->close();
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
-<div class="flex flex-col lg:flex-row w-full p-2 md:p-4 bg-blue-50 min-h-screen"
-    x-data='{
+    <div class="flex flex-col lg:flex-row w-full p-2 md:p-4 bg-blue-50 min-h-screen"
+        x-data='{
         jobs: <?php echo htmlspecialchars(json_encode($jobs), ENT_QUOTES, "UTF-8"); ?>, 
         selectedJob: null, 
         open: false, 
@@ -641,11 +693,11 @@ $conn->close();
             });
         }
     }'>
-    
-    
 
 
-    <div x-data="{
+
+
+        <div x-data="{
     showMyJobs: false,
     userId: <?php echo $_SESSION['user_id']; ?>, 
     get filteredJobs() {
@@ -659,186 +711,186 @@ $conn->close();
                 <img src="../img/pin.svg" alt="Pin Icon" class="w-6 h-6 mr-2"> Available Jobs
             </h2>
 
-        <!-- My Posted Jobs Toggle Button -->
-        <button @click="showMyJobs = !showMyJobs" 
-            class="px-3 py-1 text-xs font-semibold rounded border border-blue-600 text-blue-600 
+            <!-- My Posted Jobs Toggle Button -->
+            <button @click="showMyJobs = !showMyJobs"
+                class="px-3 py-1 text-xs font-semibold rounded border border-blue-600 text-blue-600 
                 hover:bg-blue-600 hover:text-white transition">
-            <span x-text="showMyJobs ? 'All Jobs' : 'My Jobs'"></span>
-        </button>
-        
+                <span x-text="showMyJobs ? 'All Jobs' : 'My Jobs'"></span>
+            </button>
 
-    <ul class="space-y-3">
-        <template x-for="job in filteredJobs" :key="job.id">
-            <li @click="
+
+            <ul class="space-y-3">
+                <template x-for="job in filteredJobs" :key="job.id">
+                    <li @click="
                 selectedJob = (selectedJob && selectedJob.id === job.id) ? null : job;
                 localStorage.setItem('selectedJobId', selectedJob ? selectedJob.id : '');
             "
-                class="p-3 md:p-4 rounded-lg cursor-pointer transition duration-200 shadow-sm border border-gray-300 
+                        class="p-3 md:p-4 rounded-lg cursor-pointer transition duration-200 shadow-sm border border-gray-300 
                     bg-gray-100 hover:bg-blue-100 hover:border-blue-400 transform hover:scale-[1.03] hover:shadow-md relative"
-                :class="{
+                        :class="{
                     'bg-green-200': job.has_offered,  
                     'bg-blue-600 text-white scale-[1.05] shadow-lg': selectedJob && selectedJob.id === job.id
                 }"
-                :id="'job-' + job.id">
+                        :id="'job-' + job.id">
 
-                <!-- Budget Tag -->
-                <span class="absolute top-2 right-3 text-xs font-bold px-2 md:px-3 py-1 rounded-lg transition duration-200"
-                    :class="selectedJob && selectedJob.id === job.id ? 'bg-white text-blue-800' : 'bg-blue-800 text-white'">
-                    ₱<span x-text="formatBudget(job.budget)"></span>
-                </span>
+                        <!-- Budget Tag -->
+                        <span class="absolute top-2 right-3 text-xs font-bold px-2 md:px-3 py-1 rounded-lg transition duration-200"
+                            :class="selectedJob && selectedJob.id === job.id ? 'bg-white text-blue-800' : 'bg-blue-800 text-white'">
+                            ₱<span x-text="formatBudget(job.budget)"></span>
+                        </span>
 
-                <div class="flex items-start">
-                    <div class="flex-1">
-                        <h3 class="text-sm md:text-md font-semibold flex items-center">
-                            <img src="../img/location-info.svg" alt="Loc Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                            <span x-text="job.job_title" class="text-blue-800"></span>
-                        </h3>
-                        <p class="text-xs flex items-center mt-1">
-                            <span x-text="job.location"></span>
-                        </p>
-                    </div>
-                </div>
+                        <div class="flex items-start">
+                            <div class="flex-1">
+                                <h3 class="text-sm md:text-md font-semibold flex items-center">
+                                    <img src="../img/location-info.svg" alt="Loc Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                                    <span x-text="job.job_title" class="text-blue-800"></span>
+                                </h3>
+                                <p class="text-xs flex items-center mt-1">
+                                    <span x-text="job.location"></span>
+                                </p>
+                            </div>
+                        </div>
 
-                <div x-show="job.has_offered" class="mt-2 flex flex-wrap items-center gap-2">
-                    <span class="text-xs font-bold px-2 md:px-3 py-1 rounded-lg bg-green-500 text-white">
-                        Offer Submitted
-                    </span>
-                    <button @click="withdrawOffer(job.id)"
-                        class="text-xs font-bold px-2 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600 transition">
-                        Withdraw Offer
-                    </button>
-                </div>
+                        <div x-show="job.has_offered" class="mt-2 flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-bold px-2 md:px-3 py-1 rounded-lg bg-green-500 text-white">
+                                Offer Submitted
+                            </span>
+                            <button @click="withdrawOffer(job.id)"
+                                class="text-xs font-bold px-2 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600 transition">
+                                Withdraw Offer
+                            </button>
+                        </div>
 
-            </li>
-        </template>
-    </ul>
-</div>
+                    </li>
+                </template>
+            </ul>
+        </div>
 
 
         <div class="w-full lg:w-1/3 bg-white shadow-xl rounded-2xl p-4 md:p-5 h-auto lg:h-[550px] overflow-y-auto transition-all duration-300 
             transform scale-100 hover:scale-[1.02] border border-gray-300 mb-4 lg:mb-0 lg:mx-4"
             x-show="selectedJob" x-transition x-data="{ showPosterProfile: false, profileHover: false }">
-    
-    <template x-if="selectedJob">
-        <div class="relative">
-            <button @click="selectedJob = null"
-                class="absolute top-2 right-4 text-gray-500 hover:text-red-500 transition duration-200 text-sm">
-                ✖ Close
-            </button>
-            
-            <h2 class="text-lg md:text-xl font-bold text-blue-800" x-text="selectedJob.job_title"></h2>
 
-            <!-- Profile Section with Verification Badge & Mini Profile Toggle -->
-            <div class="flex items-center gap-3 mt-2 relative">
-                <img :src="selectedJob.profile_picture || 'default-profile.png'" class="w-10 h-10 rounded-full border shadow"
-                    :class="{
+            <template x-if="selectedJob">
+                <div class="relative">
+                    <button @click="selectedJob = null"
+                        class="absolute top-2 right-4 text-gray-500 hover:text-red-500 transition duration-200 text-sm">
+                        ✖ Close
+                    </button>
+
+                    <h2 class="text-lg md:text-xl font-bold text-blue-800" x-text="selectedJob.job_title"></h2>
+
+                    <!-- Profile Section with Verification Badge & Mini Profile Toggle -->
+                    <div class="flex items-center gap-3 mt-2 relative">
+                        <img :src="selectedJob.profile_picture || 'default-profile.png'" class="w-10 h-10 rounded-full border shadow"
+                            :class="{
                         'ring-2 ring-blue-500': selectedJob.verification_status === 'fully_verified',
                         'ring-2 ring-green-500': selectedJob.verification_status === 'identity_verified',
                         'ring-2 ring-red-500': selectedJob.verification_status === 'not_verified'
                     }">
-                <div>
-                    <p class="text-xs md:text-sm font-semibold text-blue-800 relative">
-                        <a @mouseenter="showPosterProfile = true" 
-                           @mouseleave="setTimeout(() => { if (!profileHover) showPosterProfile = false; }, 200)" 
-                           @click="showPosterProfile = !showPosterProfile"
-                           class="cursor-pointer hover:underline">
-                            <span x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></span>
-                        </a>
+                        <div>
+                            <p class="text-xs md:text-sm font-semibold text-blue-800 relative">
+                                <a @mouseenter="showPosterProfile = true"
+                                    @mouseleave="setTimeout(() => { if (!profileHover) showPosterProfile = false; }, 200)"
+                                    @click="showPosterProfile = !showPosterProfile"
+                                    class="cursor-pointer hover:underline">
+                                    <span x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></span>
+                                </a>
 
-                        <!-- Mini Profile Popup -->
-                        <div x-show="showPosterProfile" x-transition.opacity x-cloak
-                            class="absolute top-8 left-0 bg-gradient-to-b from-blue-50 to-white shadow-2xl border border-gray-200/60 
+                                <!-- Mini Profile Popup -->
+                            <div x-show="showPosterProfile" x-transition.opacity x-cloak
+                                class="absolute top-8 left-0 bg-gradient-to-b from-blue-50 to-white shadow-2xl border border-gray-200/60 
                                    rounded-2xl p-4 w-72 z-50 transition-all duration-300 ease-in-out transform origin-top scale-95 hover:scale-100"
-                            @mouseenter="profileHover = true"
-                            @mouseleave="profileHover = false; setTimeout(() => showPosterProfile = false, 200)">
+                                @mouseenter="profileHover = true"
+                                @mouseleave="profileHover = false; setTimeout(() => showPosterProfile = false, 200)">
 
-                            <div class="flex items-center gap-4">
-                                <img :src="selectedJob.profile_picture || 'default-profile.png'" alt="Profile Picture"
-                                    class="w-16 h-16 rounded-full shadow-md"
-                                    :class="{
+                                <div class="flex items-center gap-4">
+                                    <img :src="selectedJob.profile_picture || 'default-profile.png'" alt="Profile Picture"
+                                        class="w-16 h-16 rounded-full shadow-md"
+                                        :class="{
                                         'ring-4 ring-blue-500': selectedJob.verification_status === 'fully_verified',
                                         'ring-4 ring-green-500': selectedJob.verification_status === 'identity_verified',
                                         'ring-4 ring-red-500': selectedJob.verification_status === 'not_verified'
                                     }">
-                                <div>
-                                    <h3 class="text-md font-semibold text-gray-800" x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></h3>
-                                    
-                                    <!-- Verification Badge -->
-                                    <p class="text-xs flex items-center gap-1 mt-1 text-gray-600">
-                                        <i class="fas"
-                                            :class="{
+                                    <div>
+                                        <h3 class="text-md font-semibold text-gray-800" x-text="selectedJob.first_name + ' ' + selectedJob.last_name"></h3>
+
+                                        <!-- Verification Badge -->
+                                        <p class="text-xs flex items-center gap-1 mt-1 text-gray-600">
+                                            <i class="fas"
+                                                :class="{
                                                 'fa-shield-check text-blue-500': selectedJob.verification_status === 'fully_verified',
                                                 'fa-user-check text-green-500': selectedJob.verification_status === 'identity_verified',
                                                 'fa-exclamation-circle text-red-500': selectedJob.verification_status === 'not_verified'
                                             }"></i>
-                                        <span x-text="selectedJob.verification_status === 'fully_verified' ? 'Fully Verified' :
+                                            <span x-text="selectedJob.verification_status === 'fully_verified' ? 'Fully Verified' :
                                                     selectedJob.verification_status === 'identity_verified' ? 'Identity Verified' : 'Not Verified'"></span>
-                                    </p>
+                                        </p>
+                                    </div>
                                 </div>
+
+                                <!-- "View Profile" Button -->
+                                <a :href="'public_profile.php?user_id=' + selectedJob.user_id + '&job_id=' + selectedJob.id"
+                                    class="block mt-3 text-xs text-blue-600 hover:underline text-center">
+                                    View Full Profile
+                                </a>
                             </div>
+                            </p>
 
-                            <!-- "View Profile" Button -->
-                            <a :href="'public_profile.php?user_id=' + selectedJob.user_id + '&job_id=' + selectedJob.id"
-                                class="block mt-3 text-xs text-blue-600 hover:underline text-center">
-                                View Full Profile
-                            </a>
-                        </div>
-                    </p>
-
-                    <!-- Verification Badge -->
-                    <p class="text-xs px-2 py-1 rounded text-white inline-block"
-                        :class="{
+                            <!-- Verification Badge -->
+                            <p class="text-xs px-2 py-1 rounded text-white inline-block"
+                                :class="{
                             'bg-blue-500': selectedJob.verification_status === 'fully_verified',
                             'bg-green-500': selectedJob.verification_status === 'identity_verified',
                             'bg-red-500': selectedJob.verification_status === 'not_verified'
                         }">
-                        <span x-text="selectedJob.verification_status === 'fully_verified' ? 'Fully Verified' :
+                                <span x-text="selectedJob.verification_status === 'fully_verified' ? 'Fully Verified' :
                                     selectedJob.verification_status === 'identity_verified' ? 'Identity Verified' : 'Not Verified'">
-                        </span>
-                    </p>
-                </div>
-            </div>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
 
-            <p class="text-gray-700 text-xs mt-1" x-text="selectedJob.location"></p>
-            <p class="text-gray-600 text-xs mt-1 flex items-center">
-                <img src="../img/date-range-job.svg" alt="Date Icon" class="w-4 h-4 mr-1">
-                <span x-text="selectedJob.job_date"></span>
-                <span class="mx-2">|</span>
-                <img src="../img/time-job.svg" alt="Time Icon" class="w-4 h-4 mr-1">
-                <span x-text="selectedJob.job_time"></span>
-            </p>
+                    <p class="text-gray-700 text-xs mt-1" x-text="selectedJob.location"></p>
+                    <p class="text-gray-600 text-xs mt-1 flex items-center">
+                        <img src="../img/date-range-job.svg" alt="Date Icon" class="w-4 h-4 mr-1">
+                        <span x-text="selectedJob.job_date"></span>
+                        <span class="mx-2">|</span>
+                        <img src="../img/time-job.svg" alt="Time Icon" class="w-4 h-4 mr-1">
+                        <span x-text="selectedJob.job_time"></span>
+                    </p>
 
                     <p class="text-xs md:text-sm font-semibold text-gray-700 mt-3 flex items-center">
-                <img src="../img/category-job.svg" alt="Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.category_name"></span>
-            </p>
+                        <img src="../img/category-job.svg" alt="Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                        Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.category_name"></span>
+                    </p>
 
-            <p class="text-xs md:text-sm font-semibold text-gray-700 mt-3 flex items-center">
-                <img src="../img/sub-category-job.svg" alt="Sub-Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                Sub-Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.sub_category_name"></span>
-            </p>
+                    <p class="text-xs md:text-sm font-semibold text-gray-700 mt-3 flex items-center">
+                        <img src="../img/sub-category-job.svg" alt="Sub-Category Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                        Sub-Category: <span class="text-blue-800 font-bold ml-1" x-text="selectedJob.sub_category_name"></span>
+                    </p>
 
-            <p class="text-sm md:text-md font-bold text-gray-700 mt-3 flex items-center">
-                <img src="../img/budget-job.svg" alt="Budget Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                Budget: <span class="text-blue-800 font-bold ml-1"> ₱<span x-text="selectedJob.budget.toLocaleString()"></span></span>
-            </p>
+                    <p class="text-sm md:text-md font-bold text-gray-700 mt-3 flex items-center">
+                        <img src="../img/budget-job.svg" alt="Budget Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                        Budget: <span class="text-blue-800 font-bold ml-1"> ₱<span x-text="selectedJob.budget.toLocaleString()"></span></span>
+                    </p>
 
-            <!-- Job Images Section -->
-            <div x-show="selectedJob.images" x-cloak x-transition>
-                <h3 class="text-sm md:text-md font-semibold text-gray-700 mt-3 flex items-center">
-                    <img src="../img/image-job.svg" alt="Job Images Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
-                    Job Images
-                </h3>
-                <div class="flex space-x-3 overflow-x-auto p-2">
-                    <template x-for="image in selectedJob.images.split(',')" :key="image">
-                        <img :src="image.trim()"
-                            class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg shadow-md border border-gray-300 cursor-pointer hover:scale-105 transition"
-                            @click="enlargedImage = image.trim()">
-                    </template>
-                </div>
-            </div>
-           
-<div x-data="{ 
+                    <!-- Job Images Section -->
+                    <div x-show="selectedJob.images" x-cloak x-transition>
+                        <h3 class="text-sm md:text-md font-semibold text-gray-700 mt-3 flex items-center">
+                            <img src="../img/image-job.svg" alt="Job Images Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1">
+                            Job Images
+                        </h3>
+                        <div class="flex space-x-3 overflow-x-auto p-2">
+                            <template x-for="image in selectedJob.images.split(',')" :key="image">
+                                <img :src="image.trim()"
+                                    class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg shadow-md border border-gray-300 cursor-pointer hover:scale-105 transition"
+                                    @click="enlargedImage = image.trim()">
+                            </template>
+                        </div>
+                    </div>
+
+                    <div x-data="{ 
     comments: [], 
     newComment: '', 
     replyComment: '', 
@@ -897,43 +949,43 @@ $conn->close();
 }" x-init="loadComments()" class="max-w-2xl mx-auto mt-6">
 
 
-    <h3 class="text-lg font-semibold text-gray-900">Questions</h3>
-    <p class="text-sm text-gray-500">* Please don't share personal info! </p>
+                        <h3 class="text-lg font-semibold text-gray-900">Questions</h3>
+                        <p class="text-sm text-gray-500">* Please don't share personal info! </p>
 
-    <!-- Comment List -->
-    <div class="mt-4">
-        <template x-if="comments.length > 0">
-            <ul class="space-y-4">
-                <template x-for="comment in comments" :key="comment.id">
-                    <li class="bg-white shadow-sm p-4 rounded-lg border">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                                <span x-text="comment.first_name[0] + comment.last_name[0]"></span>
-                            </div>
-                            <div class="w-full">
-                                <p class="text-sm font-semibold text-gray-800" x-text="comment.first_name + ' ' + comment.last_name"></p>
-                                <p class="text-sm text-gray-700 mt-1" x-text="comment.comment"></p>
-                                <p class="text-xs text-gray-400 mt-1" x-text="new Date(comment.created_at).toLocaleString()"></p>
+                        <!-- Comment List -->
+                        <div class="mt-4">
+                            <template x-if="comments.length > 0">
+                                <ul class="space-y-4">
+                                    <template x-for="comment in comments" :key="comment.id">
+                                        <li class="bg-white shadow-sm p-4 rounded-lg border">
+                                            <div class="flex items-start space-x-3">
+                                                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                                                    <span x-text="comment.first_name[0] + comment.last_name[0]"></span>
+                                                </div>
+                                                <div class="w-full">
+                                                    <p class="text-sm font-semibold text-gray-800" x-text="comment.first_name + ' ' + comment.last_name"></p>
+                                                    <p class="text-sm text-gray-700 mt-1" x-text="comment.comment"></p>
+                                                    <p class="text-xs text-gray-400 mt-1" x-text="new Date(comment.created_at).toLocaleString()"></p>
 
-                                <div class="flex space-x-3 mt-1">
-                                    <button class="text-blue-600 text-xs hover:underline" @click="replyTo = (replyTo === comment.id) ? null : comment.id">
-                                        Reply
-                                    </button>
-                                    
-                                    <?php if (isset($_SESSION['user_id'])) { ?>
-                                        <template x-if="comment.user_id == <?php echo $_SESSION['user_id']; ?>">
-                                            <button class="text-red-600 text-xs hover:underline" @click="deleteComment(comment.id)">
-                                                Delete
-                                            </button>
-                                        </template>
-                                    <?php } ?>
-                                </div>
+                                                    <div class="flex space-x-3 mt-1">
+                                                        <button class="text-blue-600 text-xs hover:underline" @click="replyTo = (replyTo === comment.id) ? null : comment.id">
+                                                            Reply
+                                                        </button>
 
-                                <!-- Reply Input -->
-                                <div x-show="replyTo === comment.id" class="mt-3">
-                                    <div class="flex items-center space-x-2">
-                                        <input type="text" x-model="replyComment" placeholder="Write a reply..." class="w-full px-3 py-1 border rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
-                                        <button @click="
+                                                        <?php if (isset($_SESSION['user_id'])) { ?>
+                                                            <template x-if="comment.user_id == <?php echo $_SESSION['user_id']; ?>">
+                                                                <button class="text-red-600 text-xs hover:underline" @click="deleteComment(comment.id)">
+                                                                    Delete
+                                                                </button>
+                                                            </template>
+                                                        <?php } ?>
+                                                    </div>
+
+                                                    <!-- Reply Input -->
+                                                    <div x-show="replyTo === comment.id" class="mt-3">
+                                                        <div class="flex items-center space-x-2">
+                                                            <input type="text" x-model="replyComment" placeholder="Write a reply..." class="w-full px-3 py-1 border rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
+                                                            <button @click="
                                             if(replyComment.trim() !== '') {
                                                 fetch('add_comment.php', {
                                                     method: 'POST',
@@ -959,48 +1011,48 @@ $conn->close();
                                             } else {
                                                 alert('Reply cannot be empty');
                                             }"
-                                            class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700">
-                                            Reply
-                                        </button>
-                                    </div>
-                                </div>
+                                                                class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700">
+                                                                Reply
+                                                            </button>
+                                                        </div>
+                                                    </div>
 
-                                <!-- Replies -->
-                                <div x-show="comment.replies.length > 0" class="mt-3 space-y-3 border-l-2 border-gray-200 pl-4">
-                                    <template x-for="reply in comment.replies" :key="reply.id">
-                                        <div class="flex items-start space-x-3">
-                                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
-                                                <span x-text="reply.first_name[0] + reply.last_name[0]"></span>
+                                                    <!-- Replies -->
+                                                    <div x-show="comment.replies.length > 0" class="mt-3 space-y-3 border-l-2 border-gray-200 pl-4">
+                                                        <template x-for="reply in comment.replies" :key="reply.id">
+                                                            <div class="flex items-start space-x-3">
+                                                                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                                                                    <span x-text="reply.first_name[0] + reply.last_name[0]"></span>
+                                                                </div>
+                                                                <div class="w-full">
+                                                                    <p class="text-xs font-semibold text-gray-800" x-text="reply.first_name + ' ' + reply.last_name"></p>
+                                                                    <p class="text-xs text-gray-700 mt-1" x-text="reply.comment"></p>
+                                                                    <p class="text-xs text-gray-400 mt-1" x-text="new Date(reply.created_at).toLocaleString()"></p>
+                                                                    <?php if (isset($_SESSION['user_id'])) { ?>
+                                                                        <template x-if="comment.user_id == <?php echo $_SESSION['user_id']; ?>">
+                                                                            <button class="text-red-600 text-xs mt-1 hover:underline" @click="deleteComment(reply.id, comment.id)">
+                                                                                Delete
+                                                                            </button>
+                                                                        </template>
+                                                                    <?php } ?>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="w-full">
-                                                <p class="text-xs font-semibold text-gray-800" x-text="reply.first_name + ' ' + reply.last_name"></p>
-                                                <p class="text-xs text-gray-700 mt-1" x-text="reply.comment"></p>
-                                                <p class="text-xs text-gray-400 mt-1" x-text="new Date(reply.created_at).toLocaleString()"></p>
-                                                <?php if (isset($_SESSION['user_id'])) { ?>
-                                                    <template x-if="comment.user_id == <?php echo $_SESSION['user_id']; ?>">
-                                                        <button class="text-red-600 text-xs mt-1 hover:underline" @click="deleteComment(reply.id, comment.id)">
-                                                            Delete
-                                                        </button>
-                                                    </template>
-                                                <?php } ?>
-                                            </div>
-                                        </div>
+                                        </li>
                                     </template>
-                                </div>
-                            </div>
+                                </ul>
+                            </template>
+
+                            <p x-show="comments.length === 0" class="text-sm text-gray-500">No questions yet. Be the first to ask!</p>
                         </div>
-                    </li>
-                </template>
-            </ul>
-        </template>
 
-        <p x-show="comments.length === 0" class="text-sm text-gray-500">No questions yet. Be the first to ask!</p>
-    </div>
-
-    <!-- Add Comment -->
-    <div class="mt-5 flex items-center space-x-2">
-        <input type="text" x-model="newComment" placeholder="Write a comment..." class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
-        <button @click="
+                        <!-- Add Comment -->
+                        <div class="mt-5 flex items-center space-x-2">
+                            <input type="text" x-model="newComment" placeholder="Write a comment..." class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
+                            <button @click="
             if(newComment.trim() !== '') {
                 fetch('add_comment.php', {
                     method: 'POST',
@@ -1026,26 +1078,26 @@ $conn->close();
             } else {
                 alert('Comment cannot be empty');
             }"
-            class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
-            Post
-        </button>
-    </div>
+                                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
+                                Post
+                            </button>
+                        </div>
 
-</div>
-
-
+                    </div>
 
 
-<button x-show="selectedJob.user_id !== <?php echo $_SESSION['user_id']; ?>" 
-        class="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm md:text-md font-semibold hover:bg-blue-700 
+
+
+                    <button x-show="selectedJob.user_id !== <?php echo $_SESSION['user_id']; ?>"
+                        class="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm md:text-md font-semibold hover:bg-blue-700 
                shadow-md hover:shadow-lg transition transform hover:scale-[1.05] flex items-center justify-center"
-        @click="open = true">
-    <img src="../img/offer-job.svg" alt="Offer Icon" class="w-4 h-4 md:w-5 md:h-5 mr-2 ">
-    Make an Offer
-</button>
+                        @click="open = true">
+                        <img src="../img/offer-job.svg" alt="Offer Icon" class="w-4 h-4 md:w-5 md:h-5 mr-2 ">
+                        Make an Offer
+                    </button>
+                </div>
+            </template>
         </div>
-    </template>
-</div>
 
 
         <div x-show="enlargedImage" x-cloak
@@ -1128,349 +1180,346 @@ $conn->close();
             <div id="map" class="h-[300px] lg:h-[550px] w-full shadow-lg border-2 border-gray-400 rounded-2xl sticky top-0"></div>
         </div>
 
-</div>
+    </div>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                let map;
-                let jobMarkers = {};
-                let selectedMarker = null;
-                let selectedJobId = null;
-                let defaultLocation = [14.7576, 121.0453];
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let map;
+            let jobMarkers = {};
+            let selectedMarker = null;
+            let selectedJobId = null;
+            let defaultLocation = [14.7576, 121.0453];
 
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(position => {
-                        let lat = position.coords.latitude;
-                        let lng = position.coords.longitude;
-                        initMap(lat, lng);
-                    }, () => {
-                        initMap(defaultLocation[0], defaultLocation[1]);
-                    });
-                } else {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    let lat = position.coords.latitude;
+                    let lng = position.coords.longitude;
+                    initMap(lat, lng);
+                }, () => {
                     initMap(defaultLocation[0], defaultLocation[1]);
-                }
+                });
+            } else {
+                initMap(defaultLocation[0], defaultLocation[1]);
+            }
 
-                function initMap(lat, lng) {
-                    map = L.map('map').setView([lat, lng], 13);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            function initMap(lat, lng) {
+                map = L.map('map').setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-                    L.marker([lat, lng], {
-                        icon: L.divIcon({
-                            className: 'current-location-marker',
-                            html: '<div style="background-color: blue; width: 14px; height: 14px; border-radius: 50%;"></div>',
-                        })
-                    }).addTo(map).bindPopup("You are here");
+                L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'current-location-marker',
+                        html: '<div style="background-color: blue; width: 14px; height: 14px; border-radius: 50%;"></div>',
+                    })
+                }).addTo(map).bindPopup("You are here");
 
-                    loadJobMarkers();
-                }
+                loadJobMarkers();
+            }
 
-                function loadJobMarkers() {
-                    let jobs = JSON.parse('<?php echo json_encode($jobs); ?>');
+            function loadJobMarkers() {
+                let jobs = JSON.parse('<?php echo json_encode($jobs); ?>');
 
-                    Object.values(jobMarkers).forEach(marker => map.removeLayer(marker));
-                    jobMarkers = {};
+                Object.values(jobMarkers).forEach(marker => map.removeLayer(marker));
+                jobMarkers = {};
 
-                    jobs.forEach(job => {
-                        if (job.latitude && job.longitude) {
-                            let marker = L.marker([job.latitude, job.longitude]).addTo(map)
-                                .bindPopup(`<strong>${job.job_title}</strong><br>${job.location}`);
+                jobs.forEach(job => {
+                    if (job.latitude && job.longitude) {
+                        let marker = L.marker([job.latitude, job.longitude]).addTo(map)
+                            .bindPopup(`<strong>${job.job_title}</strong><br>${job.location}`);
 
-                            jobMarkers[job.id] = marker;
+                        jobMarkers[job.id] = marker;
 
-                            marker.on("click", function() {
-                                toggleJobSelection(job.id);
-                                scrollToJob(job.id);
-                            });
-                        }
-                    });
-                }
-
-                function toggleJobSelection(jobId) {
-                    let jobElement = document.getElementById("job-" + jobId);
-
-                    if (selectedJobId === jobId) {
-
-                        selectedJobId = null;
-                        if (selectedMarker) {
-                            selectedMarker.closePopup();
-                            selectedMarker = null;
-                        }
-                        if (jobElement) {
-                            jobElement.classList.remove("bg-blue-600", "text-white");
-                        }
-                    } else {
-
-                        document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-white"));
-                        if (jobElement) {
-                            jobElement.classList.add("bg-blue-600", "text-white");
-                        }
-
-                        if (selectedMarker) {
-                            selectedMarker.closePopup();
-                        }
-
-                        let job = jobMarkers[jobId];
-                        if (job) {
-                            map.setView(job.getLatLng(), 15);
-                            job.openPopup();
-                            selectedMarker = job;
-                        }
-
-                        selectedJobId = jobId;
-                    }
-                }
-
-                function scrollToJob(jobId) {
-                    let jobElement = document.getElementById("job-" + jobId);
-                    if (jobElement) {
-                        jobElement.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center"
+                        marker.on("click", function() {
+                            toggleJobSelection(job.id);
+                            scrollToJob(job.id);
                         });
                     }
-                }
-
-                document.querySelectorAll("li").forEach(li => {
-                    li.addEventListener("click", function() {
-                        let jobId = this.id.replace("job-", "");
-                        toggleJobSelection(jobId);
-                    });
                 });
-
-                document.addEventListener("alpine:init", () => {
-                    Alpine.data("jobHandler", () => ({
-                        selectedJob: null,
-                        closeJobDetails() {
-                            this.selectedJob = null;
-                            selectedJobId = null;
-                            if (selectedMarker) {
-                                selectedMarker.closePopup();
-                                selectedMarker = null;
-                            }
-                            document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-white"));
-                        }
-                    }));
-                });
-            });
-        </script>
-
-        <script>
-            document.getElementById('offerForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                const formData = new FormData(this);
-                const jobId = formData.get('job_id');
-
-                const alreadyOffered = await hasAlreadyOffered(jobId);
-                if (alreadyOffered) {
-
-                    document.getElementById('confirmReplaceModal').style.display = 'flex';
-                    return;
-                }
-
-                submitOffer(formData);
-            });
-
-
-            async function hasAlreadyOffered(jobId) {
-                try {
-                    const response = await fetch(`check-offer.php?job_id=${jobId}`);
-                    const data = await response.json();
-                    return data.hasOffer;
-                } catch (error) {
-                    console.error('Error:', error);
-                    return false;
-                }
             }
 
-            function submitOffer(formData) {
-                fetch('submit-offer.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(text => {
-                        console.log("Raw Response:", text);
-                        try {
-                            return JSON.parse(text);
-                        } catch (error) {
-                            console.error("JSON Parse Error:", error, "Raw Response:", text);
-                            throw new Error("Invalid JSON response");
-                        }
-                    })
-                    .then(data => {
-                        console.log("Parsed JSON:", data);
-                        if (data.success) {
-                            document.getElementById('successModal').style.display = 'flex';
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1500);
-                        } else {
-                            alert('Error: ' + (data.message || 'Unknown error occurred.'));
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Fetch Error:', error);
-                        alert('An error occurred. Please check the console for details.');
-                    });
-            }
+            function toggleJobSelection(jobId) {
+                let jobElement = document.getElementById("job-" + jobId);
 
-            function confirmReplaceOffer() {
-                const formData = new FormData(document.getElementById('offerForm'));
-                submitOffer(formData);
-            }
+                if (selectedJobId === jobId) {
 
-            function closeSuccessModal() {
-                document.getElementById('successModal').style.display = 'none';
-            }
-
-
-
-            function replaceOffer() {
-                document.getElementById("confirmReplaceModal").style.display = "none";
-
-                const form = document.getElementById("offerForm");
-                const formData = new FormData(form);
-
-                submitOffer(formData);
-            }
-
-            function closeConfirmReplaceModal() {
-                document.getElementById("confirmReplaceModal").style.display = "none";
-            }
-            
-            
-            function formatBudget(budget) {
-    if (typeof budget === 'string' && budget.includes('-')) {
-        return budget.split('-').map(num => parseInt(num.trim())).join(' - ');
-    }
-    return parseInt(budget).toLocaleString();
-}
-
-
-            
-        </script>
-
-
-
-
-
-        <script>
-            function openJob(job) {
-
-                console.log("Opening job:", job);
-            }
-        </script>
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                let map;
-                let jobMarkers = {};
-                let selectedMarker = null;
-                let selectedJobId = null;
-                let userMarker = null;
-                let defaultLocation = [14.7576, 121.0453];
-
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(position => {
-                        let lat = position.coords.latitude;
-                        let lng = position.coords.longitude;
-                        initMap(lat, lng);
-                    }, () => {
-                        initMap(defaultLocation[0], defaultLocation[1]);
-                    });
+                    selectedJobId = null;
+                    if (selectedMarker) {
+                        selectedMarker.closePopup();
+                        selectedMarker = null;
+                    }
+                    if (jobElement) {
+                        jobElement.classList.remove("bg-blue-600", "text-white");
+                    }
                 } else {
-                    initMap(defaultLocation[0], defaultLocation[1]);
-                }
 
-                function initMap(lat, lng) {
-                    map = L.map('map').setView([lat, lng], 14);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-                    userMarker = L.marker([lat, lng], {
-                        icon: L.divIcon({
-                            className: 'current-location-marker',
-                            html: '<div style="background-color: blue; width: 14px; height: 14px; border-radius: 50%;"></div>',
-                        })
-                    }).addTo(map).bindPopup("You are here").openPopup();
-
-                    loadJobMarkers();
-                }
-
-                function loadJobMarkers() {
-                    let jobs = JSON.parse('<?php echo json_encode($jobs); ?>');
-
-                    Object.values(jobMarkers).forEach(marker => map.removeLayer(marker));
-                    jobMarkers = {};
-
-                    jobs.forEach(job => {
-                        if (job.latitude && job.longitude) {
-                            let marker = L.marker([job.latitude, job.longitude]).addTo(map)
-                                .bindPopup(`<strong>${job.job_title}</strong><br>${job.location}`);
-
-                            jobMarkers[job.id] = marker;
-
-                            marker.on("click", function() {
-                                highlightJobInList(job.id);
-                            });
-                        }
-                    });
-                }
-
-                function highlightJobInList(jobId) {
-                    let jobElement = document.getElementById("job-" + jobId);
-
-                    if (!jobElement) return;
-
-                    document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-black"));
-
-                    jobElement.classList.add("bg-blue-600", "text-black");
-
-                    jobElement.scrollIntoView({
-                        behavior: "smooth",
-                        block: "nearest"
-                    });
+                    document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-white"));
+                    if (jobElement) {
+                        jobElement.classList.add("bg-blue-600", "text-white");
+                    }
 
                     if (selectedMarker) {
                         selectedMarker.closePopup();
                     }
 
-                    let marker = jobMarkers[jobId];
-                    if (marker) {
-                        map.setView(marker.getLatLng(), 15);
-                        marker.openPopup();
-                        selectedMarker = marker;
+                    let job = jobMarkers[jobId];
+                    if (job) {
+                        map.setView(job.getLatLng(), 15);
+                        job.openPopup();
+                        selectedMarker = job;
                     }
 
                     selectedJobId = jobId;
                 }
+            }
 
-                document.querySelectorAll("li").forEach(li => {
-                    li.addEventListener("click", function() {
-                        let jobId = this.id.replace("job-", "");
-                        highlightJobInList(jobId);
+            function scrollToJob(jobId) {
+                let jobElement = document.getElementById("job-" + jobId);
+                if (jobElement) {
+                    jobElement.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
                     });
-                });
+                }
+            }
 
-                document.addEventListener("alpine:init", () => {
-                    Alpine.data("jobHandler", () => ({
-                        selectedJob: null,
-                        closeJobDetails() {
-                            this.selectedJob = null;
-                            selectedJobId = null;
-                            if (selectedMarker) {
-                                selectedMarker.closePopup();
-                                selectedMarker = null;
-                            }
-                            document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-white"));
-                        }
-                    }));
+            document.querySelectorAll("li").forEach(li => {
+                li.addEventListener("click", function() {
+                    let jobId = this.id.replace("job-", "");
+                    toggleJobSelection(jobId);
                 });
             });
-        </script>
+
+            document.addEventListener("alpine:init", () => {
+                Alpine.data("jobHandler", () => ({
+                    selectedJob: null,
+                    closeJobDetails() {
+                        this.selectedJob = null;
+                        selectedJobId = null;
+                        if (selectedMarker) {
+                            selectedMarker.closePopup();
+                            selectedMarker = null;
+                        }
+                        document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-white"));
+                    }
+                }));
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById('offerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const jobId = formData.get('job_id');
+
+            const alreadyOffered = await hasAlreadyOffered(jobId);
+            if (alreadyOffered) {
+
+                document.getElementById('confirmReplaceModal').style.display = 'flex';
+                return;
+            }
+
+            submitOffer(formData);
+        });
+
+
+        async function hasAlreadyOffered(jobId) {
+            try {
+                const response = await fetch(`check-offer.php?job_id=${jobId}`);
+                const data = await response.json();
+                return data.hasOffer;
+            } catch (error) {
+                console.error('Error:', error);
+                return false;
+            }
+        }
+
+        function submitOffer(formData) {
+            fetch('submit-offer.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(text => {
+                    console.log("Raw Response:", text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (error) {
+                        console.error("JSON Parse Error:", error, "Raw Response:", text);
+                        throw new Error("Invalid JSON response");
+                    }
+                })
+                .then(data => {
+                    console.log("Parsed JSON:", data);
+                    if (data.success) {
+                        document.getElementById('successModal').style.display = 'flex';
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        alert('Error: ' + (data.message || 'Unknown error occurred.'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    alert('An error occurred. Please check the console for details.');
+                });
+        }
+
+        function confirmReplaceOffer() {
+            const formData = new FormData(document.getElementById('offerForm'));
+            submitOffer(formData);
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+
+
+        function replaceOffer() {
+            document.getElementById("confirmReplaceModal").style.display = "none";
+
+            const form = document.getElementById("offerForm");
+            const formData = new FormData(form);
+
+            submitOffer(formData);
+        }
+
+        function closeConfirmReplaceModal() {
+            document.getElementById("confirmReplaceModal").style.display = "none";
+        }
+
+
+        function formatBudget(budget) {
+            if (typeof budget === 'string' && budget.includes('-')) {
+                return budget.split('-').map(num => parseInt(num.trim())).join(' - ');
+            }
+            return parseInt(budget).toLocaleString();
+        }
+    </script>
+
+
+
+
+
+    <script>
+        function openJob(job) {
+
+            console.log("Opening job:", job);
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let map;
+            let jobMarkers = {};
+            let selectedMarker = null;
+            let selectedJobId = null;
+            let userMarker = null;
+            let defaultLocation = [14.7576, 121.0453];
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    let lat = position.coords.latitude;
+                    let lng = position.coords.longitude;
+                    initMap(lat, lng);
+                }, () => {
+                    initMap(defaultLocation[0], defaultLocation[1]);
+                });
+            } else {
+                initMap(defaultLocation[0], defaultLocation[1]);
+            }
+
+            function initMap(lat, lng) {
+                map = L.map('map').setView([lat, lng], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+                userMarker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'current-location-marker',
+                        html: '<div style="background-color: blue; width: 14px; height: 14px; border-radius: 50%;"></div>',
+                    })
+                }).addTo(map).bindPopup("You are here").openPopup();
+
+                loadJobMarkers();
+            }
+
+            function loadJobMarkers() {
+                let jobs = JSON.parse('<?php echo json_encode($jobs); ?>');
+
+                Object.values(jobMarkers).forEach(marker => map.removeLayer(marker));
+                jobMarkers = {};
+
+                jobs.forEach(job => {
+                    if (job.latitude && job.longitude) {
+                        let marker = L.marker([job.latitude, job.longitude]).addTo(map)
+                            .bindPopup(`<strong>${job.job_title}</strong><br>${job.location}`);
+
+                        jobMarkers[job.id] = marker;
+
+                        marker.on("click", function() {
+                            highlightJobInList(job.id);
+                        });
+                    }
+                });
+            }
+
+            function highlightJobInList(jobId) {
+                let jobElement = document.getElementById("job-" + jobId);
+
+                if (!jobElement) return;
+
+                document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-black"));
+
+                jobElement.classList.add("bg-blue-600", "text-black");
+
+                jobElement.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+
+                if (selectedMarker) {
+                    selectedMarker.closePopup();
+                }
+
+                let marker = jobMarkers[jobId];
+                if (marker) {
+                    map.setView(marker.getLatLng(), 15);
+                    marker.openPopup();
+                    selectedMarker = marker;
+                }
+
+                selectedJobId = jobId;
+            }
+
+            document.querySelectorAll("li").forEach(li => {
+                li.addEventListener("click", function() {
+                    let jobId = this.id.replace("job-", "");
+                    highlightJobInList(jobId);
+                });
+            });
+
+            document.addEventListener("alpine:init", () => {
+                Alpine.data("jobHandler", () => ({
+                    selectedJob: null,
+                    closeJobDetails() {
+                        this.selectedJob = null;
+                        selectedJobId = null;
+                        if (selectedMarker) {
+                            selectedMarker.closePopup();
+                            selectedMarker = null;
+                        }
+                        document.querySelectorAll("li").forEach(li => li.classList.remove("bg-blue-600", "text-white"));
+                    }
+                }));
+            });
+        });
+    </script>
 
     <script>
         function resetAnimation() {
@@ -1482,7 +1531,9 @@ $conn->close();
                     letter.style.opacity = 0;
                     void letter.offsetWidth;
                     letter.style.animation = 'none';
-                    setTimeout(() => { letter.style.animation = ''; }, 10);
+                    setTimeout(() => {
+                        letter.style.animation = '';
+                    }, 10);
                 });
             }, 800);
         }
@@ -1505,34 +1556,34 @@ $conn->close();
 
 
 
-        <script>
-            function updateDistanceLabel() {
-                const slider = document.querySelector("input[type='range']");
-                const label = document.getElementById("distanceLabel");
-                label.textContent = ["5km", "10km", "15km", "25km", "50km", "50km+"][slider.value];
-            }
-        </script>
-
-        <script>
-            function toggleDropdown(id) {
-                document.getElementById(id).classList.toggle('hidden');
-            }
-        </script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    let savedJobId = localStorage.getItem('selectedJobId');
-    if (savedJobId) {
-        let jobElement = document.querySelector(`[id='job-${savedJobId}']`);
-        if (jobElement) {
-            jobElement.click(); // Simulate a click to restore selection
+    <script>
+        function updateDistanceLabel() {
+            const slider = document.querySelector("input[type='range']");
+            const label = document.getElementById("distanceLabel");
+            label.textContent = ["5km", "10km", "15km", "25km", "50km", "50km+"][slider.value];
         }
-    }
-});
-</script>
+    </script>
 
-</div>
+    <script>
+        function toggleDropdown(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let savedJobId = localStorage.getItem('selectedJobId');
+            if (savedJobId) {
+                let jobElement = document.querySelector(`[id='job-${savedJobId}']`);
+                if (jobElement) {
+                    jobElement.click(); // Simulate a click to restore selection
+                }
+            }
+        });
+    </script>
+
+    </div>
 </body>
 
 </html>

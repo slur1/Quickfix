@@ -25,7 +25,7 @@ if (!empty($_POST['comment_id'])) {
     // Delete the comment and its replies
     $stmt = $conn->prepare("DELETE FROM comments WHERE id = ? OR parent_id = ?");
     $stmt->bind_param("ii", $comment_id, $comment_id);
-    
+
     if ($stmt->execute()) {
         echo json_encode(["success" => true]);
     } else {
@@ -37,4 +37,3 @@ if (!empty($_POST['comment_id'])) {
 }
 
 $conn->close();
-?>
